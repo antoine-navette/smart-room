@@ -1,34 +1,30 @@
-import express, { type NextFunction, type Request, type Response } from 'express';
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
+import Fastify from 'fastify';
+import cors from '@fastify/cors';
+import cookie from '@fastify/cookie';
 import type { Env } from '../config/env.js';
 import type { Logger } from 'pino';
 
 export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger) => {
-    const app = express();
+    const app = Fastify({ loggerInstance: logger, disableRequestLogging: true });
 
-    app.use(
-        cors({
-            origin: allowedOrigins,
-            credentials: true,
-        }),
-    );
-
-    app.use(express.json());
-    app.use(cookieParser());
-
-    app.use('/test', (req: Request, res: Response) => {
-        res.status(200).send('OK');
-    });
-    app.all(/.*/, (req: Request, res: Response) => {
-        res.status(404).send('Route not found');
+    app.register(cors, {
+        origin: allowedOrigins,
+        credentials: true,
     });
 
-    // Error handler
-    app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+    app.register(cookie);
+
+    app.get('/test', async (_request, reply) => {
+        return reply.status(200).send('OK');
+    });
+
+    app.setNotFoundHandler(async (_request, reply) => {
+        return reply.status(404).send('Route not found');
+    });
+
+    app.setErrorHandler(async (err, _request, reply) => {
         logger.error(err instanceof Error ? err.message : 'Unknown error');
-
-        res.status(500).json({ success: false, message: 'Internal server error' });
+        return reply.status(500).send({ code: 'INTERNAL_SERVER_ERROR', message: 'Internal server error' });
     });
 
     return app;
