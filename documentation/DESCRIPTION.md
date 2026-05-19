@@ -106,3 +106,7 @@ Clean architecture
 - Frameworks and Libraries: React, NodeJS(+Express)
 - Development tools: Git, Docker
 - Databases: PostgreSQL, Redis
+
+Front-End: React, Tailwind
+Back-End: NodeJS(+Express), Redis, PostgreSQL
+Déploiement: Docker, Docker Compose
