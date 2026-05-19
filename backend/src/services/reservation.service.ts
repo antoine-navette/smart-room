@@ -1,5 +1,5 @@
 import { check } from 'zod';
-import type { Reservation } from '../entities/entities.js';
+import type { Reservation } from '../entities/reservation.entity.js';
 import type { ReservationCreate } from '../repositories/reservation.repository.js';
 import { ReservationRepository } from '../repositories/reservation.repository.js';
 import { RoomRepository } from '../repositories/room.repository.js';

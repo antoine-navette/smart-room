@@ -1,5 +1,6 @@
 import { randomBytes } from 'crypto';
-import type { Gender, Session, User } from '../entities/entities.js';
+import type { Session } from '../entities/session.entity.js';
+import type { User } from '../entities/user.entity.js';
 import type { Bcrypt } from '../libs/bcrypt.js';
 import type { SessionRepository } from '../repositories/session.repository.js';
 import type { UserRepository } from '../repositories/user.repository.js';
@@ -16,7 +17,7 @@ export class AuthService {
         private readonly bcrypt: Bcrypt,
     ) {}
 
-    async register(email: string, password: string, firstName: string, lastName: string, gender: Gender) {
+    async register(email: string, password: string, firstName: string, lastName: string) {
         const existing = await this.userRepo.findByEmail(email);
         if (existing) return { success: false, code: 'EMAIL_ALREADY_EXISTS' } as const;
 
@@ -25,7 +26,7 @@ export class AuthService {
             password_hash: await this.bcrypt.hash(password),
             first_name: firstName,
             last_name: lastName,
-            gender,
+            role: 'USER',
         });
         const session = await this.createSession(user.id);
 

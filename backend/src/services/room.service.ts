@@ -1,4 +1,4 @@
-import type { Room } from '../entities/entities.js';
+import type { Room } from '../entities/room.entity.js';
 import type { RoomCreate } from '../repositories/room.repository.js';
 import { RoomRepository } from '../repositories/room.repository.js';
 import { FloorRepository } from '../repositories/floor.repository.js';
