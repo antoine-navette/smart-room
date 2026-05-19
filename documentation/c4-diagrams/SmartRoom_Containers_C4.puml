@@ -2,68 +2,49 @@
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 LAYOUT_TOP_DOWN()
 
-title SmartRoom — Diagramme C4: Conteneurs (Version simplifiée)
+title SmartRoom - Diagramme C4: Conteneurs
 
-Person(visitor, "Visiteur", "Non connecté — consulte les salles")
-Person(user, "Utilisateur", "Connecté — réserve/annule")
-Person(admin, "Administrateur", "Gère salles, utilisateurs, statistiques")
+Person(visitor, "Visiteur", "Non connecte - consulte les salles")
+Person(user, "Utilisateur", "Connecte - reserve, annule, consulte son historique")
+Person(admin, "Administrateur", "Gere salles, utilisateurs et statistiques")
 
 System_Boundary(s1, "SmartRoom") {
 
-  Container(web, "Application Web SmartRoom", "SPA React TypeScript", "Interface utilisateur : consultation, authentification, réservation, administration")
+  Container(web, "Application Web SmartRoom", "SPA React TypeScript", "Interface utilisateur : consultation des salles, connexion, reservation, signalement, administration")
 
-  Container(api, "API REST SmartRoom", "Node.js TypeScript Docker", "Endpoints REST : authentification, salles, réservations, signalements, statistiques")
+  Container(api, "API REST SmartRoom", "Node.js TypeScript Docker", "Endpoints REST : /auth, /rooms, /reservations, /reports, /stats. Gere l'authentification, les sessions et l'autorisation avant les appels metier")
 
-  Container(auth, "Module Authentification & Session", "Node.js TypeScript", "Gestion des identités, rôles (Visiteur, Utilisateur, Admin) et sessions")
-
-  ' --- CONTENEUR SERVICES MÉTIER ---
-  Container_Boundary(services, "Container Services") {
-
-    Container(sRes, "Service Réservation", "Node.js TypeScript", "Gestion des réservations : création, modification, annulation")
-
-    Container(sRooms, "Service Gestion des salles", "Node.js TypeScript", "Gestion du catalogue : salles, disponibilités, fermetures/ouvertures")
-
-    Container(sInc, "Service Signalements", "Node.js TypeScript", "Signalements : pannes, incidents, problèmes")
-
-    Container(sStats, "Service Statistiques", "Node.js TypeScript", "Statistiques d’occupation et rapports")
+  Container_Boundary(services, "Services metier") {
+    Container(sRes, "Service Reservation", "Node.js TypeScript", "Creation, modification et annulation des reservations")
+    Container(sRooms, "Service Gestion des salles", "Node.js TypeScript", "Catalogue des salles, disponibilites, ouvertures et fermetures")
+    Container(sInc, "Service Signalements", "Node.js TypeScript", "Declaration et suivi des incidents")
+    Container(sStats, "Service Statistiques", "Node.js TypeScript", "Calcul et consultation des statistiques d'occupation")
   }
 
-  Container(notif, "Service Notification", "Node.js TypeScript", "Formate et envoie les e-mails de notification")
+  Container(notif, "Service Notification", "Node.js TypeScript", "Prepare et envoie les notifications e-mail")
 
-  ContainerDb(db, "SmartRoomDB", "PostgreSQL Docker", "Salles, réservations, signalements, statistiques, utilisateurs, rôles")
+  ContainerDb(db, "SmartRoomDB", "PostgreSQL Docker", "Salles, reservations, signalements, statistiques, utilisateurs, roles, sessions")
 }
 
 System_Ext(mailSrv, "Serveur de mail (SMTP/Exchange)", "Relais e-mail")
 
-' ───────────────────────────────
-' Relations utilisateurs → UI
-' ───────────────────────────────
-Rel(visitor, web, "Consulte")
-Rel(user, web, "Consulte, réserve")
-Rel(admin, web, "Administre")
+' Relations utilisateurs -> UI
+Rel(visitor, web, "Consulte les salles")
+Rel(user, web, "Se connecte, consulte, reserve")
+Rel(admin, web, "Se connecte, administre")
 
-' ───────────────────────────────
-' Front → API → Auth → Services
-' ───────────────────────────────
-Rel(web, api, "Appels REST JSON", "HTTPS")
-Rel(api, auth, "Vérifie identité et rôle")
+' Front -> API -> Services
+Rel(web, api, "Login/logout et appels REST", "HTTPS")
+Rel(api, db, "Lit utilisateurs, roles et sessions", "SQL")
+Rel(api, services, "Applique le controle d'acces et appelle :\n- Reservation\n- Gestion des salles\n- Signalements\n- Statistiques")
 
-Rel(api, services, "Appels métier vers :\n- Réservation\n- Gestion des salles\n- Signalements\n- Statistiques")
+' Services -> Base de donnees
+Rel(services, db, "Lecture / ecriture des donnees metier", "SQL")
 
-Rel(auth, services, "Contrôle d’accès selon rôle")
-
-' ───────────────────────────────
-' Services → Base de données
-' ───────────────────────────────
-Rel(services, db, "Lecture / écriture données métier", "SQL")
-
-' ───────────────────────────────
-' Services → Notification → Mail
-' ───────────────────────────────
-Rel(services, notif, "Demande d’envoi de notifications")
-Rel(mailSrv, user, "Notifications distribuées", "E-mail")
-Rel(mailSrv, admin, "Notifications distribuées", "E-mail")
-Rel(notif, mailSrv, "Envoie e-mails", "SMTP")
-
+' Services -> Notification -> Mail
+Rel(services, notif, "Demande d'envoi de notifications")
+Rel(notif, mailSrv, "Envoie les e-mails", "SMTP")
+Rel(mailSrv, user, "Notifications distribuees", "E-mail")
+Rel(mailSrv, admin, "Notifications distribuees", "E-mail")
 
 @enduml
