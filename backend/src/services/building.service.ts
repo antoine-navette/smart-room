@@ -39,6 +39,11 @@ export class BuildingService {
     }
 
     async save(entity: Building) {
+        const current = await this.repo.findById(entity.id);
+        if (!current) {
+            return { success: false, code: 'BUILDING_NOT_FOUND' } as const;
+        }
+
         // Prevent saving a building with a duplicate name
         const existingName = await this.findByName(entity.name);
         if (existingName.success && existingName.building.id !== entity.id) {
@@ -49,6 +54,11 @@ export class BuildingService {
     }
 
     async deleteById(id: number) {
+        const current = await this.repo.findById(id);
+        if (!current) {
+            return { success: false, code: 'BUILDING_NOT_FOUND' } as const;
+        }
+
         // Prevent deleting a building that still has floors
         const floors = await this.floorRepo.findAll();
         const hasFloors = floors.some((f) => f.building_id === id);

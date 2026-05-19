@@ -2,13 +2,13 @@ import { z } from 'zod';
 import type { FastifyPluginAsync } from 'fastify';
 import type { AuthService } from '../services/auth.service.js';
 
-const registerSchema = z.object({
-    email: z.email(),
-    password: z.string().min(8),
-    first_name: z.string().min(1),
-    last_name: z.string().min(1),
-    gender: z.enum(['M', 'F', 'O']),
-});
+// const registerSchema = z.object({
+//     email: z.email(),
+//     password: z.string().min(8),
+//     first_name: z.string().min(1),
+//     last_name: z.string().min(1),
+//     gender: z.enum(['M', 'F', 'O']),
+// });
 
 const loginSchema = z.object({
     email: z.email(),
@@ -26,31 +26,31 @@ const sessionCookieOptions = (expiresAt: Date) => ({
 });
 
 export const authRoutes: FastifyPluginAsync<Options> = async (app, { authService }) => {
-    app.post('/auth/register', async (request, reply) => {
-        const body = registerSchema.safeParse(request.body);
-        if (!body.success) {
-            return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
-        }
+    // app.post('/auth/register', async (request, reply) => {
+    //     const body = registerSchema.safeParse(request.body);
+    //     if (!body.success) {
+    //         return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
+    //     }
 
-        const result = await authService.register(
-            body.data.email,
-            body.data.password,
-            body.data.first_name,
-            body.data.last_name,
-            body.data.gender,
-        );
+    //     const result = await authService.register(
+    //         body.data.email,
+    //         body.data.password,
+    //         body.data.first_name,
+    //         body.data.last_name,
+    //         body.data.gender,
+    //     );
 
-        if (!result.success) {
-            if (result.code === 'EMAIL_ALREADY_EXISTS') {
-                return reply.status(409).send({ code: 'EMAIL_ALREADY_EXISTS', message: 'Email already in use' });
-            }
-            result satisfies never;
-        }
+    //     if (!result.success) {
+    //         if (result.code === 'EMAIL_ALREADY_EXISTS') {
+    //             return reply.status(409).send({ code: 'EMAIL_ALREADY_EXISTS', message: 'Email already in use' });
+    //         }
+    //         result satisfies never;
+    //     }
 
-        const { password_hash, ...user } = result.user;
-        reply.setCookie('session_token', result.session.token, sessionCookieOptions(result.session.expires_at));
-        return reply.status(201).send(user);
-    });
+    //     const { password_hash, ...user } = result.user;
+    //     reply.setCookie('session_token', result.session.token, sessionCookieOptions(result.session.expires_at));
+    //     return reply.status(201).send(user);
+    // });
 
     app.post('/auth/login', async (request, reply) => {
         const body = loginSchema.safeParse(request.body);

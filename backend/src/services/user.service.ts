@@ -1,8 +1,10 @@
+import { z } from 'zod';
 import type { User } from '../entities/entities.js';
 import type { UserCreate } from '../repositories/user.repository.js';
 import { UserRepository } from '../repositories/user.repository.js';
 import { ReservationRepository } from '../repositories/reservation.repository.js';
-import id from 'zod/v4/locales/id.js';
+
+const emailSchema = z.email();
 
 export class UserService {
     constructor(
@@ -24,6 +26,16 @@ export class UserService {
     }
 
     async create(data: UserCreate) {
+        const parsedEmail = emailSchema.safeParse(data.email);
+        if (!parsedEmail.success) {
+            return { success: false, code: 'INVALID_EMAIL', issues: parsedEmail.error.issues } as const;
+        }
+
+        const existing = await this.repo.findByEmail(parsedEmail.data);
+        if (existing) {
+            return { success: false, code: 'EMAIL_ALREADY_EXISTS' } as const;
+        }
+
         const user = await this.repo.create(data);
         if (!user) {
             return { success: false, code: 'USER_CREATE_FAILED' } as const;
@@ -33,6 +45,16 @@ export class UserService {
     }
 
     async save(entity: User) {
+        const parsedEmail = emailSchema.safeParse(entity.email);
+        if (!parsedEmail.success) {
+            return { success: false, code: 'INVALID_EMAIL', issues: parsedEmail.error.issues } as const;
+        }
+
+        const existing = await this.repo.findByEmail(parsedEmail.data);
+        if (existing && existing.id !== entity.id) {
+            return { success: false, code: 'EMAIL_ALREADY_EXISTS' } as const;
+        }
+
         const user = await this.repo.save(entity);
         if (!user) {
             return { success: false, code: 'USER_SAVE_FAILED' } as const;
@@ -42,6 +64,11 @@ export class UserService {
     }
 
     async deleteById(id: number) {
+        const user = await this.repo.findById(id);
+        if (!user) {
+            return { success: false, code: 'USER_NOT_FOUND' } as const;
+        }
+
         // Ensure user has no reservations before deleting
         const reservations = await this.reservationRepo.findAll();
         const hasReservations = reservations.some((r) => r.user_id === id);
