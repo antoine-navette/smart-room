@@ -3,6 +3,10 @@ import { connectToPostgres } from './config/postgres.js';
 import { startServer } from './app/server.js';
 import { createLogger } from './config/pino.js';
 import { createApp } from './app/app.js';
+import { Bcrypt } from './libs/bcrypt.js';
+import { SessionRepository } from './repositories/session.repository.js';
+import { UserRepository } from './repositories/user.repository.js';
+import { AuthService } from './services/auth.service.js';
 
 const logger = createLogger(process.env.NODE_ENV as Env['nodeEnv']);
 
@@ -13,7 +17,11 @@ try {
     const postgres = await connectToPostgres(env.postgresUrl);
     logger.info('Postgres connected');
 
-    const app = createApp(env.allowedOrigins, logger);
+    const sessionRepo = new SessionRepository(postgres.pool);
+    const userRepo = new UserRepository(postgres.pool);
+    const authService = new AuthService(sessionRepo, userRepo, new Bcrypt());
+
+    const app = createApp(env.allowedOrigins, logger, { authService });
     await startServer(app, env.port);
     logger.info('Server started');
 

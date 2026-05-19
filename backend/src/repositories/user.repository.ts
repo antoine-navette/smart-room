@@ -7,7 +7,9 @@ export class UserRepository {
     constructor(private readonly pool: Pool) {}
 
     async findAll(): Promise<User[]> {
-        const res = await this.pool.query('SELECT id, last_name, first_name, gender, email, password_hash FROM users ORDER BY id ASC');
+        const res = await this.pool.query(
+            'SELECT id, last_name, first_name, gender, email, password_hash FROM users ORDER BY id ASC',
+        );
 
         return res.rows.map((r) => ({
             id: Number(r.id),
@@ -19,8 +21,19 @@ export class UserRepository {
         }));
     }
 
+    async findByEmail(email: string): Promise<User | null> {
+        const res = await this.pool.query<User>(
+            'SELECT id, last_name, first_name, gender, email, password_hash FROM users WHERE email = $1',
+            [email],
+        );
+        return res.rows[0] ?? null;
+    }
+
     async findById(id: number): Promise<User | null> {
-        const res = await this.pool.query('SELECT id, last_name, first_name, gender, email, password_hash FROM users WHERE id = $1', [id]);
+        const res = await this.pool.query(
+            'SELECT id, last_name, first_name, gender, email, password_hash FROM users WHERE id = $1',
+            [id],
+        );
         const row = res.rows[0];
 
         if (!row) return null;

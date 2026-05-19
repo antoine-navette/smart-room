@@ -36,8 +36,8 @@ export class SessionRepository {
         };
     }
 
-    async deleteByToken(token: string): Promise<void> {
-        await this.pool.query('DELETE FROM sessions WHERE token = $1', [token]);
+    async delete(session: Session): Promise<void> {
+        await this.pool.query('DELETE FROM sessions WHERE id = $1', [session.id]);
     }
 
     async deleteByUserId(userId: number): Promise<void> {
