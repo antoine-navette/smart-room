@@ -1,34 +1,35 @@
-import express, { type NextFunction, type Request, type Response } from 'express';
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
+import Fastify from 'fastify';
+import cors from '@fastify/cors';
+import cookie from '@fastify/cookie';
 import type { Env } from '../config/env.js';
 import type { Logger } from 'pino';
 
 export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger) => {
-    const app = express();
+    const app = Fastify({ loggerInstance: logger, disableRequestLogging: true });
 
-    app.use(
-        cors({
-            origin: allowedOrigins,
-            credentials: true,
-        }),
-    );
-
-    app.use(express.json());
-    app.use(cookieParser());
-
-    app.use('/test', (req: Request, res: Response) => {
-        res.status(200).send('OK');
-    });
-    app.all(/.*/, (req: Request, res: Response) => {
-        res.status(404).send('Route not found');
+    app.register(cors, {
+        origin: allowedOrigins,
+        credentials: true,
     });
 
-    // Error handler
-    app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
-        logger.error(err instanceof Error ? err.message : 'Unknown error');
+    app.register(cookie);
 
-        res.status(500).json({ success: false, message: 'Internal server error' });
+    app.addHook('onRequest', async (request, _reply) => {
+        request.log = request.log.child({
+            method: request.method,
+            url: request.url,
+            route: request.routeOptions.url,
+        });
+    });
+
+    app.setNotFoundHandler(async (request, reply) => {
+        request.log.warn('Route not found');
+        return reply.status(404).send({ code: 'NOT_FOUND', message: 'Route not found' });
+    });
+
+    app.setErrorHandler(async (err, request, reply) => {
+        request.log.error(err instanceof Error ? err.message : 'Unknown error');
+        return reply.status(500).send({ code: 'INTERNAL_SERVER_ERROR', message: 'Internal server error' });
     });
 
     return app;

@@ -1,16 +1,6 @@
-import type { Express } from 'express';
 import type { Env } from '../config/env.js';
+import type { createApp } from './app.js';
 
-export const startServer = (app: Express, port: Env['port']) => {
-    return new Promise((resolve, reject) => {
-        const server = app.listen(port);
-
-        server.on('listening', () => {
-            resolve(server);
-        });
-
-        server.on('error', (err: unknown) => {
-            reject(err);
-        });
-    });
+export const startServer = async (app: ReturnType<typeof createApp>, port: Env['port']) => {
+    await app.listen({ port, host: '0.0.0.0' });
 };
