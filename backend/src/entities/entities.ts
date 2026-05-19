@@ -1,4 +1,4 @@
-export type Gender = 'M' | 'F' | 'O';
+export type Role = 'USER' | 'ADMIN';
 
 export interface Building {
     id: number;
@@ -22,7 +22,7 @@ export interface User {
     id: number;
     last_name: string;
     first_name: string;
-    gender: Gender;
+    role: Role;
     email: string;
     password_hash: string;
 }

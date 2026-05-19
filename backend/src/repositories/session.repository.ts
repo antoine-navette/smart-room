@@ -9,13 +9,15 @@ export class SessionRepository {
             'INSERT INTO sessions (user_id, token, expires_at) VALUES ($1, $2, $3) RETURNING *',
             [userId, token, expiresAt],
         );
-        return result.rows[0]!;
+        const row = result.rows[0];
+        if (!row) throw new Error('Failed to create session');
+        return row;
     }
 
     async findByToken(token: string): Promise<{ session: Session; user: User } | null> {
         type Row = Session & Omit<User, 'id'>;
         const result = await this.pool.query<Row>(
-            `SELECT sessions.*, users.last_name, users.first_name, users.gender, users.email, users.password_hash
+            `SELECT sessions.*, users.last_name, users.first_name, users.role, users.email, users.password_hash
              FROM sessions
              JOIN users ON sessions.user_id = users.id
              WHERE sessions.token = $1`,
@@ -29,7 +31,7 @@ export class SessionRepository {
                 id: row.user_id,
                 last_name: row.last_name,
                 first_name: row.first_name,
-                gender: row.gender,
+                role: row.role,
                 email: row.email,
                 password_hash: row.password_hash,
             },
