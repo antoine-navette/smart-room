@@ -47,21 +47,30 @@ rectangle "SmartRoom" {
   }
     Utilisateur --> P_Resa
   
-
   package "Gestion des salles\n" as P_Gest {
     usecase "Créer une nouvelle salle" as UC_CreateRoom SHOULD_COLOR
-    usecase "Modifier les informations d’une salle" as UC_EditRoom SHOULD_COLOR
     usecase "Supprimer une salle" as UC_DeleteRoom SHOULD_COLOR
+    usecase "Modifier les informations d’une salle" as UC_EditRoom SHOULD_COLOR
+    usecase "Rendre une salle disponible" as UC_Unblock MUST_COLOR
     usecase "Rendre une salle indisponible\n(travaux, maintenance)" as UC_Block MUST_COLOR
-    usecase "Rendre une salle disponible à nouveau" as UC_Unblock MUST_COLOR
     usecase "Consulter toutes les réservations" as UC_ViewAll MUST_COLOR
     usecase "Modifier ou annuler une réservation\nquelconque" as UC_AdminEdit SHOULD_COLOR
-    usecase "Consulter les signalements reçus" as UC_ViewReports MUST_COLOR
-    usecase "Mettre à jour l’état d’un signalement\n(en cours / traité)" as UC_HandleReports MUST_COLOR
     usecase "Consulter les statistiques\nd’occupation des salles" as UC_Stats COULD_COLOR
-    usecase "Ajouter, modifier ou supprimer\ndes équipements" as UC_ManageEquip SHOULD_COLOR
   }
   Admin --> P_Gest
+
+  package "Gestion des équipements\n" as P_Equip {
+    usecase "Ajouter un équipement à une salle" as UC_AddEquip SHOULD_COLOR
+    usecase "Modifier les informations d’un équipement" as UC_EditEquip SHOULD_COLOR
+    usecase "Supprimer un équipement d’une salle" as UC_DeleteEquip SHOULD_COLOR
+  }
+  Admin --> P_Equip
+
+  package "Gestion des signalements\n" as P_Sign {
+    usecase "Consulter les signalements reçus" as UC_ViewReports MUST_COLOR
+    usecase "Mettre à jour l’état d’un signalement\n(en cours / traité)" as UC_HandleReports MUST_COLOR
+  }
+  Admin --> P_Sign
 
   '=== Notifications automatiques ===
   usecase "Notifier par e-mail\n(confirmation, modification, annulation,\nindisponibilité, signalement)" as UC_Email SHOULD_COLOR

@@ -27,15 +27,16 @@ Admin --|> Utilisateur
 
 rectangle "SmartRoom" {
 
+    '=== Consultation des salles ===
     package "Consultation (Public)" as P_Consult {
         usecase "Consulter la liste des salles" as UC_Browse K_ESSENTIAL
         usecase "Rechercher une salle" as UC_Search K_ESSENTIAL
         usecase "Afficher les disponibilités\n(planning, calendrier)" as UC_Schedule K_ESSENTIAL
         usecase "Consulter les détails d'une salle\n(capacité, équipements, localisation)" as UC_Detail K_ESSENTIAL
-        usecase "Recommandation de salles par IA" as UC_Recommend K_REVERSE
     }
     Visiteur --> P_Consult
 
+    '=== Gestion des réservations ===
     package "Réservations\n[Précondition: Authentification requise]" as P_Resa {
         usecase "Créer une réservation\nsimple" as UC_BookSimple K_ESSENTIAL
         usecase "Créer une réservation\nrécurrente" as UC_BookRecur K_PERFORMANCE
@@ -50,22 +51,33 @@ rectangle "SmartRoom" {
     }
     Utilisateur --> P_Resa
 
-
-    package "Gestion des salles\n" as P_Gest {
+    '=== Gestion des salles ===
+    package "Gestion des salles\n" as P_Salles {
         usecase "Créer une nouvelle salle" as UC_CreateRoom K_PERFORMANCE
-        usecase "Modifier les informations d’une salle" as UC_EditRoom K_PERFORMANCE
         usecase "Supprimer une salle" as UC_DeleteRoom K_PERFORMANCE
+        usecase "Modifier les informations d’une salle" as UC_EditRoom K_PERFORMANCE
+        usecase "Rendre une salle disponible" as UC_Unblock K_ESSENTIAL
         usecase "Rendre une salle indisponible\n(travaux, maintenance)" as UC_Block K_ESSENTIAL
-        usecase "Rendre une salle disponible à nouveau" as UC_Unblock K_ESSENTIAL
         usecase "Consulter toutes les réservations" as UC_ViewAll K_ESSENTIAL
         usecase "Modifier ou annuler une réservation\nquelconque" as UC_AdminEdit K_PERFORMANCE
+        usecase "Consulter les statistiques\nd’occupation des salles" as UC_Stats K_ATTRACTIVE
+    }
+    Admin --> P_Salles
+
+    '=== Gestion des équipements ===
+    package "Équipements\n" as P_Equip {
+        usecase "Ajouter un équipement à une salle" as UC_AddEquip K_PERFORMANCE
+        usecase "Modifier les informations d’un équipement" as UC_EditEquip K_PERFORMANCE
+        usecase "Supprimer un équipement d’une salle" as UC_DeleteEquip K_PERFORMANCE
+    }
+    Admin --> P_Equip
+
+    '=== Gestion des signalements ===
+    package "Gestion des signalements\n" as P_Sign {
         usecase "Consulter les signalements reçus" as UC_ViewReports K_ESSENTIAL
         usecase "Mettre à jour l’état d’un signalement\n(en cours / traité)" as UC_HandleReports K_ESSENTIAL
-        usecase "Consulter les statistiques\nd’occupation des salles" as UC_Stats K_ATTRACTIVE
-        usecase "Ajouter, modifier ou supprimer\ndes équipements" as UC_ManageEquip K_PERFORMANCE
-        usecase "Réattribuer une réservation à un autre utilisateur" as UC_ReassignReservation K_REVERSE
     }
-    Admin --> P_Gest
+    Admin --> P_Sign
 
     '=== Notifications automatiques ===
     usecase "Notifier par e-mail\n(confirmation, modification, annulation,\nindisponibilité, signalement)" as UC_Email K_PERFORMANCE
