@@ -1,6 +1,13 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
+import swagger from '@fastify/swagger';
+import swaggerUi from '@fastify/swagger-ui';
+import {
+    fastifyZodOpenApiPlugin,
+    fastifyZodOpenApiTransformers,
+    serializerCompiler,
+} from 'fastify-zod-openapi';
 import type { Env } from '../config/env.js';
 import type { Logger } from 'pino';
 import type { AuthService } from '../services/auth.service.js';
@@ -14,12 +21,17 @@ type Services = {
 export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger, services: Services) => {
     const app = Fastify({ loggerInstance: logger, disableRequestLogging: true });
 
-    app.register(cors, {
-        origin: allowedOrigins,
-        credentials: true,
-    });
+    app.setValidatorCompiler(() => (data) => ({ value: data }));
+    app.setSerializerCompiler(serializerCompiler);
 
+    app.register(cors, { origin: allowedOrigins, credentials: true });
     app.register(cookie);
+    app.register(fastifyZodOpenApiPlugin);
+    app.register(swagger, {
+        openapi: { info: { title: 'Smart Room API', version: '1.0.0' } },
+        ...fastifyZodOpenApiTransformers,
+    });
+    app.register(swaggerUi, { routePrefix: '/docs' });
 
     app.addHook('onRequest', async (request, _reply) => {
         request.log = request.log.child({
