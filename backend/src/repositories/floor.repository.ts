@@ -21,6 +21,15 @@ export class FloorRepository {
         return { id: Number(row.id), name: String(row.name), building_id: Number(row.building_id) };
     }
 
+    async findByName(name: string): Promise<Floor | null> {
+        const res = await this.pool.query('SELECT id, name, building_id FROM floors WHERE name = $1', [name]);
+        const row = res.rows[0];
+
+        if (!row) return null;
+
+        return { id: Number(row.id), name: String(row.name), building_id: Number(row.building_id) };
+    }
+
     async create(data: FloorCreate): Promise<Floor> {
         const res = await this.pool.query(
             'INSERT INTO floors (name, building_id) VALUES ($1, $2) RETURNING id, name, building_id',
