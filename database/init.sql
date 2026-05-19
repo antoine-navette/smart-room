@@ -43,6 +43,14 @@ CREATE TABLE reservations (
     CONSTRAINT chk_time CHECK (end_time > start_time)
 );
 
+-- ========== TABLE: sessions ==========
+CREATE TABLE sessions (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL
+);
+
 -- ===========================
 --  TEST DATA (Simplifiée)
 -- ===========================

@@ -3,8 +3,15 @@ import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import type { Env } from '../config/env.js';
 import type { Logger } from 'pino';
+import type { AuthService } from '../services/auth.service.js';
+import { authRoutes } from '../routes/auth.routes.js';
+import { userRoutes } from '../routes/user.routes.js';
 
-export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger) => {
+type Services = {
+    authService: AuthService;
+};
+
+export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger, services: Services) => {
     const app = Fastify({ loggerInstance: logger, disableRequestLogging: true });
 
     app.register(cors, {
@@ -21,6 +28,9 @@ export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger)
             route: request.routeOptions.url,
         });
     });
+
+    app.register(authRoutes, { authService: services.authService });
+    app.register(userRoutes, { authService: services.authService });
 
     app.setNotFoundHandler(async (request, reply) => {
         request.log.warn('Route not found');

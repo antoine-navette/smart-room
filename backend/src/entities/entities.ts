@@ -34,3 +34,10 @@ export interface Reservation {
     start_time: Date;
     end_time: Date;
 }
+
+export interface Session {
+    id: number;
+    user_id: number;
+    token: string;
+    expires_at: Date;
+}
