@@ -1,4 +1,4 @@
-import type { User } from '../entities/entities.js';
+import type { User } from '../entities/user.entity.js';
 import type { UserCreate } from '../repositories/user.repository.js';
 import { UserRepository } from '../repositories/user.repository.js';
 import { ReservationRepository } from '../repositories/reservation.repository.js';

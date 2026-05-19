@@ -1,4 +1,4 @@
-import type { Floor } from '../entities/entities.js';
+import type { Floor } from '../entities/floor.entity.js';
 import type { FloorCreate } from '../repositories/floor.repository.js';
 import { FloorRepository } from '../repositories/floor.repository.js';
 import { BuildingRepository } from '../repositories/building.repository.js';

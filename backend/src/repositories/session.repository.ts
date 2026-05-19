@@ -1,5 +1,6 @@
 import type { Pool } from 'pg';
-import type { Session, User } from '../entities/entities.js';
+import type { Session } from '../entities/session.entity.js';
+import type { User } from '../entities/user.entity.js';
 
 export class SessionRepository {
     constructor(private readonly pool: Pool) {}

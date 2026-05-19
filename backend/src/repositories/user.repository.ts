@@ -1,5 +1,5 @@
 import type { Pool } from 'pg';
-import type { User } from '../entities/entities.js';
+import type { User } from '../entities/user.entity.js';
 
 export type UserCreate = Omit<User, 'id'>;
 
