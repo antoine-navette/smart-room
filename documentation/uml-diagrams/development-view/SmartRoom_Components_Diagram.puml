@@ -2,25 +2,24 @@
 title SmartRoom - Diagramme de composants
 
 ' ==== Acteurs externes ====
-actor "Visiteur\n(non connecté)" as Visiteur
-actor "Utilisateur\n(connecté)" as User
+actor "Visiteur\n(non connecte)" as Visiteur
+actor "Utilisateur\n(connecte)" as User
 actor "Administrateur" as Admin
-actor "Service Mail" as MailActor
 
-' ==== Couche présentation ====
-package "Couche présentation" {
+' ==== Couche presentation ====
+package "Couche presentation" {
   [Application Web\nSmartRoom] as WebApp
-  [Module Authentification\n& Gestion de session] as AuthModule
 }
 
-' ==== Backend métier ====
+' ==== Backend metier ====
 package "Backend SmartRoom" {
 
   [API REST SmartRoom] as Api
+  [Module Authentification\n& Gestion de session] as AuthModule
 
   package "Services" {
     [Service Consultation\nSalles] as ConsultationSvc
-    [Service Réservation] as ReservationSvc
+    [Service Reservation] as ReservationSvc
     [Service Gestion des salles] as RoomMgmtSvc
     [Service Signalements] as ReportSvc
     [Service Statistiques\nOccupation] as StatsSvc
@@ -29,37 +28,34 @@ package "Backend SmartRoom" {
 
 }
 
-' ==== Données & systèmes externes ====
+' ==== Donnees & systemes externes ====
 database "SmartRoomDB" as DB
 cloud "Serveur de mail\n(SMTP, Exchange, ...)" as MailServer
 
 ' ==== Interactions acteurs -> UI ====
 Visiteur --> WebApp : consulter\nles salles
-User --> WebApp : réserver,\nconsulter historique
+User --> WebApp : reserver,\nconsulter historique
 Admin --> WebApp : administration
 
-MailActor --> NotifSvc : (optionnel)\nretours de mail
-
 ' ==== Interactions UI -> Backend ====
-WebApp --> AuthModule : login / logout\n(via API REST)
-WebApp --> Api : appels REST\n(JSON, HTTPS)
+WebApp --> Api : login / logout\n+ appels REST\n(JSON, HTTPS)
 
-' ==== API REST : vérification de l'accès ====
-Api --> AuthModule : Vérification\nd'identité & rôles
-AuthModule --> DB : utilisateurs,\nrôles, permissions
+' ==== API REST : authentification / autorisation ====
+Api --> AuthModule : authentification,\nsession et roles
+AuthModule --> DB : utilisateurs,\nroles, permissions
 
-' ==== API -> Services métier (seulement si autorisé) ====
-Api --> ConsultationSvc : /rooms
-Api --> ReservationSvc : /reservations
-Api --> RoomMgmtSvc : /admin/rooms
-Api --> ReportSvc : /reports
-Api --> StatsSvc : /admin/stats
+' ==== API -> Services metier ====
+Api --> ConsultationSvc : /rooms\n(public)
+Api --> ReservationSvc : /reservations\n(protege)
+Api --> RoomMgmtSvc : /admin/rooms\n(admin)
+Api --> ReportSvc : /reports\n(protege)
+Api --> StatsSvc : /admin/stats\n(admin)
 
-' ==== Services métier -> Données ====
+' ==== Services metier -> Donnees ====
 Services --> DB
 
 ' ==== Notifications ====
-ReservationSvc --> NotifSvc : évènements\n(réservation, annulation,\nindisponibilité)
+ReservationSvc --> NotifSvc : evenements\n(reservation, annulation,\nindisponibilite)
 RoomMgmtSvc --> NotifSvc : fermeture / ouverture\nsalles
 ReportSvc --> NotifSvc : nouveau signalement
 
