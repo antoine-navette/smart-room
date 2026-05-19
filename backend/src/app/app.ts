@@ -11,6 +11,7 @@ import {
 import type { Env } from '../config/env.js';
 import type { Logger } from 'pino';
 import type { AuthService } from '../services/auth.service.js';
+import { healthRoute } from '../routes/health.route.js';
 import { authRoutes } from '../routes/auth.route.js';
 import { userRoutes } from '../routes/user.route.js';
 
@@ -41,6 +42,7 @@ export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger,
         });
     });
 
+    app.register(healthRoute);
     app.register(authRoutes, { authService: services.authService });
     app.register(userRoutes, { authService: services.authService });
 

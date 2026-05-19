@@ -1,0 +1,10 @@
+import { z } from 'zod';
+import type { FastifyPluginAsyncZodOpenApi } from 'fastify-zod-openapi';
+
+export const healthRoute: FastifyPluginAsyncZodOpenApi = async (app) => {
+    app.get(
+        '/health',
+        { schema: { response: { 204: z.object({}) } } },
+        async (_request, reply) => reply.status(204).send({}),
+    );
+};
