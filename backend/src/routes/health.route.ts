@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { FastifyPluginAsyncZodOpenApi } from 'fastify-zod-openapi';
 
-export const healthRoute: FastifyPluginAsyncZodOpenApi = async (app) => {
+export const healthRoutes: FastifyPluginAsyncZodOpenApi = async (app) => {
     app.get(
         '/health',
         { schema: { tags: ['Health'], response: { 204: z.object({}) } } },

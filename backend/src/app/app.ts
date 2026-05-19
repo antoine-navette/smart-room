@@ -7,7 +7,7 @@ import { fastifyZodOpenApiPlugin, fastifyZodOpenApiTransformers, serializerCompi
 import type { Env } from '../config/env.js';
 import type { Logger } from 'pino';
 import type { AuthService } from '../services/auth.service.js';
-import { healthRoute } from '../routes/health.route.js';
+import { healthRoutes } from '../routes/health.route.js';
 import { authRoutes } from '../routes/auth.route.js';
 import { userRoutes } from '../routes/user.route.js';
 
@@ -39,7 +39,7 @@ export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger,
     });
 
     app.register(authRoutes, { authService: services.authService });
-    app.register(healthRoute);
+    app.register(healthRoutes);
     app.register(userRoutes, { authService: services.authService });
 
     app.setNotFoundHandler(async (request, reply) => {
