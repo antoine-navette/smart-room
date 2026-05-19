@@ -1,26 +1,31 @@
-import { loadEnv } from './config/env.js';
+import { loadEnv, type Env } from './config/env.js';
 import { connectToPostgres } from './config/postgres.js';
 import { startServer } from './app/server.js';
 import { createLogger } from './config/pino.js';
 import { createApp } from './app/app.js';
 
-const start = async () => {
-    const logger = createLogger(process.env.NODE_ENV === 'development' ? 'development' : 'production');
+const logger = createLogger(process.env.NODE_ENV as Env['nodeEnv']);
 
-    try {
-        const { postgresUrl, port, allowedOrigins } = loadEnv();
-        logger.info('Environment loaded');
+try {
+    const env = loadEnv();
+    logger.info('Environment loaded');
 
-        const postgres = await connectToPostgres(postgresUrl);
-        logger.info('Postgres connected');
+    const postgres = await connectToPostgres(env.postgresUrl);
+    logger.info('Postgres connected');
 
-        const app = createApp(allowedOrigins, logger);
-        await startServer(app, port);
-        logger.info('Server started');
-    } catch (err: unknown) {
-        logger.fatal(err instanceof Error ? err.message : 'Unknown error');
-        process.exit(1);
-    }
-};
+    const app = createApp(env.allowedOrigins, logger);
+    await startServer(app, env.port);
+    logger.info('Server started');
 
-await start();
+    const shutdown = async (signal: NodeJS.Signals) => {
+        logger.info(`Received ${signal}, shutting down`);
+        await app.close();
+        await postgres.pool.end();
+        process.exit(0);
+    };
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
+} catch (err: unknown) {
+    logger.fatal(err instanceof Error ? err.message : 'Unknown error');
+    process.exit(1);
+}
