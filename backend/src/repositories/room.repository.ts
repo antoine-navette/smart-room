@@ -21,6 +21,15 @@ export class RoomRepository {
         return { id: Number(row.id), name: String(row.name), floor_id: Number(row.floor_id), capacity: Number(row.capacity) };
     }
 
+    async findByName(name: string): Promise<Room | null> {
+        const res = await this.pool.query('SELECT id, name, floor_id, capacity FROM rooms WHERE name = $1', [name]);
+        const row = res.rows[0];
+
+        if (!row) return null;
+
+        return { id: Number(row.id), name: String(row.name), floor_id: Number(row.floor_id), capacity: Number(row.capacity) };
+    }
+
     async create(data: RoomCreate): Promise<Room> {
         const res = await this.pool.query(
             'INSERT INTO rooms (name, floor_id, capacity) VALUES ($1, $2, $3) RETURNING id, name, floor_id, capacity',
