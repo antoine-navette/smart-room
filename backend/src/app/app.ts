@@ -14,16 +14,21 @@ export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger)
 
     app.register(cookie);
 
-    app.get('/test', async (_request, reply) => {
-        return reply.status(200).send('OK');
+    app.addHook('onRequest', async (request, _reply) => {
+        request.log = request.log.child({
+            method: request.method,
+            url: request.url,
+            route: request.routeOptions.url,
+        });
     });
 
-    app.setNotFoundHandler(async (_request, reply) => {
-        return reply.status(404).send('Route not found');
+    app.setNotFoundHandler(async (request, reply) => {
+        request.log.warn('Route not found');
+        return reply.status(404).send({ code: 'NOT_FOUND', message: 'Route not found' });
     });
 
-    app.setErrorHandler(async (err, _request, reply) => {
-        logger.error(err instanceof Error ? err.message : 'Unknown error');
+    app.setErrorHandler(async (err, request, reply) => {
+        request.log.error(err instanceof Error ? err.message : 'Unknown error');
         return reply.status(500).send({ code: 'INTERNAL_SERVER_ERROR', message: 'Internal server error' });
     });
 
