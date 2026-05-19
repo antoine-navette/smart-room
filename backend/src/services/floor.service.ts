@@ -22,8 +22,8 @@ export class FloorService {
         return { success: true, floor } as const;
     }
 
-    async findByName(name: string) {
-        const floor = await this.repo.findByName(name);
+    async findByNameAndBuildingId(name: string, buildingId: number) {
+        const floor = await this.repo.findByNameAndBuildingId(name, buildingId);
         if (!floor) return { success: false, code: 'FLOOR_NOT_FOUND' } as const;
 
         return { success: true, floor } as const;
@@ -37,7 +37,7 @@ export class FloorService {
         }
 
         // Prevent creating a floor with a duplicate name in the same building
-        const existingName = await this.findByName(data.name);
+        const existingName = await this.findByNameAndBuildingId(data.name, data.building_id);
         if (existingName.success) {
             return { success: false, code: 'FLOOR_NAME_EXISTS', name: data.name } as const;
         }
@@ -46,21 +46,33 @@ export class FloorService {
     }
 
     async save(entity: Floor) {
-        // Prevent saving a floor with a duplicate name in the same building
-        const existingName = await this.findByName(entity.name);
-        if (existingName.success && existingName.floor.id !== entity.id) {
-            return { success: false, code: 'FLOOR_NAME_EXISTS', name: entity.name } as const;
+        const current = await this.repo.findById(entity.id);
+        if (!current) {
+            return { success: false, code: 'FLOOR_NOT_FOUND' } as const;
         }
 
-        // Ensure building exists before saving a floor
-        const building = await this.buildingRepo.findById(entity.building_id);
-        if (!building) {
-            return { success: false, code: 'BUILDING_NOT_FOUND' } as const;
+        if (entity.name !== current.name || entity.building_id !== current.building_id) {
+            // Prevent saving a floor with a duplicate name in the same building
+            const existingName = await this.findByNameAndBuildingId(entity.name, entity.building_id);
+            if (existingName.success && existingName.floor.id !== entity.id) {
+                return { success: false, code: 'FLOOR_NAME_EXISTS', name: entity.name } as const;
+            }
+            // Ensure building exists before saving a floor
+            const building = await this.buildingRepo.findById(entity.building_id);
+            if (!building) {
+                return { success: false, code: 'BUILDING_NOT_FOUND' } as const;
+            }
         }
+
         return { success: true, floor: await this.repo.save(entity) } as const;
     }
 
     async deleteById(id: number) {
+        const current = await this.repo.findById(id);
+        if (!current) {
+            return { success: false, code: 'FLOOR_NOT_FOUND' } as const;
+        }
+
         // Prevent deleting a floor that still has rooms
         const rooms = await this.roomRepo.findAll();
         const hasRooms = rooms.some((r) => r.floor_id === id);

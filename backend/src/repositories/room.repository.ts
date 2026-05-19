@@ -21,8 +21,8 @@ export class RoomRepository {
         return { id: Number(row.id), name: String(row.name), floor_id: Number(row.floor_id), capacity: Number(row.capacity) };
     }
 
-    async findByName(name: string): Promise<Room | null> {
-        const res = await this.pool.query('SELECT id, name, floor_id, capacity FROM rooms WHERE name = $1', [name]);
+    async findByNameAndFloorId(name: string, floor_id: number): Promise<Room | null> {
+        const res = await this.pool.query('SELECT id, name, floor_id, capacity FROM rooms WHERE name = $1 AND floor_id = $2', [name, floor_id]);
         const row = res.rows[0];
 
         if (!row) return null;

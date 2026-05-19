@@ -23,8 +23,8 @@ export class RoomService {
         return { success: true, room } as const;
     }
 
-    async findByName(name: string) {
-        const room = await this.repo.findByName(name);
+    async findByNameAndFloorId(name: string, floor_id: number) {
+        const room = await this.repo.findByNameAndFloorId(name, floor_id);
         if (!room) {
             return { success: false, code: 'ROOM_NOT_FOUND' } as const;
         }
@@ -39,7 +39,7 @@ export class RoomService {
         }
 
         // Prevent creating a room with a duplicate name in the same floor
-        const existingName = await this.findByName(data.name);
+        const existingName = await this.findByNameAndFloorId(data.name, data.floor_id);
         if (existingName.success) {
             return { success: false, code: 'ROOM_NAME_EXISTS', name: data.name } as const;
         }
@@ -48,16 +48,33 @@ export class RoomService {
     }
 
     async save(entity: Room) {
-        // Prevent saving a room with a duplicate name in the same floor
-        const existingName = await this.findByName(entity.name);
-        if (existingName.success && existingName.room.id !== entity.id) {
-            return { success: false, code: 'ROOM_NAME_EXISTS', name: entity.name } as const;
+        const current = await this.repo.findById(entity.id);
+        if (!current) {
+            return { success: false, code: 'ROOM_NOT_FOUND' } as const;
+        }
+
+        if (entity.name !== current.name || entity.floor_id !== current.floor_id) {
+            // Prevent saving a room with a duplicate name in the same floor
+            const existingName = await this.findByNameAndFloorId(entity.name, entity.floor_id);
+            if (existingName.success && existingName.room.id !== entity.id) {
+                return { success: false, code: 'ROOM_NAME_EXISTS', name: entity.name } as const;
+            }
+            // Ensure floor exists before saving a room
+            const floor = await this.floorRepo.findById(entity.floor_id);
+            if (!floor) {
+                return { success: false, code: 'FLOOR_NOT_FOUND' } as const;
+            }
         }
 
         return { success: true, room: await this.repo.save(entity) } as const;
     }
 
     async deleteById(id: number) {
+        const current = await this.repo.findById(id);
+        if (!current) {
+            return { success: false, code: 'ROOM_NOT_FOUND' } as const;
+        }
+
         // Prevent deleting a room that has reservations
         const reservations = await this.reservationRepo.findAll();
         const hasReservations = reservations.some((r) => r.room_id === id);
