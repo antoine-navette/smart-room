@@ -3,11 +3,7 @@ import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
-import {
-    fastifyZodOpenApiPlugin,
-    fastifyZodOpenApiTransformers,
-    serializerCompiler,
-} from 'fastify-zod-openapi';
+import { fastifyZodOpenApiPlugin, fastifyZodOpenApiTransformers, serializerCompiler } from 'fastify-zod-openapi';
 import type { Env } from '../config/env.js';
 import type { Logger } from 'pino';
 import type { AuthService } from '../services/auth.service.js';
@@ -42,8 +38,8 @@ export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger,
         });
     });
 
-    app.register(healthRoute);
     app.register(authRoutes, { authService: services.authService });
+    app.register(healthRoute);
     app.register(userRoutes, { authService: services.authService });
 
     app.setNotFoundHandler(async (request, reply) => {

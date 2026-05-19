@@ -26,6 +26,7 @@ export const authRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
         '/auth/register',
         {
             schema: {
+                tags: ['Auth'],
                 body: RegisterBodyDto,
                 response: {
                     201: UserDto,
@@ -66,6 +67,7 @@ export const authRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
         '/auth/login',
         {
             schema: {
+                tags: ['Auth'],
                 body: LoginBodyDto,
                 response: {
                     200: UserDto,
@@ -101,6 +103,7 @@ export const authRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
         '/auth/logout',
         {
             schema: {
+                tags: ['Auth'],
                 response: {
                     204: z.object({}),
                     401: UnauthorizedErrorDto,
@@ -124,6 +127,7 @@ export const authRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
         '/auth/logout-all',
         {
             schema: {
+                tags: ['Auth'],
                 response: {
                     204: z.object({}),
                     401: UnauthorizedErrorDto,

@@ -8,6 +8,7 @@ type Options = { authService: AuthService };
 export const userRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { authService }) => {
     app.get('/users/me', {
         schema: {
+            tags: ['Users'],
             response: {
                 200: UserDto,
                 401: UnauthorizedErrorDto,
