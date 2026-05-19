@@ -47,7 +47,6 @@ export const authRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
                 body.data.password,
                 body.data.first_name,
                 body.data.last_name,
-                body.data.gender,
             );
 
             if (!result.success) {

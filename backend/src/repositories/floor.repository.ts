@@ -1,5 +1,5 @@
 import type { Pool } from 'pg';
-import type { Floor } from '../entities/entities.js';
+import type { Floor } from '../entities/floor.entity.js';
 
 export type FloorCreate = Omit<Floor, 'id'>;
 

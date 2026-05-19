@@ -1,5 +1,5 @@
 -- ========== ENUMS ==========
-CREATE TYPE gender_enum AS ENUM ('M', 'F', 'O');
+CREATE TYPE role_enum AS ENUM ('USER', 'ADMIN');
 
 -- ========== TABLE: buildings ==========
 CREATE TABLE buildings (
@@ -28,7 +28,7 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     last_name VARCHAR(20) NOT NULL,
     first_name VARCHAR(20) NOT NULL,
-    gender gender_enum,
+    role role_enum NOT NULL DEFAULT 'USER',
     email VARCHAR(40) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL
 );
@@ -50,31 +50,3 @@ CREATE TABLE sessions (
     token VARCHAR(255) NOT NULL UNIQUE,
     expires_at TIMESTAMP NOT NULL
 );
-
--- ===========================
---  TEST DATA (Simplifiée)
--- ===========================
-
-INSERT INTO buildings (name) VALUES
-    ('Building A'),
-    ('Building B');
-
-INSERT INTO floors (building_id, name) VALUES
-    (1, 'RDC'),
-    (1, '1er étage'),
-    (2, 'RDC');
-
-INSERT INTO rooms (floor_id, name, capacity) VALUES
-    (1, 'A0.01', 10),
-    (1, 'A1.12', 15),
-    (3, 'B0.05', 50);
-
-INSERT INTO users (last_name, first_name, gender, email, password_hash) VALUES
-    ('SCHENK', 'Hugo', 'M', 'hugo@example.com', 'pwd'),
-    ('NAVETTE', 'Antoine', 'M', 'antoine@example.com', 'pwd'),
-    ('KOLETZKI', 'Livia', 'F', 'livia@example.com', 'pwd');
-
-INSERT INTO reservations (user_id, room_id, start_time, end_time) VALUES
-    (1, 1, '2025-01-10 10:00', '2025-01-10 12:00'),
-    (2, 2, '2025-01-11 14:00', '2025-01-11 16:00'),
-    (3, 3, '2025-01-12 09:00', '2025-01-12 11:00');

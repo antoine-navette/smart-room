@@ -11,8 +11,8 @@ import {
 import type { Env } from '../config/env.js';
 import type { Logger } from 'pino';
 import type { AuthService } from '../services/auth.service.js';
-import { authRoutes } from '../routes/auth.routes.js';
-import { userRoutes } from '../routes/user.routes.js';
+import { authRoutes } from '../routes/auth.route.js';
+import { userRoutes } from '../routes/user.route.js';
 
 type Services = {
     authService: AuthService;

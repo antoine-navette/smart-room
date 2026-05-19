@@ -1,5 +1,5 @@
 import type { Pool } from 'pg';
-import type { Building } from '../entities/entities.js';
+import type { Building } from '../entities/building.entity.js';
 
 export type BuildingCreate = Omit<Building, 'id'>;
 

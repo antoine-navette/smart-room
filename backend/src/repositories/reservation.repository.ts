@@ -1,5 +1,5 @@
 import type { Pool, QueryResultRow } from 'pg';
-import type { Reservation } from '../entities/entities.js';
+import type { Reservation } from '../entities/reservation.entity.js';
 
 export type ReservationCreate = Omit<Reservation, 'id'>;
 
