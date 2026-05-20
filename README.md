@@ -2,73 +2,40 @@
 
 ## Getting Started
 
-### 1. Set Up Environment Variables
+### 1. Environment Variables
 
-Copy the example environment files:
+The stack uses `.env.example` files as the default configuration — no copy needed. To override a value locally, create a `.env` file next to the corresponding `.env.example` and set only what you want to change.
 
-```bash
-cp .env.example .env
-cp frontend/.env.example frontend/.env
-cp backend/.env.example backend/.env
-```
-
-The root `.env` file lets you adjust application ports and some Docker Compose settings.
-Useful when configuring your local development environment.
+| File | Purpose |
+|---|---|
+| `.env` | Root: ports, Postgres credentials, pgAdmin credentials |
+| `backend/.env` | Backend-specific overrides |
+| `frontend/.env` | Frontend-specific overrides |
 
 ---
 
 ### 2. Start the Stack
 
-Start the full development stack:
-
 ```bash
 docker compose up
 ```
 
-By default, Docker will load `compose.local.yaml`, already configured for local development.
+Docker Compose automatically loads `compose.yaml` and merges `compose.override.yaml` on top of it. The override file configures the local dev build (Dockerfiles, volume mounts).
 
 Default ports:
 
-* **Frontend:** `5173` (or `4173` for Vite preview)
+* **Frontend:** `5173`
 * **Backend:** `3000`
+* **Database:** `5432` (exposed in dev — connect directly from your IDE)
 * **pgAdmin:** `5050`
 
-All port mappings are defined in the root `.env`.
-
-#### Frontend Preview (Vite)
-
-If you want to run a Vite preview build:
-
-##### 1. Make sure the container is running (`docker compose up`).
-##### 2. Enter the frontend container:
-
-```bash
-docker exec -it <frontend-container> bash
-```
-
-##### 3. Run:
-
-```bash
-npm run build
-npm run preview
-```
-
-The preview port is already defined in `.env`, and routed automatically via Docker.
+All ports are configurable via the root `.env`.
 
 ---
 
 ### 3. Node Modules & the IDE
 
-Your IDE may complain about missing dependencies because `node_modules` exist only inside the containers.
-
-To provide editor support, install them locally:
-
-```bash
-cd frontend && npm install
-cd ../backend && npm install
-```
-
-These local installations are *only* for your IDE — the app always uses the container versions.
+`node_modules` are installed inside the containers at startup. Because the source directories are volume-mounted, they appear on your host after the first `docker compose up`, and your IDE will pick them up automatically — no manual `npm install` needed.
 
 ---
 
@@ -76,19 +43,13 @@ These local installations are *only* for your IDE — the app always uses the co
 
 Always install new dependencies **inside the appropriate container**, not on your host machine.
 
-### 1. List containers:
-
-```bash
-docker ps
-```
-
-### 2. Enter a container:
+### 1. Enter a container:
 
 ```bash
 docker exec -it <container-name> bash
 ```
 
-### 3. Install packages:
+### 2. Install the package:
 
 ```bash
 npm install <package-name>
@@ -96,20 +57,32 @@ npm install <package-name>
 
 ---
 
-## Optional: Custom Container Names
+## Migrations
 
-If you prefer simpler container names:
+Migrations are SQL files managed by [node-pg-migrate](https://github.com/salsita/node-pg-migrate). They live in `database/migrations/` and are mounted into the backend container at runtime.
 
-1. Create a `compose.override.yaml`.
-2. Follow the instructions in `.env.example` to enable it.
-3. Define custom container names:
+All migration commands run inside the backend container:
 
-```yaml
-services:
-  backend:
-    container_name: backend
-  frontend:
-    container_name: frontend
+```bash
+docker exec -it <backend-container> bash
 ```
 
-Container names must be **unique on your machine**.
+### Create a migration
+
+```bash
+npm run migrate:create -- <migration-name>
+```
+
+This generates a new `.sql` file in `database/migrations/`. Edit it to add your `up` and `down` SQL.
+
+### Run pending migrations
+
+```bash
+npm run migrate:up
+```
+
+### Roll back the last migration
+
+```bash
+npm run migrate:down
+```

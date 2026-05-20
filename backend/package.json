@@ -7,6 +7,9 @@
         "dev": "tsx watch src/index.ts",
         "build": "rimraf dist && tsc",
         "start": "node .",
+        "migrate:up": "node-pg-migrate up --database-url-var POSTGRES_URL -m migrations",
+        "migrate:down": "node-pg-migrate down --database-url-var POSTGRES_URL -m migrations",
+        "migrate:create": "node-pg-migrate create --migration-file-language sql -m migrations",
         "format:write": "prettier --write .",
         "format:check": "prettier --check ."
     },
@@ -30,6 +33,7 @@
         "bcrypt": "^6.0.0",
         "fastify": "^5.8.5",
         "fastify-zod-openapi": "^5.6.1",
+        "node-pg-migrate": "^8.0.4",
         "pg": "^8.16.3",
         "pino": "^10.1.0",
         "pino-loki": "^2.6.0",

@@ -3,14 +3,13 @@ import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
-import {
-    fastifyZodOpenApiPlugin,
-    fastifyZodOpenApiTransformers,
-    serializerCompiler,
-} from 'fastify-zod-openapi';
+import { fastifyZodOpenApiPlugin, fastifyZodOpenApiTransformers, serializerCompiler } from 'fastify-zod-openapi';
 import type { Env } from '../config/env.js';
 import type { Logger } from 'pino';
 import type { AuthService } from '../services/auth.service.js';
+import { healthRoutes } from '../routes/health.route.js';
+import { authRoutes } from '../routes/auth.route.js';
+import { userRoutes } from '../routes/user.route.js';
 import type { BuildingService } from '../services/building.service.js';
 import type { FloorService } from '../services/floor.service.js';
 import type { ReservationService } from '../services/reservation.service.js';
@@ -56,6 +55,7 @@ export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger,
     });
 
     app.register(authRoutes, { authService: services.authService });
+    app.register(healthRoutes);
     app.register(buildingRoutes, { authService: services.authService, buildingService: services.buildingService });
     app.register(floorRoutes, { authService: services.authService, floorService: services.floorService });
     app.register(reservationRoutes, { authService: services.authService, reservationService: services.reservationService });

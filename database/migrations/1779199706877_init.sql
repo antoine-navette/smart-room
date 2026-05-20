@@ -1,21 +1,19 @@
--- ========== ENUMS ==========
+-- Up Migration
+
 CREATE TYPE role_enum AS ENUM ('USER', 'ADMIN');
 
--- ========== TABLE: buildings ==========
 CREATE TABLE buildings (
     id SERIAL PRIMARY KEY,
     name VARCHAR(20) NOT NULL UNIQUE
 );
 
--- ========== TABLE: floors ==========
 CREATE TABLE floors (
     id SERIAL PRIMARY KEY,
     building_id INT NOT NULL REFERENCES buildings(id) ON DELETE CASCADE,
     name VARCHAR(20) NOT NULL,
-    UNIQUE (building_id, name) -- Contrainte d'unicité par bâtiment
+    UNIQUE (building_id, name)
 );
 
--- ========== TABLE: rooms ==========
 CREATE TABLE rooms (
     id SERIAL PRIMARY KEY,
     floor_id INT NOT NULL REFERENCES floors(id) ON DELETE CASCADE,
@@ -23,7 +21,6 @@ CREATE TABLE rooms (
     capacity INT NOT NULL
 );
 
--- ========== TABLE: users ==========
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     last_name VARCHAR(20) NOT NULL,
@@ -33,7 +30,6 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL
 );
 
--- ========== TABLE: reservations ==========
 CREATE TABLE reservations (
     id SERIAL PRIMARY KEY,
     room_id INT NOT NULL REFERENCES rooms(id) ON DELETE SET NULL,
@@ -43,10 +39,19 @@ CREATE TABLE reservations (
     CONSTRAINT chk_time CHECK (end_time > start_time)
 );
 
--- ========== TABLE: sessions ==========
 CREATE TABLE sessions (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     token VARCHAR(255) NOT NULL UNIQUE,
     expires_at TIMESTAMP NOT NULL
 );
+
+-- Down Migration
+
+DROP TABLE IF EXISTS sessions;
+DROP TABLE IF EXISTS reservations;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS rooms;
+DROP TABLE IF EXISTS floors;
+DROP TABLE IF EXISTS buildings;
+DROP TYPE IF EXISTS role_enum;
