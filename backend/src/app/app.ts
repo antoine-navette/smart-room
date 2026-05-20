@@ -15,12 +15,10 @@ import type { FloorService } from '../services/floor.service.js';
 import type { ReservationService } from '../services/reservation.service.js';
 import type { UserService } from '../services/user.service.js';
 import type { RoomService } from '../services/room.service.js';
-import { authRoutes } from '../routes/auth.routes.js';
-import { buildingRoutes } from '../routes/building.routes.js';
-import { floorRoutes } from '../routes/floor.routes.js';
-import { reservationRoutes } from '../routes/reservation.routes.js';
-import { roomRoutes } from '../routes/room.routes.js';
-import { userRoutes } from '../routes/user.routes.js';
+import { buildingRoutes } from '../routes/building.route.js';
+import { floorRoutes } from '../routes/floor.route.js';
+import { reservationRoutes } from '../routes/reservation.route.js';
+import { roomRoutes } from '../routes/room.route.js';
 
 type Services = {
     authService: AuthService;
@@ -55,10 +53,13 @@ export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger,
     });
 
     app.register(authRoutes, { authService: services.authService });
-    app.register(healthRoutes);
     app.register(buildingRoutes, { authService: services.authService, buildingService: services.buildingService });
     app.register(floorRoutes, { authService: services.authService, floorService: services.floorService });
-    app.register(reservationRoutes, { authService: services.authService, reservationService: services.reservationService });
+    app.register(healthRoutes);
+    app.register(reservationRoutes, {
+        authService: services.authService,
+        reservationService: services.reservationService,
+    });
     app.register(roomRoutes, { authService: services.authService, roomService: services.roomService });
     app.register(userRoutes, { authService: services.authService, userService: services.userService });
 

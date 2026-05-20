@@ -32,12 +32,13 @@ try {
     const floorRepo = new FloorRepository(postgres.pool);
     const reservationRepo = new ReservationRepository(postgres.pool);
     const roomRepo = new RoomRepository(postgres.pool);
-    const authService = new AuthService(sessionRepo, userRepo, new Bcrypt());
+    const bcrypt = new Bcrypt();
+    const authService = new AuthService(sessionRepo, userRepo, bcrypt);
     const buildingService = new BuildingService(buildingRepo, floorRepo);
     const floorService = new FloorService(floorRepo, buildingRepo, roomRepo);
-    const roomService = new RoomService(roomRepo, floorRepo, reservationRepo);
+    const roomService = new RoomService(roomRepo, floorRepo);
     const reservationService = new ReservationService(reservationRepo, roomRepo, userRepo);
-    const userService = new UserService(userRepo, reservationRepo);
+    const userService = new UserService(userRepo, bcrypt);
 
     const app = createApp(env.allowedOrigins, logger, { authService, buildingService, floorService, reservationService, roomService, userService });
     await startServer(app, env.port);

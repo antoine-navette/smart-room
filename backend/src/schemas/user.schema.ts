@@ -11,3 +11,12 @@ export const UserDto = z
         email: z.email(),
     })
     .meta({ id: 'User' });
+
+export const CreateUserBodyDto = z
+    .object({
+        email: z.email(),
+        password: z.string().min(8),
+        first_name: z.string().min(1).max(100),
+        last_name: z.string().min(1).max(100),
+    })
+    .meta({ id: 'CreateUserBody' });

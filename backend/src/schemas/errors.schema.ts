@@ -1,12 +1,18 @@
 import { z } from 'zod';
 
-export const ValidationErrorDto = z
+export const InvalidBodyErrorDto = z
     .object({
-        code: z.literal('VALIDATION_ERROR'),
-        message: z.string(),
+        code: z.literal('INVALID_BODY'),
         issues: z.unknown(),
     })
-    .meta({ id: 'ValidationError' });
+    .meta({ id: 'InvalidBodyError' });
+
+export const InvalidParamsErrorDto = z
+    .object({
+        code: z.literal('INVALID_PARAMS'),
+        issues: z.unknown(),
+    })
+    .meta({ id: 'InvalidParamsError' });
 
 export const EmailAlreadyExistsErrorDto = z
     .object({
@@ -35,3 +41,51 @@ export const InternalServerErrorDto = z
         message: z.string(),
     })
     .meta({ id: 'InternalServerError' });
+
+export const BuildingNotFoundErrorDto = z
+    .object({ code: z.literal('BUILDING_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'BuildingNotFoundError' });
+
+export const FloorNotFoundErrorDto = z
+    .object({ code: z.literal('FLOOR_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'FloorNotFoundError' });
+
+export const RoomNotFoundErrorDto = z
+    .object({ code: z.literal('ROOM_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'RoomNotFoundError' });
+
+export const ReservationNotFoundErrorDto = z
+    .object({ code: z.literal('RESERVATION_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'ReservationNotFoundError' });
+
+export const UserNotFoundErrorDto = z
+    .object({ code: z.literal('USER_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'UserNotFoundError' });
+
+export const BuildingNameExistsErrorDto = z
+    .object({ code: z.literal('BUILDING_NAME_EXISTS'), message: z.string() })
+    .meta({ id: 'BuildingNameExistsError' });
+
+export const FloorNameExistsErrorDto = z
+    .object({ code: z.literal('FLOOR_NAME_EXISTS'), message: z.string() })
+    .meta({ id: 'FloorNameExistsError' });
+
+export const RoomNameExistsErrorDto = z
+    .object({ code: z.literal('ROOM_NAME_EXISTS'), message: z.string() })
+    .meta({ id: 'RoomNameExistsError' });
+
+export const BuildingHasFloorsErrorDto = z
+    .object({ code: z.literal('BUILDING_HAS_FLOORS'), message: z.string() })
+    .meta({ id: 'BuildingHasFloorsError' });
+
+export const FloorHasRoomsErrorDto = z
+    .object({ code: z.literal('FLOOR_HAS_ROOMS'), message: z.string() })
+    .meta({ id: 'FloorHasRoomsError' });
+
+export const RoomNotAvailableErrorDto = z
+    .object({ code: z.literal('ROOM_NOT_AVAILABLE'), message: z.string() })
+    .meta({ id: 'RoomNotAvailableError' });
+
+export const InvalidDateRangeErrorDto = z
+    .object({ code: z.literal('INVALID_DATE_RANGE'), message: z.string() })
+    .meta({ id: 'InvalidDateRangeError' });

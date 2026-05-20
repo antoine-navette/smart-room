@@ -15,7 +15,7 @@ export class SessionRepository {
         return row;
     }
 
-    async findByToken(token: string): Promise<{ session: Session; user: User } | null> {
+    async findByTokenWithUser(token: string): Promise<{ session: Session; user: User } | null> {
         type Row = Session & Omit<User, 'id'>;
         const result = await this.pool.query<Row>(
             `SELECT sessions.*, users.last_name, users.first_name, users.role, users.email, users.password_hash
