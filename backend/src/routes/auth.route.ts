@@ -1,14 +1,13 @@
 import { z } from 'zod';
 import type { FastifyPluginAsyncZodOpenApi } from 'fastify-zod-openapi';
 import type { AuthService } from '../services/auth.service.js';
-import { RegisterBodyDto, LoginBodyDto } from '../schemas/auth.schema.js';
+import { LoginBodyDto } from '../schemas/auth.schema.js';
 import { UserDto } from '../schemas/user.schema.js';
 import {
-    EmailAlreadyExistsErrorDto,
+    InvalidBodyErrorDto,
     InvalidCredentialsErrorDto,
     InternalServerErrorDto,
     UnauthorizedErrorDto,
-    ValidationErrorDto,
 } from '../schemas/errors.schema.js';
 
 type Options = { authService: AuthService };
@@ -23,47 +22,6 @@ const sessionCookieOptions = (expiresAt: Date) => ({
 
 export const authRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { authService }) => {
     app.post(
-        '/auth/register',
-        {
-            schema: {
-                tags: ['Auth'],
-                body: RegisterBodyDto,
-                response: {
-                    201: UserDto,
-                    400: ValidationErrorDto,
-                    409: EmailAlreadyExistsErrorDto,
-                    500: InternalServerErrorDto,
-                },
-            },
-        },
-        async (request, reply) => {
-            const body = RegisterBodyDto.safeParse(request.body);
-            if (!body.success)
-                return reply
-                    .status(400)
-                    .send({ code: 'VALIDATION_ERROR', message: 'Validation failed', issues: body.error.issues });
-
-            const result = await authService.register(
-                body.data.email,
-                body.data.password,
-                body.data.first_name,
-                body.data.last_name,
-            );
-
-            if (!result.success) {
-                if (result.code === 'EMAIL_ALREADY_EXISTS') {
-                    return reply.status(409).send({ code: 'EMAIL_ALREADY_EXISTS', message: 'Email already in use' });
-                }
-                result satisfies never;
-            }
-
-            const { password_hash, ...user } = result.user;
-            reply.setCookie('session_token', result.session.token, sessionCookieOptions(result.session.expires_at));
-            return reply.status(201).send(user);
-        },
-    );
-
-    app.post(
         '/auth/login',
         {
             schema: {
@@ -71,7 +29,7 @@ export const authRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
                 body: LoginBodyDto,
                 response: {
                     200: UserDto,
-                    400: ValidationErrorDto,
+                    400: InvalidBodyErrorDto,
                     401: InvalidCredentialsErrorDto,
                     500: InternalServerErrorDto,
                 },
@@ -80,9 +38,7 @@ export const authRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
         async (request, reply) => {
             const body = LoginBodyDto.safeParse(request.body);
             if (!body.success)
-                return reply
-                    .status(400)
-                    .send({ code: 'VALIDATION_ERROR', message: 'Validation failed', issues: body.error.issues });
+                return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
 
             const result = await authService.login(body.data.email, body.data.password);
 

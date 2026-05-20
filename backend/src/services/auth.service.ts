@@ -21,13 +21,7 @@ export class AuthService {
         const existing = await this.userRepo.findByEmail(email);
         if (existing) return { success: false, code: 'EMAIL_ALREADY_EXISTS' } as const;
 
-        const user = await this.userRepo.create({
-            email,
-            password_hash: await this.bcrypt.hash(password),
-            first_name: firstName,
-            last_name: lastName,
-            role: 'USER',
-        });
+        const user = await this.userRepo.create(email, await this.bcrypt.hash(password), firstName, lastName, 'USER');
         const session = await this.createSession(user.id);
 
         return { success: true, session, user } as const;
@@ -58,7 +52,7 @@ export class AuthService {
     async authenticate(token: string | undefined) {
         if (!token) return { success: false, code: 'MISSING_TOKEN' } as const;
 
-        const result = await this.sessionRepo.findByToken(token);
+        const result = await this.sessionRepo.findByTokenWithUser(token);
         if (!result) return { success: false, code: 'SESSION_NOT_FOUND' } as const;
 
         if (result.session.expires_at < new Date()) {
