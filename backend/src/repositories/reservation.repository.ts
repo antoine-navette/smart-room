@@ -45,6 +45,18 @@ export class ReservationRepository {
         }));
     }
 
+    async findByUserId(user_id: number): Promise<Reservation[]> {
+        const res = await this.pool.query('SELECT id, user_id, room_id, start_time, end_time FROM reservations WHERE user_id = $1 ORDER BY start_time ASC', [user_id]);
+
+        return res.rows.map((r) => ({
+            id: Number(r.id),
+            user_id: Number(r.user_id),
+            room_id: Number(r.room_id),
+            start_time: new Date(r.start_time),
+            end_time: new Date(r.end_time),
+        }));
+    }
+
     async create(data: ReservationCreate): Promise<Reservation> {
         const res = await this.pool.query(
             'INSERT INTO reservations (user_id, room_id, start_time, end_time) VALUES ($1, $2, $3, $4) RETURNING id, user_id, room_id, start_time, end_time',

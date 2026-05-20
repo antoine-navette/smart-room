@@ -33,6 +33,16 @@ export class ReservationService {
         return { success: true, reservations: filtered } as const;
     }
 
+    async findByUserId(user_id: number) {
+        const reservations = await this.repo.findAll();
+        const filtered = reservations.filter((r) => r.user_id === user_id);
+        if (filtered.length === 0) {
+            return { success: false, code: 'RESERVATIONS_NOT_FOUND' } as const;
+        }
+        return { success: true, reservations: filtered } as const;
+    }
+
+
     async create(data: ReservationCreate) {
         // Validate room exists
         if (data.room_id != null) {
