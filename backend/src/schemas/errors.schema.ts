@@ -105,6 +105,14 @@ export const RoomResourceAssignmentNotFoundErrorDto = z
     .object({ code: z.literal('ROOM_RESOURCE_ASSIGNMENT_NOT_FOUND'), message: z.string() })
     .meta({ id: 'RoomResourceAssignmentNotFoundError' });
 
+export const RoomUnavailabilityNotFoundErrorDto = z
+    .object({ code: z.literal('ROOM_UNAVAILABILITY_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'RoomUnavailabilityNotFoundError' });
+
+export const RoomUnavailabilityConflictErrorDto = z
+    .object({ code: z.literal('ROOM_UNAVAILABILITY_CONFLICT'), message: z.string() })
+    .meta({ id: 'RoomUnavailabilityConflictError' });
+
 export const BuildingHasFloorsErrorDto = z
     .object({ code: z.literal('BUILDING_HAS_FLOORS'), message: z.string() })
     .meta({ id: 'BuildingHasFloorsError' });

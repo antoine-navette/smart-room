@@ -41,10 +41,32 @@ export class RoomRepository {
                  AND start_time < $2
                  AND end_time > $1
              )
+             AND id NOT IN (
+                 SELECT room_id FROM room_unavailabilities
+                 WHERE from_time < $2
+                 AND to_time > $1
+             )
              ORDER BY id`,
             [startTime.toISOString(), endTime.toISOString()],
         );
         return res.rows;
+    }
+
+    async hasUnavailabilityOverlap(roomId: number, startTime: Date, endTime: Date, excludeId?: number): Promise<boolean> {
+        const params: Array<number | string> = [roomId, startTime.toISOString(), endTime.toISOString()];
+        const excludeClause = excludeId == null ? '' : ' AND id <> $4';
+        if (excludeId != null) params.push(excludeId);
+
+        const res = await this.pool.query<{ exists: boolean }>(
+            `SELECT EXISTS (
+                SELECT 1 FROM room_unavailabilities
+                WHERE room_id = $1
+                AND from_time < $3
+                AND to_time > $2${excludeClause}
+            ) AS exists`,
+            params,
+        );
+        return res.rows[0]?.exists ?? false;
     }
 
     async save(room: Room): Promise<void> {

@@ -21,6 +21,14 @@ export class ReservationRepository {
         return res.rows;
     }
 
+    async findByRoomId(roomId: number): Promise<Reservation[]> {
+        const res = await this.pool.query<Reservation>(
+            'SELECT id, user_id, room_id, start_time, end_time FROM reservations WHERE room_id = $1 ORDER BY id',
+            [roomId],
+        );
+        return res.rows;
+    }
+
     async findById(id: number): Promise<Reservation | null> {
         const res = await this.pool.query<Reservation>(
             'SELECT id, user_id, room_id, start_time, end_time FROM reservations WHERE id = $1',

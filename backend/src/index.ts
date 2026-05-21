@@ -10,6 +10,7 @@ import { ReservationRepository } from './repositories/reservation.repository.js'
 import { RoomResourceRepository } from './repositories/room-resource.repository.js';
 import { RoomResourceAssignmentRepository } from './repositories/room-resource-assignment.repository.js';
 import { IncidentRepository } from './repositories/incident.repository.js';
+import { RoomUnavailabilityRepository } from './repositories/room-unavailability.repository.js';
 import { RoomRepository } from './repositories/room.repository.js';
 import { SessionRepository } from './repositories/session.repository.js';
 import { UserRepository } from './repositories/user.repository.js';
@@ -20,6 +21,7 @@ import { ReservationService } from './services/reservation.service.js';
 import { RoomResourceAssignmentService } from './services/room-resource-assignment.service.js';
 import { RoomResourceService } from './services/room-resource.service.js';
 import { IncidentService } from './services/incident.service.js';
+import { RoomUnavailabilityService } from './services/room-unavailability.service.js';
 import { UserService } from './services/user.service.js';
 import { RoomService } from './services/room.service.js';
 
@@ -40,6 +42,7 @@ try {
     const roomResourceRepo = new RoomResourceRepository(postgres.pool);
     const roomResourceAssignmentRepo = new RoomResourceAssignmentRepository(postgres.pool);
     const roomRepo = new RoomRepository(postgres.pool);
+    const roomUnavailabilityRepo = new RoomUnavailabilityRepository(postgres.pool);
     const bcrypt = new Bcrypt();
     const authService = new AuthService(sessionRepo, userRepo, bcrypt);
     const buildingService = new BuildingService(buildingRepo, floorRepo);
@@ -50,6 +53,7 @@ try {
     const roomResourceService = new RoomResourceService(roomResourceRepo);
     const incidentRepo = new IncidentRepository(postgres.pool);
     const incidentService = new IncidentService(incidentRepo, roomRepo);
+    const roomUnavailabilityService = new RoomUnavailabilityService(roomUnavailabilityRepo, roomRepo, reservationRepo);
     const userService = new UserService(userRepo, bcrypt);
 
     const app = createApp(env.allowedOrigins, logger, {
@@ -60,6 +64,7 @@ try {
         roomResourceAssignmentService,
         roomResourceService,
         incidentService,
+        roomUnavailabilityService,
         roomService,
         userService,
     });

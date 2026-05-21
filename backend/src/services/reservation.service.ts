@@ -79,6 +79,6 @@ export class ReservationService {
         return !reservations.some((r) => {
             if (excludeId != null && r.id === excludeId) return false;
             return startTime.getTime() < r.end_time.getTime() && r.start_time.getTime() < endTime.getTime();
-        });
+        }) && !(await this.roomRepo.hasUnavailabilityOverlap(roomId, startTime, endTime, excludeId));
     }
 }
