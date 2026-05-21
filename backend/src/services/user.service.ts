@@ -1,5 +1,5 @@
 import { UserRepository } from '../repositories/user.repository.js';
-import type { Bcrypt } from '../libs/bcrypt.js';
+import type { Bcrypt } from '../adapters/bcrypt.js';
 
 export class UserService {
     constructor(

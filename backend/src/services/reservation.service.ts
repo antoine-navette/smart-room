@@ -1,12 +1,17 @@
 import type { Reservation } from '../entities/reservation.entity.js';
+import type { Room } from '../entities/room.entity.js';
 import type { User } from '../entities/user.entity.js';
 import { ReservationRepository } from '../repositories/reservation.repository.js';
 import { RoomRepository } from '../repositories/room.repository.js';
+import { UserRepository } from '../repositories/user.repository.js';
+import { Mailer } from '../adapters/mailer.js';
 
 export class ReservationService {
     constructor(
         private readonly repo: ReservationRepository,
         private readonly roomRepo: RoomRepository,
+        private readonly userRepo: UserRepository,
+        private readonly emailService: Mailer,
     ) {}
 
     private isAuthorized(reservation: Reservation, currentUser: User): boolean {
@@ -14,15 +19,18 @@ export class ReservationService {
     }
 
     async create(roomId: number | null, user: User, startTime: Date, endTime: Date) {
+        let room: Room | null = null;
         if (roomId != null) {
-            const room = await this.roomRepo.findById(roomId);
+            room = await this.roomRepo.findById(roomId);
             if (!room) return { success: false, code: 'ROOM_NOT_FOUND' } as const;
 
             if (!(await this.checkAvailability(roomId, startTime, endTime)))
                 return { success: false, code: 'ROOM_NOT_AVAILABLE' } as const;
         }
 
-        return { success: true, reservation: await this.repo.create(roomId, user.id, startTime, endTime) } as const;
+        const reservation = await this.repo.create(roomId, user.id, startTime, endTime);
+        await this.emailService.sendReservationConfirmation(user, reservation, room);
+        return { success: true, reservation } as const;
     }
 
     findAll(): Promise<Reservation[]> {
@@ -51,8 +59,9 @@ export class ReservationService {
 
         if (!this.isAuthorized(current, currentUser)) return { success: false, code: 'FORBIDDEN' } as const;
 
+        let room: Room | null = null;
         if (roomId != null) {
-            const room = await this.roomRepo.findById(roomId);
+            room = await this.roomRepo.findById(roomId);
             if (!room) return { success: false, code: 'ROOM_NOT_FOUND' } as const;
 
             if (!(await this.checkAvailability(roomId, startTime, endTime, id)))
@@ -61,6 +70,7 @@ export class ReservationService {
 
         const updated = { ...current, room_id: roomId, user_id: user.id, start_time: startTime, end_time: endTime };
         await this.repo.save(updated);
+        await this.emailService.sendReservationUpdate(currentUser, updated, room);
         return { success: true, reservation: updated } as const;
     }
 
@@ -70,15 +80,27 @@ export class ReservationService {
 
         if (!this.isAuthorized(current, currentUser)) return { success: false, code: 'FORBIDDEN' } as const;
 
+        const owner =
+            current.user_id === currentUser.id
+                ? currentUser
+                : current.user_id != null
+                  ? await this.userRepo.findById(current.user_id)
+                  : null;
+        const room = current.room_id != null ? await this.roomRepo.findById(current.room_id) : null;
+
         await this.repo.delete(current);
+
+        if (owner) await this.emailService.sendReservationCancellation(owner, current, room);
         return { success: true } as const;
     }
 
     private async checkAvailability(roomId: number, startTime: Date, endTime: Date, excludeId?: number) {
         const reservations = await this.findByRoomId(roomId);
-        return !reservations.some((r) => {
-            if (excludeId != null && r.id === excludeId) return false;
-            return startTime.getTime() < r.end_time.getTime() && r.start_time.getTime() < endTime.getTime();
-        }) && !(await this.roomRepo.hasUnavailabilityOverlap(roomId, startTime, endTime, excludeId));
+        return (
+            !reservations.some((r) => {
+                if (excludeId != null && r.id === excludeId) return false;
+                return startTime.getTime() < r.end_time.getTime() && r.start_time.getTime() < endTime.getTime();
+            }) && !(await this.roomRepo.hasUnavailabilityOverlap(roomId, startTime, endTime, excludeId))
+        );
     }
 }

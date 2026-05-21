@@ -1,16 +1,22 @@
-import type { User } from '../entities/user.entity.js';
 import type { Incident } from '../entities/incident.entity.js';
+import type { User } from '../entities/user.entity.js';
 import { IncidentRepository } from '../repositories/incident.repository.js';
 import { RoomRepository } from '../repositories/room.repository.js';
+import { Mailer } from '../adapters/mailer.js';
 
 export class IncidentService {
-    constructor(private readonly repo: IncidentRepository, private readonly roomRepo: RoomRepository) {}
+    constructor(
+        private readonly repo: IncidentRepository,
+        private readonly roomRepo: RoomRepository,
+        private readonly emailService: Mailer,
+    ) {}
 
     async create(user: User, roomId: number | null, title: string, description: string | undefined) {
         const room = roomId ? await this.roomRepo.findById(roomId) : null;
         if (roomId && !room) return { success: false, code: 'ROOM_NOT_FOUND' } as const;
 
         const incident = await this.repo.create(roomId, user.id, title, description ?? null);
+        await this.emailService.sendIncidentReport(user, incident, room ?? null);
         return { success: true, incident } as const;
     }
 
