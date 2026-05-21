@@ -69,6 +69,10 @@ export const UserNotFoundErrorDto = z
     .object({ code: z.literal('USER_NOT_FOUND'), message: z.string() })
     .meta({ id: 'UserNotFoundError' });
 
+export const IncidentNotFoundErrorDto = z
+    .object({ code: z.literal('INCIDENT_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'IncidentNotFoundError' });
+
 export const BuildingNameExistsErrorDto = z
     .object({ code: z.literal('BUILDING_NAME_EXISTS'), message: z.string() })
     .meta({ id: 'BuildingNameExistsError' });

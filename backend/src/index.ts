@@ -9,6 +9,7 @@ import { FloorRepository } from './repositories/floor.repository.js';
 import { ReservationRepository } from './repositories/reservation.repository.js';
 import { RoomResourceRepository } from './repositories/room-resource.repository.js';
 import { RoomResourceAssignmentRepository } from './repositories/room-resource-assignment.repository.js';
+import { IncidentRepository } from './repositories/incident.repository.js';
 import { RoomRepository } from './repositories/room.repository.js';
 import { SessionRepository } from './repositories/session.repository.js';
 import { UserRepository } from './repositories/user.repository.js';
@@ -18,6 +19,7 @@ import { FloorService } from './services/floor.service.js';
 import { ReservationService } from './services/reservation.service.js';
 import { RoomResourceAssignmentService } from './services/room-resource-assignment.service.js';
 import { RoomResourceService } from './services/room-resource.service.js';
+import { IncidentService } from './services/incident.service.js';
 import { UserService } from './services/user.service.js';
 import { RoomService } from './services/room.service.js';
 
@@ -46,6 +48,8 @@ try {
     const reservationService = new ReservationService(reservationRepo, roomRepo);
     const roomResourceAssignmentService = new RoomResourceAssignmentService(roomResourceAssignmentRepo, roomRepo, roomResourceRepo);
     const roomResourceService = new RoomResourceService(roomResourceRepo);
+    const incidentRepo = new IncidentRepository(postgres.pool);
+    const incidentService = new IncidentService(incidentRepo, roomRepo);
     const userService = new UserService(userRepo, bcrypt);
 
     const app = createApp(env.allowedOrigins, logger, {
@@ -55,6 +59,7 @@ try {
         reservationService,
         roomResourceAssignmentService,
         roomResourceService,
+        incidentService,
         roomService,
         userService,
     });
