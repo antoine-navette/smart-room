@@ -1,16 +1,15 @@
 import type { Reservation } from '../entities/reservation.entity.js';
+import type { User } from '../entities/user.entity.js';
 import { ReservationRepository } from '../repositories/reservation.repository.js';
 import { RoomRepository } from '../repositories/room.repository.js';
-import { UserRepository } from '../repositories/user.repository.js';
 
 export class ReservationService {
     constructor(
         private readonly repo: ReservationRepository,
         private readonly roomRepo: RoomRepository,
-        private readonly userRepo: UserRepository,
     ) {}
 
-    async create(roomId: number | null, userId: number | null, startTime: Date, endTime: Date) {
+    async create(roomId: number | null, user: User, startTime: Date, endTime: Date) {
         if (roomId != null) {
             const room = await this.roomRepo.findById(roomId);
             if (!room) return { success: false, code: 'ROOM_NOT_FOUND' } as const;
@@ -19,12 +18,7 @@ export class ReservationService {
                 return { success: false, code: 'ROOM_NOT_AVAILABLE' } as const;
         }
 
-        if (userId != null) {
-            const user = await this.userRepo.findById(userId);
-            if (!user) return { success: false, code: 'USER_NOT_FOUND' } as const;
-        }
-
-        return { success: true, reservation: await this.repo.create(roomId, userId, startTime, endTime) } as const;
+        return { success: true, reservation: await this.repo.create(roomId, user.id, startTime, endTime) } as const;
     }
 
     findAll(): Promise<Reservation[]> {
@@ -47,7 +41,7 @@ export class ReservationService {
         return reservations.filter((r) => r.user_id === userId);
     }
 
-    async update(id: number, roomId: number | null, userId: number | null, startTime: Date, endTime: Date) {
+    async update(id: number, roomId: number | null, user: User, startTime: Date, endTime: Date) {
         const current = await this.repo.findById(id);
         if (!current) return { success: false, code: 'RESERVATION_NOT_FOUND' } as const;
 
@@ -59,12 +53,7 @@ export class ReservationService {
                 return { success: false, code: 'ROOM_NOT_AVAILABLE' } as const;
         }
 
-        if (userId != null) {
-            const user = await this.userRepo.findById(userId);
-            if (!user) return { success: false, code: 'USER_NOT_FOUND' } as const;
-        }
-
-        const updated = { ...current, room_id: roomId, user_id: userId, start_time: startTime, end_time: endTime };
+        const updated = { ...current, room_id: roomId, user_id: user.id, start_time: startTime, end_time: endTime };
         await this.repo.save(updated);
         return { success: true, reservation: updated } as const;
     }
