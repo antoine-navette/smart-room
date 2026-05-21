@@ -8,7 +8,7 @@ export class IncidentService {
     constructor(
         private readonly repo: IncidentRepository,
         private readonly roomRepo: RoomRepository,
-        private readonly emailService: Mailer,
+        private readonly mailer: Mailer,
     ) {}
 
     async create(user: User, roomId: number | null, title: string, description: string | undefined) {
@@ -16,7 +16,7 @@ export class IncidentService {
         if (roomId && !room) return { success: false, code: 'ROOM_NOT_FOUND' } as const;
 
         const incident = await this.repo.create(roomId, user.id, title, description ?? null);
-        await this.emailService.sendIncidentReport(user, incident, room ?? null);
+        await this.mailer.sendIncidentReport(user, incident, room ?? null);
         return { success: true, incident } as const;
     }
 

@@ -11,7 +11,7 @@ export class ReservationService {
         private readonly repo: ReservationRepository,
         private readonly roomRepo: RoomRepository,
         private readonly userRepo: UserRepository,
-        private readonly emailService: Mailer,
+        private readonly mailer: Mailer,
     ) {}
 
     private isAuthorized(reservation: Reservation, currentUser: User): boolean {
@@ -29,7 +29,7 @@ export class ReservationService {
         }
 
         const reservation = await this.repo.create(roomId, user.id, startTime, endTime);
-        await this.emailService.sendReservationConfirmation(user, reservation, room);
+        await this.mailer.sendReservationConfirmation(user, reservation, room);
         return { success: true, reservation } as const;
     }
 
@@ -70,7 +70,7 @@ export class ReservationService {
 
         const updated = { ...current, room_id: roomId, user_id: user.id, start_time: startTime, end_time: endTime };
         await this.repo.save(updated);
-        await this.emailService.sendReservationUpdate(currentUser, updated, room);
+        await this.mailer.sendReservationUpdate(user, updated, room);
         return { success: true, reservation: updated } as const;
     }
 
@@ -90,7 +90,7 @@ export class ReservationService {
 
         await this.repo.delete(current);
 
-        if (owner) await this.emailService.sendReservationCancellation(owner, current, room);
+        if (owner) await this.mailer.sendReservationCancellation(owner, current, room);
         return { success: true } as const;
     }
 

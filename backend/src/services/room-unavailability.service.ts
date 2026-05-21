@@ -13,7 +13,7 @@ export class RoomUnavailabilityService {
         private readonly roomRepo: RoomRepository,
         private readonly reservationRepo: ReservationRepository,
         private readonly userRepo: UserRepository,
-        private readonly emailService: Mailer,
+        private readonly mailer: Mailer,
     ) {}
 
     private async cancelOverlappingReservations(room: Room, fromTime: Date, toTime: Date, reason: string) {
@@ -29,7 +29,7 @@ export class RoomUnavailabilityService {
                 if (r.user_id == null) return;
                 const user = await this.userRepo.findById(r.user_id);
                 if (!user) return;
-                await this.emailService.sendRoomUnavailabilityNotification(user, r, room, reason);
+                await this.mailer.sendRoomUnavailabilityNotification(user, r, room, reason);
             }),
         );
     }
