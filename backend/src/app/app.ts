@@ -19,6 +19,7 @@ import type { IncidentService } from '../services/incident.service.js';
 import type { RoomUnavailabilityService } from '../services/room-unavailability.service.js';
 import type { UserService } from '../services/user.service.js';
 import type { RoomService } from '../services/room.service.js';
+import type { FavoriteService } from '../services/favorite.service.js';
 import { buildingRoutes } from '../routes/building.route.js';
 import { floorRoutes } from '../routes/floor.route.js';
 import { reservationRoutes } from '../routes/reservation.route.js';
@@ -27,6 +28,7 @@ import { roomResourceRoutes } from '../routes/room-resource.route.js';
 import { roomRoutes } from '../routes/room.route.js';
 import { incidentRoutes } from '../routes/incident.route.js';
 import { roomUnavailabilityRoutes } from '../routes/room-unavailability.route.js';
+import { favoriteRoutes } from '../routes/favorite.route.js';
 
 type Services = {
     authService: AuthService;
@@ -37,6 +39,7 @@ type Services = {
     roomResourceService: RoomResourceService;
     incidentService: IncidentService;
     roomUnavailabilityService: RoomUnavailabilityService;
+    favoriteService: FavoriteService;
     userService: UserService;
     roomService: RoomService;
 };
@@ -86,6 +89,7 @@ export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger,
         authService: services.authService,
         roomUnavailabilityService: services.roomUnavailabilityService,
     });
+    app.register(favoriteRoutes, { authService: services.authService, favoriteService: services.favoriteService });
     app.register(userRoutes, { authService: services.authService, userService: services.userService });
 
     app.setNotFoundHandler(async (request, reply) => {

@@ -113,6 +113,14 @@ export const RoomUnavailabilityConflictErrorDto = z
     .object({ code: z.literal('ROOM_UNAVAILABILITY_CONFLICT'), message: z.string() })
     .meta({ id: 'RoomUnavailabilityConflictError' });
 
+export const FavoriteNotFoundErrorDto = z
+    .object({ code: z.literal('FAVORITE_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'FavoriteNotFoundError' });
+
+export const FavoriteAlreadyExistsErrorDto = z
+    .object({ code: z.literal('FAVORITE_ALREADY_EXISTS'), message: z.string() })
+    .meta({ id: 'FavoriteAlreadyExistsError' });
+
 export const BuildingHasFloorsErrorDto = z
     .object({ code: z.literal('BUILDING_HAS_FLOORS'), message: z.string() })
     .meta({ id: 'BuildingHasFloorsError' });
