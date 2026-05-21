@@ -1,10 +1,12 @@
 import type { FastifyPluginAsyncZodOpenApi } from 'fastify-zod-openapi';
 import type { AuthService } from '../services/auth.service.js';
 import type { UserService } from '../services/user.service.js';
-import { UserDto, CreateUserBodyDto } from '../schemas/user.schema.js';
+import { UserDto, UserIdParamsDto, CreateUserBodyDto } from '../schemas/user.schema.js';
 import {
     EmailAlreadyExistsErrorDto,
     InvalidBodyErrorDto,
+    InvalidParamsErrorDto,
+    UserNotFoundErrorDto,
     InternalServerErrorDto,
     UnauthorizedErrorDto,
 } from '../schemas/errors.schema.js';
@@ -69,6 +71,36 @@ export const userRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
             }
 
             const { password_hash, ...user } = auth.user;
+            return reply.status(200).send(user);
+        },
+    );
+
+    app.get(
+        '/users/:id',
+        {
+            schema: {
+                tags: ['Users'],
+                params: UserIdParamsDto,
+                response: {
+                    200: UserDto,
+                    400: InvalidParamsErrorDto,
+                    404: UserNotFoundErrorDto,
+                    500: InternalServerErrorDto,
+                },
+            },
+        },
+        async (request, reply) => {
+            const params = UserIdParamsDto.safeParse(request.params);
+            if (!params.success) {
+                return reply.status(400).send({ code: 'INVALID_PARAMS', issues: params.error.issues });
+            }
+
+            const result = await userService.findById(params.data.id);
+            if (!result.success) {
+                return reply.status(404).send({ code: 'USER_NOT_FOUND', message: 'User not found' });
+            }
+
+            const { password_hash, ...user } = result.user;
             return reply.status(200).send(user);
         },
     );

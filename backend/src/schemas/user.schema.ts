@@ -12,6 +12,12 @@ export const UserDto = z
     })
     .meta({ id: 'User' });
 
+export const UserIdParamsDto = z
+    .object({
+        id: z.coerce.number().int().positive(),
+    })
+    .meta({ id: 'UserIdParams' });
+
 export const CreateUserBodyDto = z
     .object({
         email: z.email(),
