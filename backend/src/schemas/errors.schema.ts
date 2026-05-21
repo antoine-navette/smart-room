@@ -69,6 +69,18 @@ export const UserNotFoundErrorDto = z
     .object({ code: z.literal('USER_NOT_FOUND'), message: z.string() })
     .meta({ id: 'UserNotFoundError' });
 
+export const IncidentNotFoundErrorDto = z
+    .object({ code: z.literal('INCIDENT_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'IncidentNotFoundError' });
+
+export const IncidentAlreadyResolvedErrorDto = z
+    .object({ code: z.literal('INCIDENT_ALREADY_RESOLVED'), message: z.string() })
+    .meta({ id: 'IncidentAlreadyResolvedError' });
+
+export const IncidentInvalidTransitionErrorDto = z
+    .object({ code: z.literal('INCIDENT_INVALID_TRANSITION'), message: z.string() })
+    .meta({ id: 'IncidentInvalidTransitionError' });
+
 export const BuildingNameExistsErrorDto = z
     .object({ code: z.literal('BUILDING_NAME_EXISTS'), message: z.string() })
     .meta({ id: 'BuildingNameExistsError' });
@@ -92,6 +104,14 @@ export const RoomResourceNameExistsErrorDto = z
 export const RoomResourceAssignmentNotFoundErrorDto = z
     .object({ code: z.literal('ROOM_RESOURCE_ASSIGNMENT_NOT_FOUND'), message: z.string() })
     .meta({ id: 'RoomResourceAssignmentNotFoundError' });
+
+export const RoomUnavailabilityNotFoundErrorDto = z
+    .object({ code: z.literal('ROOM_UNAVAILABILITY_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'RoomUnavailabilityNotFoundError' });
+
+export const RoomUnavailabilityConflictErrorDto = z
+    .object({ code: z.literal('ROOM_UNAVAILABILITY_CONFLICT'), message: z.string() })
+    .meta({ id: 'RoomUnavailabilityConflictError' });
 
 export const BuildingHasFloorsErrorDto = z
     .object({ code: z.literal('BUILDING_HAS_FLOORS'), message: z.string() })
