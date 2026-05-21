@@ -37,7 +37,7 @@ try {
     const buildingService = new BuildingService(buildingRepo, floorRepo);
     const floorService = new FloorService(floorRepo, buildingRepo, roomRepo);
     const roomService = new RoomService(roomRepo, floorRepo);
-    const reservationService = new ReservationService(reservationRepo, roomRepo, userRepo);
+    const reservationService = new ReservationService(reservationRepo, roomRepo);
     const userService = new UserService(userRepo, bcrypt);
 
     const app = createApp(env.allowedOrigins, logger, { authService, buildingService, floorService, reservationService, roomService, userService });

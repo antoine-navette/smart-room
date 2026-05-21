@@ -55,13 +55,10 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
             return reply.status(400).send({ code: 'INVALID_DATE_RANGE', message: 'End time must be after start time' });
         }
 
-        const result = await reservationService.create(body.data.room_id, auth.user.id, body.data.start_time, body.data.end_time);
+        const result = await reservationService.create(body.data.room_id, auth.user, body.data.start_time, body.data.end_time);
         if (!result.success) {
             if (result.code === 'ROOM_NOT_FOUND') {
                 return reply.status(404).send({ code: 'ROOM_NOT_FOUND', message: 'Room not found' });
-            }
-            if (result.code === 'USER_NOT_FOUND') {
-                return reply.status(404).send({ code: 'USER_NOT_FOUND', message: 'User not found' });
             }
             if (result.code === 'ROOM_NOT_AVAILABLE') {
                 return reply.status(409).send({ code: 'ROOM_NOT_AVAILABLE', message: 'Room is not available for this time period' });
@@ -184,16 +181,13 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
             return reply.status(400).send({ code: 'INVALID_DATE_RANGE', message: 'End time must be after start time' });
         }
 
-        const result = await reservationService.update(params.data.id, body.data.room_id, auth.user.id, body.data.start_time, body.data.end_time);
+        const result = await reservationService.update(params.data.id, body.data.room_id, auth.user, body.data.start_time, body.data.end_time);
         if (!result.success) {
             if (result.code === 'RESERVATION_NOT_FOUND') {
                 return reply.status(404).send({ code: 'RESERVATION_NOT_FOUND', message: 'Reservation not found' });
             }
             if (result.code === 'ROOM_NOT_FOUND') {
                 return reply.status(404).send({ code: 'ROOM_NOT_FOUND', message: 'Room not found' });
-            }
-            if (result.code === 'USER_NOT_FOUND') {
-                return reply.status(404).send({ code: 'USER_NOT_FOUND', message: 'User not found' });
             }
             if (result.code === 'ROOM_NOT_AVAILABLE') {
                 return reply.status(409).send({ code: 'ROOM_NOT_AVAILABLE', message: 'Room is not available for this time period' });
