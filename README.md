@@ -6,11 +6,11 @@
 
 The stack uses `.env.example` files as the default configuration — no copy needed. To override a value locally, create a `.env` file next to the corresponding `.env.example` and set only what you want to change.
 
-| File | Purpose |
-|---|---|
-| `.env` | Root: ports, Postgres credentials, pgAdmin credentials |
-| `backend/.env` | Backend-specific overrides |
-| `frontend/.env` | Frontend-specific overrides |
+| File            | Purpose                                                |
+| --------------- | ------------------------------------------------------ |
+| `.env`          | Root: ports, Postgres credentials, pgAdmin credentials |
+| `backend/.env`  | Backend-specific overrides                             |
+| `frontend/.env` | Frontend-specific overrides                            |
 
 ---
 
@@ -24,10 +24,12 @@ Docker Compose automatically loads `compose.yaml` and merges `compose.override.y
 
 Default ports:
 
-* **Frontend:** `5173`
-* **Backend:** `3000`
-* **Database:** `5432` (exposed in dev — connect directly from your IDE)
-* **pgAdmin:** `5050`
+| Service  | Port   |
+| -------- | ------ |
+| Frontend | `5173` |
+| Backend  | `3000` |
+| Database | `5432` |
+| pgAdmin  | `5050` |
 
 All ports are configurable via the root `.env`.
 
@@ -46,7 +48,9 @@ Always install new dependencies **inside the appropriate container**, not on you
 ### 1. Enter a container:
 
 ```bash
-docker exec -it <container-name> bash
+docker compose exec backend bash
+# or
+docker compose exec frontend bash
 ```
 
 ### 2. Install the package:
@@ -64,7 +68,7 @@ Migrations are SQL files managed by [node-pg-migrate](https://github.com/salsita
 All migration commands run inside the backend container:
 
 ```bash
-docker exec -it <backend-container> bash
+docker compose exec backend bash
 ```
 
 ### Create a migration
