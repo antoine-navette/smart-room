@@ -37,6 +37,14 @@ export class IncidentService {
         const current = await this.repo.findById(id);
         if (!current) return { success: false, code: 'INCIDENT_NOT_FOUND' } as const;
 
+        if (current.status === 'RESOLVED') {
+            return { success: false, code: 'INCIDENT_ALREADY_RESOLVED' } as const;
+        }
+
+        if (current.status === 'IN_PROGRESS' && status === 'OPEN') {
+            return { success: false, code: 'INCIDENT_INVALID_TRANSITION' } as const;
+        }
+
         const updated: Incident = { ...current };
         if (title !== undefined) updated.title = title;
         if (description !== undefined) updated.description = description;

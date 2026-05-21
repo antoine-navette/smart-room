@@ -15,6 +15,8 @@ import {
     InvalidParamsErrorDto,
     InternalServerErrorDto,
     IncidentNotFoundErrorDto,
+    IncidentAlreadyResolvedErrorDto,
+    IncidentInvalidTransitionErrorDto,
     RoomNotFoundErrorDto,
     UnauthorizedErrorDto,
 } from '../schemas/errors.schema.js';
@@ -119,6 +121,7 @@ export const incidentRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app,
                 401: UnauthorizedErrorDto,
                 403: ForbiddenErrorDto,
                 404: IncidentNotFoundErrorDto,
+                409: z.union([IncidentAlreadyResolvedErrorDto, IncidentInvalidTransitionErrorDto]),
                 500: InternalServerErrorDto,
             },
         },
@@ -136,6 +139,8 @@ export const incidentRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app,
         if (!result.success) {
             if (result.code === 'FORBIDDEN') return reply.status(403).send({ code: 'FORBIDDEN', message: 'You must be an admin to update an incident' });
             if (result.code === 'INCIDENT_NOT_FOUND') return reply.status(404).send({ code: 'INCIDENT_NOT_FOUND', message: 'Incident not found' });
+            if (result.code === 'INCIDENT_ALREADY_RESOLVED') return reply.status(409).send({ code: 'INCIDENT_ALREADY_RESOLVED', message: 'Resolved incidents cannot be updated' });
+            if (result.code === 'INCIDENT_INVALID_TRANSITION') return reply.status(409).send({ code: 'INCIDENT_INVALID_TRANSITION', message: 'An incident in progress cannot be set back to OPEN' });
             result satisfies never;
         }
 

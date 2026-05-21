@@ -73,6 +73,14 @@ export const IncidentNotFoundErrorDto = z
     .object({ code: z.literal('INCIDENT_NOT_FOUND'), message: z.string() })
     .meta({ id: 'IncidentNotFoundError' });
 
+export const IncidentAlreadyResolvedErrorDto = z
+    .object({ code: z.literal('INCIDENT_ALREADY_RESOLVED'), message: z.string() })
+    .meta({ id: 'IncidentAlreadyResolvedError' });
+
+export const IncidentInvalidTransitionErrorDto = z
+    .object({ code: z.literal('INCIDENT_INVALID_TRANSITION'), message: z.string() })
+    .meta({ id: 'IncidentInvalidTransitionError' });
+
 export const BuildingNameExistsErrorDto = z
     .object({ code: z.literal('BUILDING_NAME_EXISTS'), message: z.string() })
     .meta({ id: 'BuildingNameExistsError' });
