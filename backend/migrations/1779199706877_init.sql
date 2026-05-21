@@ -21,6 +21,20 @@ CREATE TABLE rooms (
     capacity INT NOT NULL
 );
 
+CREATE TABLE room_resources (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE contain_resources (
+    room_id INT NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+    resource_id INT NOT NULL REFERENCES room_resources(id) ON DELETE CASCADE,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    PRIMARY KEY (room_id, resource_id)
+);
+
+CREATE INDEX idx_contain_resources_resource_id ON contain_resources(resource_id);
+
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     last_name VARCHAR(100) NOT NULL,
@@ -52,6 +66,9 @@ DROP TABLE IF EXISTS sessions;
 DROP TABLE IF EXISTS reservations;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS rooms;
+DROP INDEX IF EXISTS idx_contain_resources_resource_id;
+DROP TABLE IF EXISTS contain_resources;
+DROP TABLE IF EXISTS room_resources;
 DROP TABLE IF EXISTS floors;
 DROP TABLE IF EXISTS buildings;
 DROP TYPE IF EXISTS role_enum;

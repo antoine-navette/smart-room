@@ -1,4 +1,5 @@
 import type { Building } from '../entities/building.entity.js';
+import type { User } from '../entities/user.entity.js';
 import { BuildingRepository } from '../repositories/building.repository.js';
 import { FloorRepository } from '../repositories/floor.repository.js';
 
@@ -8,7 +9,9 @@ export class BuildingService {
         private readonly floorRepo: FloorRepository,
     ) {}
 
-    async create(name: string) {
+    async create(user: User, name: string) {
+        if (user.role !== 'ADMIN') return { success: false, code: 'FORBIDDEN' } as const;
+
         const existing = await this.repo.findByName(name);
         if (existing) return { success: false, code: 'BUILDING_NAME_EXISTS' } as const;
 
@@ -25,7 +28,9 @@ export class BuildingService {
         return { success: true, building } as const;
     }
 
-    async update(id: number, name: string) {
+    async update(user: User, id: number, name: string) {
+        if (user.role !== 'ADMIN') return { success: false, code: 'FORBIDDEN' } as const;
+
         const current = await this.repo.findById(id);
         if (!current) return { success: false, code: 'BUILDING_NOT_FOUND' } as const;
 
@@ -37,7 +42,9 @@ export class BuildingService {
         return { success: true, building: updated } as const;
     }
 
-    async delete(id: number) {
+    async delete(user: User, id: number) {
+        if (user.role !== 'ADMIN') return { success: false, code: 'FORBIDDEN' } as const;
+
         const current = await this.repo.findById(id);
         if (!current) return { success: false, code: 'BUILDING_NOT_FOUND' } as const;
 

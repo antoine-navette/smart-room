@@ -14,6 +14,8 @@ import {
     ReservationNotFoundErrorDto,
     RoomNotFoundErrorDto,
     RoomNotAvailableErrorDto,
+    UserNotFoundErrorDto,
+    ForbiddenErrorDto,
     InvalidBodyErrorDto,
     InvalidParamsErrorDto,
     InvalidDateRangeErrorDto,
@@ -35,7 +37,7 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
                 201: ReservationDto,
                 400: z.union([InvalidBodyErrorDto, InvalidDateRangeErrorDto]),
                 401: UnauthorizedErrorDto,
-                404: RoomNotFoundErrorDto,
+                404: z.union([RoomNotFoundErrorDto, UserNotFoundErrorDto]),
                 409: RoomNotAvailableErrorDto,
                 500: InternalServerErrorDto,
             },
@@ -156,7 +158,8 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
                 200: ReservationDto,
                 400: z.union([InvalidParamsErrorDto, InvalidBodyErrorDto, InvalidDateRangeErrorDto]),
                 401: UnauthorizedErrorDto,
-                404: z.union([ReservationNotFoundErrorDto, RoomNotFoundErrorDto]),
+                403: ForbiddenErrorDto,
+                404: z.union([ReservationNotFoundErrorDto, RoomNotFoundErrorDto, UserNotFoundErrorDto]),
                 409: RoomNotAvailableErrorDto,
                 500: InternalServerErrorDto,
             },
@@ -181,8 +184,11 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
             return reply.status(400).send({ code: 'INVALID_DATE_RANGE', message: 'End time must be after start time' });
         }
 
-        const result = await reservationService.update(params.data.id, body.data.room_id, auth.user, body.data.start_time, body.data.end_time);
+        const result = await reservationService.update(params.data.id, body.data.room_id, auth.user, body.data.start_time, body.data.end_time, auth.user);
         if (!result.success) {
+            if (result.code === 'FORBIDDEN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You can only modify your own reservations' });
+            }
             if (result.code === 'RESERVATION_NOT_FOUND') {
                 return reply.status(404).send({ code: 'RESERVATION_NOT_FOUND', message: 'Reservation not found' });
             }
@@ -206,6 +212,7 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
                 204: z.object({}),
                 400: InvalidParamsErrorDto,
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: ReservationNotFoundErrorDto,
                 500: InternalServerErrorDto,
             },
@@ -221,8 +228,11 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
             return reply.status(400).send({ code: 'INVALID_PARAMS', issues: params.error.issues });
         }
 
-        const result = await reservationService.delete(params.data.id);
+        const result = await reservationService.delete(params.data.id, auth.user);
         if (!result.success) {
+            if (result.code === 'FORBIDDEN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You can only delete your own reservations' });
+            }
             if (result.code === 'RESERVATION_NOT_FOUND') {
                 return reply.status(404).send({ code: 'RESERVATION_NOT_FOUND', message: 'Reservation not found' });
             }

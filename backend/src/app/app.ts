@@ -13,11 +13,15 @@ import { userRoutes } from '../routes/user.route.js';
 import type { BuildingService } from '../services/building.service.js';
 import type { FloorService } from '../services/floor.service.js';
 import type { ReservationService } from '../services/reservation.service.js';
+import type { RoomResourceAssignmentService } from '../services/room-resource-assignment.service.js';
+import type { RoomResourceService } from '../services/room-resource.service.js';
 import type { UserService } from '../services/user.service.js';
 import type { RoomService } from '../services/room.service.js';
 import { buildingRoutes } from '../routes/building.route.js';
 import { floorRoutes } from '../routes/floor.route.js';
 import { reservationRoutes } from '../routes/reservation.route.js';
+import { roomResourceAssignmentRoutes } from '../routes/room-resource-assignment.route.js';
+import { roomResourceRoutes } from '../routes/room-resource.route.js';
 import { roomRoutes } from '../routes/room.route.js';
 
 type Services = {
@@ -25,6 +29,8 @@ type Services = {
     buildingService: BuildingService;
     floorService: FloorService;
     reservationService: ReservationService;
+    roomResourceAssignmentService: RoomResourceAssignmentService;
+    roomResourceService: RoomResourceService;
     userService: UserService;
     roomService: RoomService;
 };
@@ -59,6 +65,14 @@ export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger,
     app.register(reservationRoutes, {
         authService: services.authService,
         reservationService: services.reservationService,
+    });
+    app.register(roomResourceAssignmentRoutes, {
+        authService: services.authService,
+        roomResourceAssignmentService: services.roomResourceAssignmentService,
+    });
+    app.register(roomResourceRoutes, {
+        authService: services.authService,
+        roomResourceService: services.roomResourceService,
     });
     app.register(roomRoutes, { authService: services.authService, roomService: services.roomService });
     app.register(userRoutes, { authService: services.authService, userService: services.userService });

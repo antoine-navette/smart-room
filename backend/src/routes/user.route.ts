@@ -1,9 +1,11 @@
 import type { FastifyPluginAsyncZodOpenApi } from 'fastify-zod-openapi';
+import { z } from 'zod';
 import type { AuthService } from '../services/auth.service.js';
 import type { UserService } from '../services/user.service.js';
 import { UserDto, UserIdParamsDto, CreateUserBodyDto } from '../schemas/user.schema.js';
 import {
     EmailAlreadyExistsErrorDto,
+    ForbiddenErrorDto,
     InvalidBodyErrorDto,
     InvalidParamsErrorDto,
     UserNotFoundErrorDto,
@@ -24,6 +26,7 @@ export const userRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
                     201: UserDto,
                     400: InvalidBodyErrorDto,
                     401: UnauthorizedErrorDto,
+                    403: ForbiddenErrorDto,
                     409: EmailAlreadyExistsErrorDto,
                     500: InternalServerErrorDto,
                 },
@@ -33,6 +36,10 @@ export const userRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
             const auth = await authService.authenticate(request.cookies['session_token']);
             if (!auth.success) {
                 return reply.status(401).send({ code: 'UNAUTHORIZED', message: 'Unauthorized' });
+            }
+
+            if (auth.user.role !== 'ADMIN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You must be an admin to create a user' });
             }
 
             const body = CreateUserBodyDto.safeParse(request.body);

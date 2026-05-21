@@ -9,6 +9,10 @@ export class ReservationService {
         private readonly roomRepo: RoomRepository,
     ) {}
 
+    private isAuthorized(reservation: Reservation, currentUser: User): boolean {
+        return currentUser.role === 'ADMIN' || reservation.user_id === currentUser.id;
+    }
+
     async create(roomId: number | null, user: User, startTime: Date, endTime: Date) {
         if (roomId != null) {
             const room = await this.roomRepo.findById(roomId);
@@ -41,9 +45,11 @@ export class ReservationService {
         return reservations.filter((r) => r.user_id === userId);
     }
 
-    async update(id: number, roomId: number | null, user: User, startTime: Date, endTime: Date) {
+    async update(id: number, roomId: number | null, user: User, startTime: Date, endTime: Date, currentUser: User) {
         const current = await this.repo.findById(id);
         if (!current) return { success: false, code: 'RESERVATION_NOT_FOUND' } as const;
+
+        if (!this.isAuthorized(current, currentUser)) return { success: false, code: 'FORBIDDEN' } as const;
 
         if (roomId != null) {
             const room = await this.roomRepo.findById(roomId);
@@ -58,9 +64,11 @@ export class ReservationService {
         return { success: true, reservation: updated } as const;
     }
 
-    async delete(id: number) {
+    async delete(id: number, currentUser: User) {
         const current = await this.repo.findById(id);
         if (!current) return { success: false, code: 'RESERVATION_NOT_FOUND' } as const;
+
+        if (!this.isAuthorized(current, currentUser)) return { success: false, code: 'FORBIDDEN' } as const;
 
         await this.repo.delete(current);
         return { success: true } as const;
