@@ -32,6 +32,21 @@ export class RoomRepository {
         return res.rows[0] ?? null;
     }
 
+    async findAvailable(startTime: Date, endTime: Date): Promise<Room[]> {
+        const res = await this.pool.query<Room>(
+            `SELECT id, name, floor_id, capacity FROM rooms
+             WHERE id NOT IN (
+                 SELECT room_id FROM reservations
+                 WHERE room_id IS NOT NULL
+                 AND start_time < $2
+                 AND end_time > $1
+             )
+             ORDER BY id`,
+            [startTime.toISOString(), endTime.toISOString()],
+        );
+        return res.rows;
+    }
+
     async save(room: Room): Promise<void> {
         await this.pool.query(
             'UPDATE rooms SET name = $1, floor_id = $2, capacity = $3 WHERE id = $4',
