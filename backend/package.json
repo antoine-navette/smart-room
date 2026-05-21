@@ -10,6 +10,7 @@
         "migrate:up": "node-pg-migrate up --database-url-var POSTGRES_URL -m migrations",
         "migrate:down": "node-pg-migrate down --database-url-var POSTGRES_URL -m migrations",
         "migrate:create": "node-pg-migrate create --migration-file-language sql -m migrations",
+        "generate:openapi": "curl -sf http://localhost:3000/docs/json -o openapi.json",
         "format:write": "prettier --write .",
         "format:check": "prettier --check ."
     },
