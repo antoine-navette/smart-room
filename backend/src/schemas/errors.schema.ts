@@ -81,6 +81,18 @@ export const RoomNameExistsErrorDto = z
     .object({ code: z.literal('ROOM_NAME_EXISTS'), message: z.string() })
     .meta({ id: 'RoomNameExistsError' });
 
+export const RoomResourceNotFoundErrorDto = z
+    .object({ code: z.literal('ROOM_RESOURCE_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'RoomResourceNotFoundError' });
+
+export const RoomResourceNameExistsErrorDto = z
+    .object({ code: z.literal('ROOM_RESOURCE_NAME_EXISTS'), message: z.string() })
+    .meta({ id: 'RoomResourceNameExistsError' });
+
+export const RoomResourceAssignmentNotFoundErrorDto = z
+    .object({ code: z.literal('ROOM_RESOURCE_ASSIGNMENT_NOT_FOUND'), message: z.string() })
+    .meta({ id: 'RoomResourceAssignmentNotFoundError' });
+
 export const BuildingHasFloorsErrorDto = z
     .object({ code: z.literal('BUILDING_HAS_FLOORS'), message: z.string() })
     .meta({ id: 'BuildingHasFloorsError' });

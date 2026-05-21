@@ -7,6 +7,8 @@ import { Bcrypt } from './libs/bcrypt.js';
 import { BuildingRepository } from './repositories/building.repository.js';
 import { FloorRepository } from './repositories/floor.repository.js';
 import { ReservationRepository } from './repositories/reservation.repository.js';
+import { RoomResourceRepository } from './repositories/room-resource.repository.js';
+import { RoomResourceAssignmentRepository } from './repositories/room-resource-assignment.repository.js';
 import { RoomRepository } from './repositories/room.repository.js';
 import { SessionRepository } from './repositories/session.repository.js';
 import { UserRepository } from './repositories/user.repository.js';
@@ -14,6 +16,8 @@ import { AuthService } from './services/auth.service.js';
 import { BuildingService } from './services/building.service.js';
 import { FloorService } from './services/floor.service.js';
 import { ReservationService } from './services/reservation.service.js';
+import { RoomResourceAssignmentService } from './services/room-resource-assignment.service.js';
+import { RoomResourceService } from './services/room-resource.service.js';
 import { UserService } from './services/user.service.js';
 import { RoomService } from './services/room.service.js';
 
@@ -31,6 +35,8 @@ try {
     const buildingRepo = new BuildingRepository(postgres.pool);
     const floorRepo = new FloorRepository(postgres.pool);
     const reservationRepo = new ReservationRepository(postgres.pool);
+    const roomResourceRepo = new RoomResourceRepository(postgres.pool);
+    const roomResourceAssignmentRepo = new RoomResourceAssignmentRepository(postgres.pool);
     const roomRepo = new RoomRepository(postgres.pool);
     const bcrypt = new Bcrypt();
     const authService = new AuthService(sessionRepo, userRepo, bcrypt);
@@ -38,9 +44,20 @@ try {
     const floorService = new FloorService(floorRepo, buildingRepo, roomRepo);
     const roomService = new RoomService(roomRepo, floorRepo);
     const reservationService = new ReservationService(reservationRepo, roomRepo);
+    const roomResourceAssignmentService = new RoomResourceAssignmentService(roomResourceAssignmentRepo, roomRepo, roomResourceRepo);
+    const roomResourceService = new RoomResourceService(roomResourceRepo);
     const userService = new UserService(userRepo, bcrypt);
 
-    const app = createApp(env.allowedOrigins, logger, { authService, buildingService, floorService, reservationService, roomService, userService });
+    const app = createApp(env.allowedOrigins, logger, {
+        authService,
+        buildingService,
+        floorService,
+        reservationService,
+        roomResourceAssignmentService,
+        roomResourceService,
+        roomService,
+        userService,
+    });
     await startServer(app, env.port);
     logger.info('Server started');
 
