@@ -89,3 +89,10 @@ export const RoomNotAvailableErrorDto = z
 export const InvalidDateRangeErrorDto = z
     .object({ code: z.literal('INVALID_DATE_RANGE'), message: z.string() })
     .meta({ id: 'InvalidDateRangeError' });
+
+export const InvalidQueryErrorDto = z
+    .object({
+        code: z.literal('INVALID_QUERY'),
+        issues: z.unknown(),
+    })
+    .meta({ id: 'InvalidQueryError' });

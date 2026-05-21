@@ -2,13 +2,15 @@ import { z } from 'zod';
 import type { FastifyPluginAsyncZodOpenApi } from 'fastify-zod-openapi';
 import type { AuthService } from '../services/auth.service.js';
 import type { RoomService } from '../services/room.service.js';
-import { RoomDto, CreateRoomBodyDto, UpdateRoomBodyDto, RoomIdParamsDto } from '../schemas/room.schema.js';
+import { RoomDto, CreateRoomBodyDto, UpdateRoomBodyDto, RoomIdParamsDto, RoomAvailabilityQueryDto } from '../schemas/room.schema.js';
 import {
     RoomNotFoundErrorDto,
     RoomNameExistsErrorDto,
     FloorNotFoundErrorDto,
     InvalidBodyErrorDto,
     InvalidParamsErrorDto,
+    InvalidQueryErrorDto,
+    InvalidDateRangeErrorDto,
     UnauthorizedErrorDto,
     InternalServerErrorDto,
 } from '../schemas/errors.schema.js';
@@ -67,6 +69,33 @@ export const roomRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
         },
     }, async (_request, reply) => {
         const rooms = await roomService.findAll();
+        return reply.status(200).send(rooms);
+    });
+
+    app.get('/rooms/available', {
+        schema: {
+            tags: ['Rooms'],
+            querystring: RoomAvailabilityQueryDto,
+            response: {
+                200: z.array(RoomDto),
+                400: z.union([InvalidQueryErrorDto, InvalidDateRangeErrorDto]),
+                500: InternalServerErrorDto,
+            },
+        },
+    }, async (request, reply) => {
+        const query = RoomAvailabilityQueryDto.safeParse(request.query);
+        if (!query.success) {
+            return reply.status(400).send({ code: 'INVALID_QUERY', issues: query.error.issues });
+        }
+
+        const startTime = new Date(query.data.start);
+        const endTime = new Date(query.data.end);
+
+        if (startTime >= endTime) {
+            return reply.status(400).send({ code: 'INVALID_DATE_RANGE', message: 'start must be before end' });
+        }
+
+        const rooms = await roomService.findAvailable(startTime, endTime);
         return reply.status(200).send(rooms);
     });
 

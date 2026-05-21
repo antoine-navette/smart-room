@@ -22,6 +22,10 @@ export class RoomService {
         return this.repo.findAll();
     }
 
+    findAvailable(startTime: Date, endTime: Date): Promise<Room[]> {
+        return this.repo.findAvailable(startTime, endTime);
+    }
+
     async findById(id: number) {
         const room = await this.repo.findById(id);
         if (!room) return { success: false, code: 'ROOM_NOT_FOUND' } as const;

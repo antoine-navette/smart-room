@@ -30,3 +30,10 @@ export const RoomIdParamsDto = z
         id: z.coerce.number().int().positive(),
     })
     .meta({ id: 'RoomIdParams' });
+
+export const RoomAvailabilityQueryDto = z
+    .object({
+        start: z.iso.datetime(),
+        end: z.iso.datetime(),
+    })
+    .meta({ id: 'RoomAvailabilityQuery' });
