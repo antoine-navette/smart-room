@@ -35,6 +35,13 @@ export const UnauthorizedErrorDto = z
     })
     .meta({ id: 'UnauthorizedError' });
 
+export const ForbiddenErrorDto = z
+    .object({
+        code: z.literal('FORBIDDEN'),
+        message: z.string(),
+    })
+    .meta({ id: 'ForbiddenError' });
+
 export const InternalServerErrorDto = z
     .object({
         code: z.literal('INTERNAL_SERVER_ERROR'),

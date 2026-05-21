@@ -1,4 +1,5 @@
 import type { Room } from '../entities/room.entity.js';
+import type { User } from '../entities/user.entity.js';
 import { RoomRepository } from '../repositories/room.repository.js';
 import { FloorRepository } from '../repositories/floor.repository.js';
 
@@ -8,7 +9,9 @@ export class RoomService {
         private readonly floorRepo: FloorRepository,
     ) {}
 
-    async create(name: string, floorId: number, capacity: number) {
+    async create(user: User, name: string, floorId: number, capacity: number) {
+        if (user.role !== 'ADMIN') return { success: false, code: 'FORBIDDEN' } as const;
+
         const floor = await this.floorRepo.findById(floorId);
         if (!floor) return { success: false, code: 'FLOOR_NOT_FOUND' } as const;
 
@@ -32,7 +35,9 @@ export class RoomService {
         return { success: true, room } as const;
     }
 
-    async update(id: number, name: string, floorId: number, capacity: number) {
+    async update(user: User, id: number, name: string, floorId: number, capacity: number) {
+        if (user.role !== 'ADMIN') return { success: false, code: 'FORBIDDEN' } as const;
+
         const current = await this.repo.findById(id);
         if (!current) return { success: false, code: 'ROOM_NOT_FOUND' } as const;
 
@@ -50,7 +55,9 @@ export class RoomService {
         return { success: true, room: updated } as const;
     }
 
-    async delete(id: number) {
+    async delete(user: User, id: number) {
+        if (user.role !== 'ADMIN') return { success: false, code: 'FORBIDDEN' } as const;
+
         const current = await this.repo.findById(id);
         if (!current) return { success: false, code: 'ROOM_NOT_FOUND' } as const;
 

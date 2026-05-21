@@ -7,6 +7,7 @@ import {
     RoomNotFoundErrorDto,
     RoomNameExistsErrorDto,
     FloorNotFoundErrorDto,
+    ForbiddenErrorDto,
     InvalidBodyErrorDto,
     InvalidParamsErrorDto,
     InvalidQueryErrorDto,
@@ -29,6 +30,7 @@ export const roomRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
                 201: RoomDto,
                 400: InvalidBodyErrorDto,
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: FloorNotFoundErrorDto,
                 409: RoomNameExistsErrorDto,
                 500: InternalServerErrorDto,
@@ -45,8 +47,11 @@ export const roomRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
             return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
         }
 
-        const result = await roomService.create(body.data.name, body.data.floor_id, body.data.capacity);
+        const result = await roomService.create(auth.user, body.data.name, body.data.floor_id, body.data.capacity);
         if (!result.success) {
+            if (result.code === 'FORBIDDEN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You must be an admin to create a room' });
+            }
             if (result.code === 'FLOOR_NOT_FOUND') {
                 return reply.status(404).send({ code: 'FLOOR_NOT_FOUND', message: 'Floor not found' });
             }
@@ -133,6 +138,7 @@ export const roomRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
                 200: RoomDto,
                 400: z.union([InvalidParamsErrorDto, InvalidBodyErrorDto]),
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: z.union([RoomNotFoundErrorDto, FloorNotFoundErrorDto]),
                 409: RoomNameExistsErrorDto,
                 500: InternalServerErrorDto,
@@ -154,8 +160,11 @@ export const roomRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
             return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
         }
 
-        const result = await roomService.update(params.data.id, body.data.name, body.data.floor_id, body.data.capacity);
+        const result = await roomService.update(auth.user, params.data.id, body.data.name, body.data.floor_id, body.data.capacity);
         if (!result.success) {
+            if (result.code === 'FORBIDDEN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You must be an admin to edit a room' });
+            }
             if (result.code === 'ROOM_NAME_EXISTS') {
                 return reply.status(409).send({ code: 'ROOM_NAME_EXISTS', message: 'Room name already exists' });
             }
@@ -179,6 +188,7 @@ export const roomRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
                 204: z.object({}),
                 400: InvalidParamsErrorDto,
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: RoomNotFoundErrorDto,
                 500: InternalServerErrorDto,
             },
@@ -194,8 +204,11 @@ export const roomRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
             return reply.status(400).send({ code: 'INVALID_PARAMS', issues: params.error.issues });
         }
 
-        const result = await roomService.delete(params.data.id);
+        const result = await roomService.delete(auth.user, params.data.id);
         if (!result.success) {
+            if (result.code === 'FORBIDDEN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You must be an admin to delete a room' });
+            }
             if (result.code === 'ROOM_NOT_FOUND') {
                 return reply.status(404).send({ code: 'ROOM_NOT_FOUND', message: 'Room not found' });
             }

@@ -8,6 +8,7 @@ import {
     FloorNameExistsErrorDto,
     FloorHasRoomsErrorDto,
     BuildingNotFoundErrorDto,
+    ForbiddenErrorDto,
     InvalidBodyErrorDto,
     InvalidParamsErrorDto,
     UnauthorizedErrorDto,
@@ -28,6 +29,7 @@ export const floorRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { 
                 201: FloorDto,
                 400: InvalidBodyErrorDto,
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: BuildingNotFoundErrorDto,
                 409: FloorNameExistsErrorDto,
                 500: InternalServerErrorDto,
@@ -44,8 +46,11 @@ export const floorRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { 
             return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
         }
 
-        const result = await floorService.create(body.data.name, body.data.building_id);
+        const result = await floorService.create(auth.user, body.data.name, body.data.building_id);
         if (!result.success) {
+            if (result.code === 'FORBIDDEN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You must be an admin to create a floor' });
+            }
             if (result.code === 'BUILDING_NOT_FOUND') {
                 return reply.status(404).send({ code: 'BUILDING_NOT_FOUND', message: 'Building not found' });
             }
@@ -105,6 +110,7 @@ export const floorRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { 
                 200: FloorDto,
                 400: z.union([InvalidParamsErrorDto, InvalidBodyErrorDto]),
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: z.union([FloorNotFoundErrorDto, BuildingNotFoundErrorDto]),
                 409: FloorNameExistsErrorDto,
                 500: InternalServerErrorDto,
@@ -126,8 +132,11 @@ export const floorRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { 
             return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
         }
 
-        const result = await floorService.update(params.data.id, body.data.name, body.data.building_id);
+        const result = await floorService.update(auth.user, params.data.id, body.data.name, body.data.building_id);
         if (!result.success) {
+            if (result.code === 'FORBIDDEN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You must be an admin to edit a floor' });
+            }
             if (result.code === 'FLOOR_NOT_FOUND') {
                 return reply.status(404).send({ code: 'FLOOR_NOT_FOUND', message: 'Floor not found' });
             }
@@ -151,6 +160,7 @@ export const floorRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { 
                 204: z.object({}),
                 400: InvalidParamsErrorDto,
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: FloorNotFoundErrorDto,
                 409: FloorHasRoomsErrorDto,
                 500: InternalServerErrorDto,
@@ -167,8 +177,11 @@ export const floorRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { 
             return reply.status(400).send({ code: 'INVALID_PARAMS', issues: params.error.issues });
         }
 
-        const result = await floorService.delete(params.data.id);
+        const result = await floorService.delete(auth.user, params.data.id);
         if (!result.success) {
+            if (result.code === 'FORBIDDEN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You must be an admin to delete a floor' });
+            }
             if (result.code === 'FLOOR_HAS_ROOMS') {
                 return reply.status(409).send({ code: 'FLOOR_HAS_ROOMS', message: 'Floor still has rooms' });
             }

@@ -7,6 +7,7 @@ import {
     BuildingNotFoundErrorDto,
     BuildingNameExistsErrorDto,
     BuildingHasFloorsErrorDto,
+    ForbiddenErrorDto,
     InvalidBodyErrorDto,
     InvalidParamsErrorDto,
     UnauthorizedErrorDto,
@@ -27,6 +28,7 @@ export const buildingRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app,
                 201: BuildingDto,
                 400: InvalidBodyErrorDto,
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 409: BuildingNameExistsErrorDto,
                 500: InternalServerErrorDto,
             },
@@ -42,8 +44,11 @@ export const buildingRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app,
             return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
         }
 
-        const result = await buildingService.create(body.data.name);
+        const result = await buildingService.create(auth.user, body.data.name);
         if (!result.success) {
+            if (result.code === 'FORBIDDEN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You must be an admin to create a building' });
+            }
             if (result.code === 'BUILDING_NAME_EXISTS') {
                 return reply.status(409).send({ code: 'BUILDING_NAME_EXISTS', message: 'Building name already exists' });
             }
@@ -100,6 +105,7 @@ export const buildingRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app,
                 200: BuildingDto,
                 400: z.union([InvalidParamsErrorDto, InvalidBodyErrorDto]),
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: BuildingNotFoundErrorDto,
                 409: BuildingNameExistsErrorDto,
                 500: InternalServerErrorDto,
@@ -121,8 +127,11 @@ export const buildingRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app,
             return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
         }
 
-        const result = await buildingService.update(params.data.id, body.data.name);
+        const result = await buildingService.update(auth.user, params.data.id, body.data.name);
         if (!result.success) {
+            if (result.code === 'FORBIDDEN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You must be an admin to edit a building' });
+            }
             if (result.code === 'BUILDING_NAME_EXISTS') {
                 return reply.status(409).send({ code: 'BUILDING_NAME_EXISTS', message: 'Building name already exists' });
             }
@@ -143,6 +152,7 @@ export const buildingRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app,
                 204: z.object({}),
                 400: InvalidParamsErrorDto,
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: BuildingNotFoundErrorDto,
                 409: BuildingHasFloorsErrorDto,
                 500: InternalServerErrorDto,
@@ -159,8 +169,11 @@ export const buildingRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app,
             return reply.status(400).send({ code: 'INVALID_PARAMS', issues: params.error.issues });
         }
 
-        const result = await buildingService.delete(params.data.id);
+        const result = await buildingService.delete(auth.user, params.data.id);
         if (!result.success) {
+            if (result.code === 'FORBIDDEN') {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You must be an admin to delete a building' });
+            }
             if (result.code === 'BUILDING_NOT_FOUND') {
                 return reply.status(404).send({ code: 'BUILDING_NOT_FOUND', message: 'Building not found' });
             }
