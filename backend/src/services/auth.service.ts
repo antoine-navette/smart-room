@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto';
 import type { Session } from '../entities/session.entity.js';
 import type { User } from '../entities/user.entity.js';
-import type { Bcrypt } from '../libs/bcrypt.js';
+import type { Bcrypt } from '../adapters/bcrypt.js';
 import type { SessionRepository } from '../repositories/session.repository.js';
 import type { UserRepository } from '../repositories/user.repository.js';
 

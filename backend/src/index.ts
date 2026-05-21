@@ -1,9 +1,10 @@
 import { loadEnv, type Env } from './config/env.js';
 import { connectToPostgres } from './config/postgres.js';
+import { connectToSmtp } from './config/smtp.js';
 import { startServer } from './app/server.js';
 import { createLogger } from './config/pino.js';
 import { createApp } from './app/app.js';
-import { Bcrypt } from './libs/bcrypt.js';
+import { Bcrypt } from './adapters/bcrypt.js';
 import { BuildingRepository } from './repositories/building.repository.js';
 import { FloorRepository } from './repositories/floor.repository.js';
 import { ReservationRepository } from './repositories/reservation.repository.js';
@@ -15,6 +16,7 @@ import { RoomRepository } from './repositories/room.repository.js';
 import { FavoriteRepository } from './repositories/favorite.repository.js';
 import { SessionRepository } from './repositories/session.repository.js';
 import { UserRepository } from './repositories/user.repository.js';
+import { Mailer } from './adapters/mailer.js';
 import { AuthService } from './services/auth.service.js';
 import { BuildingService } from './services/building.service.js';
 import { FloorService } from './services/floor.service.js';
@@ -36,6 +38,11 @@ try {
     const postgres = await connectToPostgres(env.postgresUrl);
     logger.info('Postgres connected');
 
+    const smtp = await connectToSmtp(env.smtpUrl);
+    logger.info('SMTP connected');
+
+    const mailer = new Mailer(smtp.transporter);
+
     const sessionRepo = new SessionRepository(postgres.pool);
     const userRepo = new UserRepository(postgres.pool);
     const buildingRepo = new BuildingRepository(postgres.pool);
@@ -51,12 +58,16 @@ try {
     const buildingService = new BuildingService(buildingRepo, floorRepo);
     const floorService = new FloorService(floorRepo, buildingRepo, roomRepo);
     const roomService = new RoomService(roomRepo, floorRepo);
-    const reservationService = new ReservationService(reservationRepo, roomRepo);
-    const roomResourceAssignmentService = new RoomResourceAssignmentService(roomResourceAssignmentRepo, roomRepo, roomResourceRepo);
+    const reservationService = new ReservationService(reservationRepo, roomRepo, userRepo, mailer);
+    const roomResourceAssignmentService = new RoomResourceAssignmentService(
+        roomResourceAssignmentRepo,
+        roomRepo,
+        roomResourceRepo,
+    );
     const roomResourceService = new RoomResourceService(roomResourceRepo);
     const incidentRepo = new IncidentRepository(postgres.pool);
-    const incidentService = new IncidentService(incidentRepo, roomRepo);
-    const roomUnavailabilityService = new RoomUnavailabilityService(roomUnavailabilityRepo, roomRepo, reservationRepo);
+    const incidentService = new IncidentService(incidentRepo, roomRepo, mailer);
+    const roomUnavailabilityService = new RoomUnavailabilityService(roomUnavailabilityRepo, roomRepo, reservationRepo, userRepo, mailer);
     const favoriteService = new FavoriteService(favoriteRepo, roomRepo);
     const userService = new UserService(userRepo, bcrypt);
 

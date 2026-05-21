@@ -7,6 +7,7 @@ const schema = z.object({
         .transform((value) => value.split(','))
         .pipe(z.array(z.url())),
     postgresUrl: z.url(),
+    smtpUrl: z.url(),
     port: z.coerce.number(),
 });
 
@@ -17,6 +18,7 @@ export const loadEnv = () => {
         nodeEnv: process.env.NODE_ENV,
         allowedOrigins: process.env.ALLOWED_ORIGINS,
         postgresUrl: process.env.POSTGRES_URL,
+        smtpUrl: process.env.SMTP_URL,
         port: process.env.PORT,
     });
 };

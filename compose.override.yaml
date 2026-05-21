@@ -29,5 +29,11 @@ services:
     volumes:
       - pgadmin:/var/lib/pgadmin
 
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "${MAILPIT_SMTP_PORT:-1025}:1025"
+      - "${MAILPIT_UI_PORT:-8025}:8025"
+
 volumes:
   pgadmin:

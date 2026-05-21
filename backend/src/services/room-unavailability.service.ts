@@ -1,22 +1,36 @@
-import type { User } from '../entities/user.entity.js';
+import type { Room } from '../entities/room.entity.js';
 import type { RoomUnavailability } from '../entities/room-unavailability.entity.js';
-import { RoomRepository } from '../repositories/room.repository.js';
+import type { User } from '../entities/user.entity.js';
 import { ReservationRepository } from '../repositories/reservation.repository.js';
+import { RoomRepository } from '../repositories/room.repository.js';
 import { RoomUnavailabilityRepository } from '../repositories/room-unavailability.repository.js';
+import { UserRepository } from '../repositories/user.repository.js';
+import { Mailer } from '../adapters/mailer.js';
 
 export class RoomUnavailabilityService {
     constructor(
         private readonly repo: RoomUnavailabilityRepository,
         private readonly roomRepo: RoomRepository,
         private readonly reservationRepo: ReservationRepository,
+        private readonly userRepo: UserRepository,
+        private readonly mailer: Mailer,
     ) {}
 
-    private async cancelOverlappingReservations(roomId: number, fromTime: Date, toTime: Date) {
-        const reservations = await this.reservationRepo.findByRoomId(roomId);
+    private async cancelOverlappingReservations(room: Room, fromTime: Date, toTime: Date, reason: string) {
+        const reservations = await this.reservationRepo.findByRoomId(room.id);
+        const overlapping = reservations.filter(
+            (r) => r.start_time.getTime() < toTime.getTime() && fromTime.getTime() < r.end_time.getTime(),
+        );
+
+        await Promise.all(overlapping.map((r) => this.reservationRepo.delete(r)));
+
         await Promise.all(
-            reservations
-                .filter((reservation) => reservation.start_time.getTime() < toTime.getTime() && fromTime.getTime() < reservation.end_time.getTime())
-                .map((reservation) => this.reservationRepo.delete(reservation)),
+            overlapping.map(async (r) => {
+                if (r.user_id == null) return;
+                const user = await this.userRepo.findById(r.user_id);
+                if (!user) return;
+                await this.mailer.sendRoomUnavailabilityNotification(user, r, room, reason);
+            }),
         );
     }
 
@@ -30,10 +44,9 @@ export class RoomUnavailabilityService {
 
         const overlap = await this.repo.findOverlapping(roomId, fromTime, toTime);
         if (overlap.length > 0) return { success: false, code: 'ROOM_UNAVAILABILITY_CONFLICT' } as const;
-        
-        // Check for overlapping reservations and cancel them
+
         const roomUnavailability = await this.repo.create(roomId, fromTime, toTime, reason);
-        await this.cancelOverlappingReservations(roomId, fromTime, toTime);
+        await this.cancelOverlappingReservations(room, fromTime, toTime, reason);
         return { success: true, roomUnavailability } as const;
     }
 
@@ -71,7 +84,7 @@ export class RoomUnavailabilityService {
 
         const updated: RoomUnavailability = { ...current, room_id: roomId, from_time: fromTime, to_time: toTime, reason };
         await this.repo.save(updated);
-        await this.cancelOverlappingReservations(roomId, fromTime, toTime);
+        await this.cancelOverlappingReservations(room, fromTime, toTime, reason);
         return { success: true, roomUnavailability: updated } as const;
     }
 
