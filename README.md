@@ -59,7 +59,7 @@ npm install <package-name>
 
 ## Migrations
 
-Migrations are SQL files managed by [node-pg-migrate](https://github.com/salsita/node-pg-migrate). They live in `database/migrations/` and are mounted into the backend container at runtime.
+Migrations are SQL files managed by [node-pg-migrate](https://github.com/salsita/node-pg-migrate). They live in `backend/migrations/` and are mounted into the backend container at runtime.
 
 All migration commands run inside the backend container:
 
@@ -73,7 +73,7 @@ docker exec -it <backend-container> bash
 npm run migrate:create -- <migration-name>
 ```
 
-This generates a new `.sql` file in `database/migrations/`. Edit it to add your `up` and `down` SQL.
+This generates a new `.sql` file in `backend/migrations/`. Edit it to add your `up` and `down` SQL.
 
 ### Run pending migrations
 
