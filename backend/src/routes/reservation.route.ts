@@ -14,14 +14,13 @@ import {
     ReservationNotFoundErrorDto,
     RoomNotFoundErrorDto,
     RoomNotAvailableErrorDto,
-    UserNotFoundErrorDto,
-    ForbiddenErrorDto,
     InvalidBodyErrorDto,
     InvalidParamsErrorDto,
     InvalidDateRangeErrorDto,
     UnauthorizedErrorDto,
     ForbiddenErrorDto,
     InternalServerErrorDto,
+    UserNotFoundErrorDto
 } from '../schemas/errors.schema.js';
 
 type Options = {
@@ -200,7 +199,7 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
                 400: z.union([InvalidParamsErrorDto, InvalidBodyErrorDto, InvalidDateRangeErrorDto]),
                 401: UnauthorizedErrorDto,
                 403: ForbiddenErrorDto,
-                404: z.union([ReservationNotFoundErrorDto, RoomNotFoundErrorDto, UserNotFoundErrorDto]),
+                404: z.union([ReservationNotFoundErrorDto, RoomNotFoundErrorDto]),
                 409: RoomNotAvailableErrorDto,
                 500: InternalServerErrorDto,
             },
@@ -276,6 +275,15 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
         const params = ReservationIdParamsDto.safeParse(request.params);
         if (!params.success) {
             return reply.status(400).send({ code: 'INVALID_PARAMS', issues: params.error.issues });
+        }
+
+        const currentReservation = await reservationService.findById(params.data.id);
+        if (!currentReservation.success) {
+            return reply.status(404).send({ code: 'RESERVATION_NOT_FOUND', message: 'Reservation not found' });
+        }
+
+        if (!canManageReservation(auth.user, currentReservation.reservation.user_id)) {
+            return reply.status(403).send({ code: 'FORBIDDEN', message: 'Forbidden' });
         }
 
         const result = await reservationService.delete(params.data.id, auth.user);
