@@ -4,4 +4,4 @@ ENV NODE_ENV=development
 
 WORKDIR /app
 EXPOSE 3000
-CMD ["sh", "-c", "npm install && exec node --import tsx --watch src/index.ts"]
+CMD ["sh", "-c", "npm install && exec node_modules/.bin/tsx watch src/index.ts"]
