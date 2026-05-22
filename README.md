@@ -24,12 +24,14 @@ Docker Compose automatically loads `compose.yaml` and merges `compose.override.y
 
 Default ports:
 
-| Service  | Port   |
-| -------- | ------ |
-| Frontend | `5173` |
-| Backend  | `3000` |
-| Database | `5432` |
-| pgAdmin  | `5050` |
+| Service       | Port   |
+| ------------- | ------ |
+| Frontend      | `5173` |
+| Backend       | `3000` |
+| Database      | `5432` |
+| pgAdmin       | `5050` |
+| Mailpit SMTP  | `1025` |
+| Mailpit UI    | `8025` |
 
 All ports are configurable via the root `.env`.
 
