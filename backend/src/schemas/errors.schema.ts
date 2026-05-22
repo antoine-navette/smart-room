@@ -143,3 +143,10 @@ export const InvalidQueryErrorDto = z
         issues: z.unknown(),
     })
     .meta({ id: 'InvalidQueryError' });
+
+export const ForbiddenErrorDto = z
+    .object({
+        code: z.literal('FORBIDDEN'),
+        message: z.string(),
+    })
+    .meta({ id: 'ForbiddenError' });
