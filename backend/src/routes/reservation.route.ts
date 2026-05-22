@@ -18,12 +18,21 @@ import {
     InvalidParamsErrorDto,
     InvalidDateRangeErrorDto,
     UnauthorizedErrorDto,
+    ForbiddenErrorDto,
     InternalServerErrorDto,
 } from '../schemas/errors.schema.js';
 
 type Options = {
     authService: AuthService;
     reservationService: ReservationService;
+};
+
+const canAccessUserReservations = (user: { id: number; role: 'USER' | 'ADMIN' }, userId: number) => {
+    return user.role === 'ADMIN' || user.id === userId;
+};
+
+const canManageReservation = (user: { id: number; role: 'USER' | 'ADMIN' }, reservationUserId: number | null) => {
+    return user.role === 'ADMIN' || reservationUserId === user.id;
 };
 
 export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { authService, reservationService }) => {
@@ -74,11 +83,21 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
             tags: ['Reservations'],
             response: {
                 200: z.array(ReservationDto),
+                401: UnauthorizedErrorDto,
                 500: InternalServerErrorDto,
             },
         },
-    }, async (_request, reply) => {
-        const reservations = await reservationService.findAll();
+    }, async (request, reply) => {
+        const auth = await authService.authenticate(request.cookies['session_token']);
+        if (!auth.success) {
+            return reply.status(401).send({ code: 'UNAUTHORIZED', message: 'Unauthorized' });
+        }
+
+        const reservations =
+            auth.user.role === 'ADMIN'
+                ? await reservationService.findAll()
+                : await reservationService.findByUserId(auth.user.id);
+
         return reply.status(200).send(reservations);
     });
 
@@ -89,11 +108,18 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
             response: {
                 200: ReservationDto,
                 400: InvalidParamsErrorDto,
+                401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: ReservationNotFoundErrorDto,
                 500: InternalServerErrorDto,
             },
         },
     }, async (request, reply) => {
+        const auth = await authService.authenticate(request.cookies['session_token']);
+        if (!auth.success) {
+            return reply.status(401).send({ code: 'UNAUTHORIZED', message: 'Unauthorized' });
+        }
+
         const params = ReservationIdParamsDto.safeParse(request.params);
         if (!params.success) {
             return reply.status(400).send({ code: 'INVALID_PARAMS', issues: params.error.issues });
@@ -102,6 +128,10 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
         const result = await reservationService.findById(params.data.id);
         if (!result.success) {
             return reply.status(404).send({ code: 'RESERVATION_NOT_FOUND', message: 'Reservation not found' });
+        }
+
+        if (!canManageReservation(auth.user, result.reservation.user_id)) {
+            return reply.status(403).send({ code: 'FORBIDDEN', message: 'Forbidden' });
         }
 
         return reply.status(200).send(result.reservation);
@@ -114,13 +144,24 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
             response: {
                 200: z.array(ReservationDto),
                 400: InvalidParamsErrorDto,
+                401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 500: InternalServerErrorDto,
             },
         },
     }, async (request, reply) => {
+        const auth = await authService.authenticate(request.cookies['session_token']);
+        if (!auth.success) {
+            return reply.status(401).send({ code: 'UNAUTHORIZED', message: 'Unauthorized' });
+        }
+
         const params = ReservationUserIdParamsDto.safeParse(request.params);
         if (!params.success) {
             return reply.status(400).send({ code: 'INVALID_PARAMS', issues: params.error.issues });
+        }
+
+        if (!canAccessUserReservations(auth.user, params.data.userId)) {
+            return reply.status(403).send({ code: 'FORBIDDEN', message: 'Forbidden' });
         }
 
         const reservations = await reservationService.findByUserId(params.data.userId);
@@ -156,6 +197,7 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
                 200: ReservationDto,
                 400: z.union([InvalidParamsErrorDto, InvalidBodyErrorDto, InvalidDateRangeErrorDto]),
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: z.union([ReservationNotFoundErrorDto, RoomNotFoundErrorDto]),
                 409: RoomNotAvailableErrorDto,
                 500: InternalServerErrorDto,
@@ -170,6 +212,15 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
         const params = ReservationIdParamsDto.safeParse(request.params);
         if (!params.success) {
             return reply.status(400).send({ code: 'INVALID_PARAMS', issues: params.error.issues });
+        }
+
+        const currentReservation = await reservationService.findById(params.data.id);
+        if (!currentReservation.success) {
+            return reply.status(404).send({ code: 'RESERVATION_NOT_FOUND', message: 'Reservation not found' });
+        }
+
+        if (!canManageReservation(auth.user, currentReservation.reservation.user_id)) {
+            return reply.status(403).send({ code: 'FORBIDDEN', message: 'Forbidden' });
         }
 
         const body = UpdateReservationBodyDto.safeParse(request.body);
@@ -206,6 +257,7 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
                 204: z.object({}),
                 400: InvalidParamsErrorDto,
                 401: UnauthorizedErrorDto,
+                403: ForbiddenErrorDto,
                 404: ReservationNotFoundErrorDto,
                 500: InternalServerErrorDto,
             },
@@ -219,6 +271,15 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (a
         const params = ReservationIdParamsDto.safeParse(request.params);
         if (!params.success) {
             return reply.status(400).send({ code: 'INVALID_PARAMS', issues: params.error.issues });
+        }
+
+        const currentReservation = await reservationService.findById(params.data.id);
+        if (!currentReservation.success) {
+            return reply.status(404).send({ code: 'RESERVATION_NOT_FOUND', message: 'Reservation not found' });
+        }
+
+        if (!canManageReservation(auth.user, currentReservation.reservation.user_id)) {
+            return reply.status(403).send({ code: 'FORBIDDEN', message: 'Forbidden' });
         }
 
         const result = await reservationService.delete(params.data.id);

@@ -1,68 +1,96 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Work+Sans:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@import "tailwindcss";
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@theme {
+  --font-headline-md: 'Plus Jakarta Sans', sans-serif;
+  --font-headline-lg: 'Plus Jakarta Sans', sans-serif;
+  --font-headline-xl: 'Plus Jakarta Sans', sans-serif;
+  --font-headline-lg-mobile: 'Plus Jakarta Sans', sans-serif;
+  
+  --font-body-md: 'Work Sans', sans-serif;
+  --font-body-lg: 'Work Sans', sans-serif;
+  --font-label-bold: 'Work Sans', sans-serif;
+  
+  --color-primary: #2042cd;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #405de6;
+  --color-on-primary-container: #ebebff;
+  --color-primary-fixed: #dee1ff;
+  --color-primary-fixed-dim: #bac3ff;
+  --color-on-primary-fixed: #001159;
+  --color-on-primary-fixed-variant: #0733c1;
+  --color-inverse-primary: #bac3ff;
+  
+  --color-secondary: #6d5e00;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #fddc00;
+  --color-on-secondary-container: #706000;
+  --color-secondary-fixed: #ffe24b;
+  --color-secondary-fixed-dim: #e3c600;
+  --color-on-secondary-fixed: #211b00;
+  --color-on-secondary-fixed-variant: #524600;
+  
+  --color-tertiary: #006034;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #007b44;
+  --color-on-tertiary-container: #abffc3;
+  --color-tertiary-fixed: #5bffa1;
+  --color-tertiary-fixed-dim: #00e383;
+  --color-on-tertiary-fixed: #00210e;
+  --color-on-tertiary-fixed-variant: #00522c;
+
+  --color-surface: #f9f9f9;
+  --color-surface-dim: #dadada;
+  --color-surface-bright: #f9f9f9;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3f3f4;
+  --color-surface-container: #eeeeee;
+  --color-surface-container-high: #e8e8e8;
+  --color-surface-container-highest: #e2e2e2;
+  --color-on-surface: #1a1c1c;
+  --color-on-surface-variant: #444654;
+  --color-inverse-surface: #2f3131;
+  --color-inverse-on-surface: #f0f1f1;
+  --color-surface-tint: #314fd9;
+  
+  --color-background: #f9f9f9;
+  --color-on-background: #1a1c1c;
+  
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  
+  --color-outline: #757686;
+  --color-outline-variant: #c5c5d7;
+
+  --spacing-unit: 4px;
+  --spacing-gutter: 24px;
+  --spacing-margin-mobile: 16px;
+  --spacing-margin-desktop: 48px;
+
+  --border-width-3: 3px;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@layer base {
+  body {
+    @apply font-body-md bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container;
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+}
+
+@layer components {
+  .neo-shadow { box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); }
+  .neo-shadow-hover:hover { box-shadow: 8px 8px 0px 0px rgba(0,0,0,1); transform: translate(-2px, -2px); }
+  .neo-shadow-active:active { box-shadow: 0px 0px 0px 0px rgba(0,0,0,1); transform: translate(6px, 6px); }
+  
+  .neo-shadow-sm { box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); }
+  .neo-border { border: 3px solid #1a1c1c; }
+  
+  .doodle-icon {
+      font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+      text-shadow: 1px 0 0 #000, 0 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
+      color: white;
   }
 }

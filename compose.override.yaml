@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./frontend:/app
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
   backend:
     build:
