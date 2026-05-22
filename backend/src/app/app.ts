@@ -50,7 +50,11 @@ export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger,
     app.setValidatorCompiler(() => (data) => ({ value: data }));
     app.setSerializerCompiler(serializerCompiler);
 
-    app.register(cors, { origin: allowedOrigins, credentials: true });
+    app.register(cors, {
+        origin: allowedOrigins,
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    });
     app.register(cookie);
     app.register(fastifyZodOpenApiPlugin);
     app.register(swagger, {
@@ -98,7 +102,7 @@ export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger,
     });
 
     app.setErrorHandler(async (err, request, reply) => {
-        request.log.error(err instanceof Error ? err.message : 'Unknown error');
+        request.log.error({ err }, 'Unhandled error');
         return reply.status(500).send({ code: 'INTERNAL_SERVER_ERROR', message: 'Internal server error' });
     });
 
