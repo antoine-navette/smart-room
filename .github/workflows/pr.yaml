@@ -1,0 +1,70 @@
+name: PR Lifecycle (Quality, Build)
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # ==========================================
+  # 1. QUALITY CHECKS
+  # ==========================================
+  quality_backend:
+    name: Backend checks (format)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - run: npm ci
+        working-directory: backend
+      - run: npm run format:check
+        working-directory: backend
+
+  # ==========================================
+  # 2. BUILD IMAGES
+  # ==========================================
+  build_frontend:
+    name: Build Frontend
+    needs: [quality_backend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u antoine-navette --password-stdin
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build & push
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t ghcr.io/antoine-navette/smart-room-frontend:${{ github.event.pull_request.head.sha }} \
+            -f frontend/Dockerfile \
+            --push \
+            ./frontend
+
+  build_backend:
+    name: Build Backend
+    needs: [quality_backend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u antoine-navette --password-stdin
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build & push
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t ghcr.io/antoine-navette/smart-room-backend:${{ github.event.pull_request.head.sha }} \
+            -f backend/Dockerfile \
+            --push \
+            ./backend

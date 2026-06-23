@@ -1,0 +1,45 @@
+name: Deploy to Production
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy_prod:
+    name: Deploy to Production
+    if: github.event.pull_request.merged == true
+    runs-on: [self-hosted, smart-room]
+    env:
+      TARGET_PATH: /srv/apps/smart-room
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+    steps:
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u antoine-navette --password-stdin
+
+      - name: Retag images to latest
+        run: |
+          docker buildx imagetools create \
+            ghcr.io/antoine-navette/smart-room-backend:$HEAD_SHA \
+            --tag ghcr.io/antoine-navette/smart-room-backend:latest
+
+          docker buildx imagetools create \
+            ghcr.io/antoine-navette/smart-room-frontend:$HEAD_SHA \
+            --tag ghcr.io/antoine-navette/smart-room-frontend:latest
+
+      - name: Pull latest code
+        run: |
+          cd "$TARGET_PATH"
+          git pull
+
+      - name: Deploy
+        run: |
+          cd "$TARGET_PATH"
+          docker compose -f compose.yaml -f compose.prod.yaml pull
+          docker compose -f compose.yaml -f compose.prod.yaml down --remove-orphans
+          docker compose -f compose.yaml -f compose.prod.yaml up -d

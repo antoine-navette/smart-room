@@ -73,12 +73,10 @@ export const roomUnavailabilityRoutes: FastifyPluginAsyncZodOpenApi<Options> = a
                         .status(400)
                         .send({ code: 'INVALID_DATE_RANGE', message: 'from_time must be before to_time' });
                 if (result.code === 'ROOM_UNAVAILABILITY_CONFLICT')
-                    return reply
-                        .status(409)
-                        .send({
-                            code: 'ROOM_UNAVAILABILITY_CONFLICT',
-                            message: 'Room unavailability overlaps with an existing one',
-                        });
+                    return reply.status(409).send({
+                        code: 'ROOM_UNAVAILABILITY_CONFLICT',
+                        message: 'Room unavailability overlaps with an existing one',
+                    });
                 result satisfies never;
             }
 
@@ -208,12 +206,10 @@ export const roomUnavailabilityRoutes: FastifyPluginAsyncZodOpenApi<Options> = a
                         .status(400)
                         .send({ code: 'INVALID_DATE_RANGE', message: 'from_time must be before to_time' });
                 if (result.code === 'ROOM_UNAVAILABILITY_CONFLICT')
-                    return reply
-                        .status(409)
-                        .send({
-                            code: 'ROOM_UNAVAILABILITY_CONFLICT',
-                            message: 'Room unavailability overlaps with an existing one',
-                        });
+                    return reply.status(409).send({
+                        code: 'ROOM_UNAVAILABILITY_CONFLICT',
+                        message: 'Room unavailability overlaps with an existing one',
+                    });
                 result satisfies never;
             }
 

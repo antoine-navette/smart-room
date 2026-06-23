@@ -180,12 +180,10 @@ export const incidentRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app,
                         .status(409)
                         .send({ code: 'INCIDENT_ALREADY_RESOLVED', message: 'Resolved incidents cannot be updated' });
                 if (result.code === 'INCIDENT_INVALID_TRANSITION')
-                    return reply
-                        .status(409)
-                        .send({
-                            code: 'INCIDENT_INVALID_TRANSITION',
-                            message: 'An incident in progress cannot be set back to OPEN',
-                        });
+                    return reply.status(409).send({
+                        code: 'INCIDENT_INVALID_TRANSITION',
+                        message: 'An incident in progress cannot be set back to OPEN',
+                    });
                 result satisfies never;
             }
 

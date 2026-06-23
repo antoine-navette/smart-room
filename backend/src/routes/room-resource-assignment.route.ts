@@ -167,12 +167,10 @@ export const roomResourceAssignmentRoutes: FastifyPluginAsyncZodOpenApi<Options>
                         .send({ code: 'ROOM_RESOURCE_NOT_FOUND', message: 'Room resource not found' });
                 }
                 if (result.code === 'ROOM_RESOURCE_ASSIGNMENT_NOT_FOUND') {
-                    return reply
-                        .status(404)
-                        .send({
-                            code: 'ROOM_RESOURCE_ASSIGNMENT_NOT_FOUND',
-                            message: 'Room resource assignment not found',
-                        });
+                    return reply.status(404).send({
+                        code: 'ROOM_RESOURCE_ASSIGNMENT_NOT_FOUND',
+                        message: 'Room resource assignment not found',
+                    });
                 }
                 result satisfies never;
             }
