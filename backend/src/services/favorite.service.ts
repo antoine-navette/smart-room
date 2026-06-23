@@ -4,7 +4,10 @@ import { FavoriteRepository } from '../repositories/favorite.repository.js';
 import { RoomRepository } from '../repositories/room.repository.js';
 
 export class FavoriteService {
-    constructor(private readonly repo: FavoriteRepository, private readonly roomRepo: RoomRepository) {}
+    constructor(
+        private readonly repo: FavoriteRepository,
+        private readonly roomRepo: RoomRepository,
+    ) {}
 
     async create(user: User, roomId: number) {
         const room = await this.roomRepo.findById(roomId);
@@ -26,7 +29,8 @@ export class FavoriteService {
         const fav = await this.repo.findByUserAndRoom(userId, roomId);
         if (!fav) return { success: false, code: 'FAVORITE_NOT_FOUND' } as const;
 
-        if (currentUser.role !== 'ADMIN' && fav.user_id !== currentUser.id) return { success: false, code: 'FORBIDDEN' } as const;
+        if (currentUser.role !== 'ADMIN' && fav.user_id !== currentUser.id)
+            return { success: false, code: 'FORBIDDEN' } as const;
 
         await this.repo.deleteByUserAndRoom(userId, roomId);
         return { success: true } as const;

@@ -82,7 +82,13 @@ export class RoomUnavailabilityService {
         const overlap = await this.repo.findOverlapping(roomId, fromTime, toTime, id);
         if (overlap.length > 0) return { success: false, code: 'ROOM_UNAVAILABILITY_CONFLICT' } as const;
 
-        const updated: RoomUnavailability = { ...current, room_id: roomId, from_time: fromTime, to_time: toTime, reason };
+        const updated: RoomUnavailability = {
+            ...current,
+            room_id: roomId,
+            from_time: fromTime,
+            to_time: toTime,
+            reason,
+        };
         await this.repo.save(updated);
         await this.cancelOverlappingReservations(room, fromTime, toTime, reason);
         return { success: true, roomUnavailability: updated } as const;

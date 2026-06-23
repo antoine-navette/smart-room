@@ -3,17 +3,35 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
+    env_file:
+      - path: ./frontend/.env.example
+        required: true
+      - path: ./frontend/.env
+        required: false
     volumes:
       - ./frontend:/app
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
+    env_file:
+      - path: ./backend/.env.example
+        required: true
+      - path: ./backend/.env
+        required: false
     volumes:
       - ./backend:/app
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
 
   database:
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-smart-room}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
 

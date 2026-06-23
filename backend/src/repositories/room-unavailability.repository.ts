@@ -37,7 +37,12 @@ export class RoomUnavailabilityRepository {
         return res.rows;
     }
 
-    async findOverlapping(roomId: number, fromTime: Date, toTime: Date, excludeId?: number): Promise<RoomUnavailability[]> {
+    async findOverlapping(
+        roomId: number,
+        fromTime: Date,
+        toTime: Date,
+        excludeId?: number,
+    ): Promise<RoomUnavailability[]> {
         const params: Array<number | string> = [roomId, fromTime.toISOString(), toTime.toISOString()];
         const excludeClause = excludeId == null ? '' : ' AND id <> $4';
         if (excludeId != null) params.push(excludeId);
@@ -55,7 +60,13 @@ export class RoomUnavailabilityRepository {
     async save(roomUnavailability: RoomUnavailability): Promise<void> {
         await this.pool.query(
             'UPDATE room_unavailabilities SET room_id = $1, from_time = $2, to_time = $3, reason = $4 WHERE id = $5',
-            [roomUnavailability.room_id, roomUnavailability.from_time.toISOString(), roomUnavailability.to_time.toISOString(), roomUnavailability.reason, roomUnavailability.id],
+            [
+                roomUnavailability.room_id,
+                roomUnavailability.from_time.toISOString(),
+                roomUnavailability.to_time.toISOString(),
+                roomUnavailability.reason,
+                roomUnavailability.id,
+            ],
         );
     }
 

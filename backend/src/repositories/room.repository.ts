@@ -52,7 +52,12 @@ export class RoomRepository {
         return res.rows;
     }
 
-    async hasUnavailabilityOverlap(roomId: number, startTime: Date, endTime: Date, excludeId?: number): Promise<boolean> {
+    async hasUnavailabilityOverlap(
+        roomId: number,
+        startTime: Date,
+        endTime: Date,
+        excludeId?: number,
+    ): Promise<boolean> {
         const params: Array<number | string> = [roomId, startTime.toISOString(), endTime.toISOString()];
         const excludeClause = excludeId == null ? '' : ' AND id <> $4';
         if (excludeId != null) params.push(excludeId);
@@ -70,10 +75,12 @@ export class RoomRepository {
     }
 
     async save(room: Room): Promise<void> {
-        await this.pool.query(
-            'UPDATE rooms SET name = $1, floor_id = $2, capacity = $3 WHERE id = $4',
-            [room.name, room.floor_id, room.capacity, room.id],
-        );
+        await this.pool.query('UPDATE rooms SET name = $1, floor_id = $2, capacity = $3 WHERE id = $4', [
+            room.name,
+            room.floor_id,
+            room.capacity,
+            room.id,
+        ]);
     }
 
     async delete(room: Room): Promise<void> {

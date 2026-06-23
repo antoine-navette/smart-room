@@ -43,8 +43,7 @@ export class RoomService {
 
         if (name !== current.name || floorId !== current.floor_id) {
             const existing = await this.repo.findByNameAndFloorId(name, floorId);
-            if (existing && existing.id !== id)
-                return { success: false, code: 'ROOM_NAME_EXISTS', name } as const;
+            if (existing && existing.id !== id) return { success: false, code: 'ROOM_NAME_EXISTS', name } as const;
 
             const floor = await this.floorRepo.findById(floorId);
             if (!floor) return { success: false, code: 'FLOOR_NOT_FOUND' } as const;

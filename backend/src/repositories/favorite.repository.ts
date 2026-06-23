@@ -15,11 +15,17 @@ export class FavoriteRepository {
     }
 
     async findByUserId(userId: number): Promise<Favorite[]> {
-        const res = await this.pool.query<Favorite>('SELECT user_id, room_id FROM favorites WHERE user_id = $1 ORDER BY room_id', [userId]);
+        const res = await this.pool.query<Favorite>(
+            'SELECT user_id, room_id FROM favorites WHERE user_id = $1 ORDER BY room_id',
+            [userId],
+        );
         return res.rows;
     }
     async findByUserAndRoom(userId: number, roomId: number): Promise<Favorite | null> {
-        const res = await this.pool.query<Favorite>('SELECT user_id, room_id FROM favorites WHERE user_id = $1 AND room_id = $2', [userId, roomId]);
+        const res = await this.pool.query<Favorite>(
+            'SELECT user_id, room_id FROM favorites WHERE user_id = $1 AND room_id = $2',
+            [userId, roomId],
+        );
         return res.rows[0] ?? null;
     }
 

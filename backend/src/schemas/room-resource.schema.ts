@@ -19,8 +19,8 @@ export const UpdateRoomResourceBodyDto = z
     })
     .meta({ id: 'UpdateRoomResourceBody' });
 
-export const RoomResourceIdParamsDto =
-    z.object({
+export const RoomResourceIdParamsDto = z
+    .object({
         id: z.coerce.number().int().positive(),
     })
-        .meta({ id: 'RoomResourceIdParams' });
+    .meta({ id: 'RoomResourceIdParams' });

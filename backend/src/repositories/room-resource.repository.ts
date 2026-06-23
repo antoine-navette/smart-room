@@ -30,7 +30,10 @@ export class RoomResourceRepository {
     }
 
     async save(roomResource: RoomResource): Promise<void> {
-        await this.pool.query('UPDATE room_resources SET name = $1 WHERE id = $2', [roomResource.name, roomResource.id]);
+        await this.pool.query('UPDATE room_resources SET name = $1 WHERE id = $2', [
+            roomResource.name,
+            roomResource.id,
+        ]);
     }
 
     async delete(roomResource: RoomResource): Promise<void> {

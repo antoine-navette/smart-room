@@ -67,7 +67,13 @@ try {
     const roomResourceService = new RoomResourceService(roomResourceRepo);
     const incidentRepo = new IncidentRepository(postgres.pool);
     const incidentService = new IncidentService(incidentRepo, roomRepo, mailer);
-    const roomUnavailabilityService = new RoomUnavailabilityService(roomUnavailabilityRepo, roomRepo, reservationRepo, userRepo, mailer);
+    const roomUnavailabilityService = new RoomUnavailabilityService(
+        roomUnavailabilityRepo,
+        roomRepo,
+        reservationRepo,
+        userRepo,
+        mailer,
+    );
     const favoriteService = new FavoriteService(favoriteRepo, roomRepo);
     const userService = new UserService(userRepo, bcrypt);
 

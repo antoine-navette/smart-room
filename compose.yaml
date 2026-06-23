@@ -1,35 +1,15 @@
 services:
-  frontend:
-    env_file:
-      - path: ./frontend/.env.example
-        required: true
-      - path: ./frontend/.env
-        required: false
-    ports:
-      - "${FRONTEND_PORT:-5173}:5173"
-
   backend:
-    env_file:
-      - path: ./backend/.env.example
-        required: true
-      - path: ./backend/.env
-        required: false
-    ports:
-      - "${BACKEND_PORT:-3000}:3000"
     depends_on:
       database:
         condition: service_healthy
 
   database:
     image: postgres:18
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-admin}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-      POSTGRES_DB: ${POSTGRES_DB:-smart-room}
     volumes:
       - database:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-smart-room}"]
+      test: ["CMD-SHELL", "pg_isready"]
       interval: 5s
       timeout: 3s
       retries: 5
