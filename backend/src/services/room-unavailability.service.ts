@@ -29,7 +29,7 @@ export class RoomUnavailabilityService {
                 if (r.user_id == null) return;
                 const user = await this.userRepo.findById(r.user_id);
                 if (!user) return;
-                await this.mailer.sendRoomUnavailabilityNotification(user, r, room, reason);
+                void this.mailer.sendRoomUnavailabilityNotification(user, r, room, reason).catch(() => {});
             }),
         );
     }
