@@ -20,17 +20,17 @@ jobs:
 
     steps:
       - name: Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u antoine-nve --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u antoine-navette --password-stdin
 
       - name: Retag images to latest
         run: |
           docker buildx imagetools create \
-            ghcr.io/antoine-nve/smart-room-backend:$HEAD_SHA \
-            --tag ghcr.io/antoine-nve/smart-room-backend:latest
+            ghcr.io/antoine-navette/smart-room-backend:$HEAD_SHA \
+            --tag ghcr.io/antoine-navette/smart-room-backend:latest
 
           docker buildx imagetools create \
-            ghcr.io/antoine-nve/smart-room-frontend:$HEAD_SHA \
-            --tag ghcr.io/antoine-nve/smart-room-frontend:latest
+            ghcr.io/antoine-navette/smart-room-frontend:$HEAD_SHA \
+            --tag ghcr.io/antoine-navette/smart-room-frontend:latest
 
       - name: Pull latest code
         run: |
