@@ -15,7 +15,7 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: [self-hosted, smart-room]
     env:
-      TARGET_PATH: /srv/apps/smart-room
+      TARGET_PATH: /srv/apps/smart-room/prod
       HEAD_SHA: ${{ github.event.pull_request.head.sha }}
 
     steps:
