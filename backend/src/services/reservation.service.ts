@@ -29,7 +29,7 @@ export class ReservationService {
         }
 
         const reservation = await this.repo.create(roomId, user.id, startTime, endTime);
-        await this.mailer.sendReservationConfirmation(user, reservation, room);
+        void this.mailer.sendReservationConfirmation(user, reservation, room).catch(() => {});
         return { success: true, reservation } as const;
     }
 
@@ -70,7 +70,7 @@ export class ReservationService {
 
         const updated = { ...current, room_id: roomId, user_id: user.id, start_time: startTime, end_time: endTime };
         await this.repo.save(updated);
-        await this.mailer.sendReservationUpdate(user, updated, room);
+        void this.mailer.sendReservationUpdate(user, updated, room).catch(() => {});
         return { success: true, reservation: updated } as const;
     }
 
@@ -90,7 +90,7 @@ export class ReservationService {
 
         await this.repo.delete(current);
 
-        if (owner) await this.mailer.sendReservationCancellation(owner, current, room);
+        if (owner) void this.mailer.sendReservationCancellation(owner, current, room).catch(() => {});
         return { success: true } as const;
     }
 

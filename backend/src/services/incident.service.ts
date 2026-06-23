@@ -16,7 +16,7 @@ export class IncidentService {
         if (roomId && !room) return { success: false, code: 'ROOM_NOT_FOUND' } as const;
 
         const incident = await this.repo.create(roomId, user.id, title, description ?? null);
-        await this.mailer.sendIncidentReport(user, incident, room ?? null);
+        void this.mailer.sendIncidentReport(user, incident, room ?? null).catch(() => {});
         return { success: true, incident } as const;
     }
 
