@@ -40,7 +40,13 @@ export class ReservationRepository {
     async save(reservation: Reservation): Promise<void> {
         await this.pool.query(
             'UPDATE reservations SET user_id = $1, room_id = $2, start_time = $3, end_time = $4 WHERE id = $5',
-            [reservation.user_id, reservation.room_id, reservation.start_time.toISOString(), reservation.end_time.toISOString(), reservation.id],
+            [
+                reservation.user_id,
+                reservation.room_id,
+                reservation.start_time.toISOString(),
+                reservation.end_time.toISOString(),
+                reservation.id,
+            ],
         );
     }
 

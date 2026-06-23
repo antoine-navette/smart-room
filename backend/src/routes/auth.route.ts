@@ -37,8 +37,7 @@ export const authRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
         },
         async (request, reply) => {
             const body = LoginBodyDto.safeParse(request.body);
-            if (!body.success)
-                return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
+            if (!body.success) return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
 
             const result = await authService.login(body.data.email, body.data.password);
 

@@ -5,10 +5,9 @@ export class BuildingRepository {
     constructor(private readonly pool: Pool) {}
 
     async create(name: string): Promise<Building> {
-        const res = await this.pool.query<Building>(
-            'INSERT INTO buildings (name) VALUES ($1) RETURNING id, name',
-            [name],
-        );
+        const res = await this.pool.query<Building>('INSERT INTO buildings (name) VALUES ($1) RETURNING id, name', [
+            name,
+        ]);
         const row = res.rows[0];
         if (!row) throw new Error('Failed to create building');
         return row;

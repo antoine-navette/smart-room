@@ -42,6 +42,9 @@ export class RoomResourceAssignmentRepository {
     }
 
     async delete(roomId: number, resourceId: number): Promise<void> {
-        await this.pool.query('DELETE FROM contain_resources WHERE room_id = $1 AND resource_id = $2', [roomId, resourceId]);
+        await this.pool.query('DELETE FROM contain_resources WHERE room_id = $1 AND resource_id = $2', [
+            roomId,
+            resourceId,
+        ]);
     }
 }

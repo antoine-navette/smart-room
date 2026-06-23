@@ -41,8 +41,7 @@ export class FloorService {
 
         if (name !== current.name || buildingId !== current.building_id) {
             const existing = await this.repo.findByNameAndBuildingId(name, buildingId);
-            if (existing && existing.id !== id)
-                return { success: false, code: 'FLOOR_NAME_EXISTS', name } as const;
+            if (existing && existing.id !== id) return { success: false, code: 'FLOOR_NAME_EXISTS', name } as const;
 
             const building = await this.buildingRepo.findById(buildingId);
             if (!building) return { success: false, code: 'BUILDING_NOT_FOUND' } as const;
@@ -60,8 +59,7 @@ export class FloorService {
         if (!current) return { success: false, code: 'FLOOR_NOT_FOUND' } as const;
 
         const rooms = await this.roomRepo.findAll();
-        if (rooms.some((r) => r.floor_id === id))
-            return { success: false, code: 'FLOOR_HAS_ROOMS' } as const;
+        if (rooms.some((r) => r.floor_id === id)) return { success: false, code: 'FLOOR_HAS_ROOMS' } as const;
 
         await this.repo.delete(current);
         return { success: true } as const;

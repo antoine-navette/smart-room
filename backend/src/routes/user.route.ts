@@ -43,10 +43,14 @@ export const userRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
             }
 
             const body = CreateUserBodyDto.safeParse(request.body);
-            if (!body.success)
-                return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
+            if (!body.success) return reply.status(400).send({ code: 'INVALID_BODY', issues: body.error.issues });
 
-            const result = await userService.create(body.data.email, body.data.password, body.data.first_name, body.data.last_name);
+            const result = await userService.create(
+                body.data.email,
+                body.data.password,
+                body.data.first_name,
+                body.data.last_name,
+            );
 
             if (!result.success) {
                 if (result.code === 'EMAIL_ALREADY_EXISTS')

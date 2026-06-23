@@ -37,7 +37,13 @@ export class IncidentService {
         return { success: true, incidents } as const;
     }
 
-    async update(user: User, id: number, title: string | undefined, description: string | undefined, status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | undefined) {
+    async update(
+        user: User,
+        id: number,
+        title: string | undefined,
+        description: string | undefined,
+        status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | undefined,
+    ) {
         if (user.role !== 'ADMIN') return { success: false, code: 'FORBIDDEN' } as const;
 
         const current = await this.repo.findById(id);
