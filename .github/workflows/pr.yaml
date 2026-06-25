@@ -68,3 +68,28 @@ jobs:
             -f backend/Dockerfile \
             --push \
             ./backend
+
+  # ==========================================
+  # 3. DEPLOY TO STAGING
+  # ==========================================
+  deploy_staging:
+    name: Deploy to Staging
+    needs: [build_frontend, build_backend]
+    runs-on: [self-hosted, ledge]
+    env:
+      TARGET_PATH: /srv/apps/ledge/staging
+      IMAGE_TAG: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - name: Checkout PR code
+        run: |
+          cd "$TARGET_PATH"
+          git fetch
+          git checkout ${{ github.event.pull_request.head.sha }}
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u antoine-navette --password-stdin
+      - name: Deploy
+        run: |
+          cd "$TARGET_PATH"
+          docker compose -f compose.yaml -f compose.prod.yaml pull
+          docker compose -f compose.yaml -f compose.prod.yaml down --remove-orphans
+          docker compose -f compose.yaml -f compose.prod.yaml up -d
