@@ -343,7 +343,7 @@ export default function Home() {
                     </div>
                 ) : null}
 
-                {!isLoading && !loadErrorMessage  && visibleRoomCards.length === 0 ? (
+                {!isLoading && !loadErrorMessage && visibleRoomCards.length === 0 ? (
                     <div className="mb-8 bg-surface-container neo-border p-6 text-center font-bold">
                         {rooms.length === 0
                             ? 'Aucune salle disponible pour le moment.'
@@ -351,7 +351,7 @@ export default function Home() {
                     </div>
                 ) : null}
 
-                {!isLoading && !loadErrorMessage  && visibleRoomCards.length > 0 ? (
+                {!isLoading && !loadErrorMessage && visibleRoomCards.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
                         {visibleRoomCards.map((room) => (
                             <RoomCard key={room.id} {...room} />

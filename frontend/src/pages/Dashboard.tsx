@@ -8,12 +8,7 @@ import { useToast } from '../components/ui/ToastProvider';
 import { useAuth } from '../auth/AuthProvider';
 import { api } from '../api/client';
 import type { components } from '../api/schema.d.ts';
-import {
-    formatTime,
-    getErrorCode,
-    isSameMonth,
-    sortReservations,
-} from '../lib/reservation-utils';
+import { formatTime, getErrorCode, isSameMonth, sortReservations } from '../lib/reservation-utils';
 
 type Reservation = components['schemas']['Reservation'];
 type Room = components['schemas']['Room'];
@@ -217,70 +212,70 @@ export default function Dashboard() {
     };
 
     const handleFeedback = (type: '' | 'success' | 'error', message: string) => {
-    if (!type || !message) {
-        return;
-    }
-
-    pushToast({
-        type: type === 'success' ? 'success' : 'error',
-        message,
-    });
-};
-
-    const requestFavoriteRemoval = (roomId: number, title: string, location: string) => {
-    setFavoriteRoomToRemove({
-        roomId,
-        title,
-        location,
-    });
-};
-
-    const handleRemoveFavorite = async () => {
-    if (!user || !favoriteRoomToRemove) {
-        return;
-    }
-
-    const roomId = favoriteRoomToRemove.roomId;
-    setFavoritePendingRoomId(roomId);
-
-    try {
-        const { error } = await api.DELETE('/users/{userId}/favorites/{roomId}', {
-            params: {
-                path: {
-                    userId: user.id,
-                    roomId,
-                },
-            },
-        });
-
-        if (error) {
-            const errorCode = getErrorCode(error);
-
-            if (errorCode === 'UNAUTHORIZED') {
-                navigate('/login', { replace: true });
-                return;
-            }
-
-            if (errorCode === 'FAVORITE_NOT_FOUND') {
-                setFavorites((current) => current.filter((favorite) => favorite.room_id !== roomId));
-                setFavoriteRoomToRemove(null);
-                pushToast({ type: 'info', message: "Ce favori n'existe plus." });
-                return;
-            }
-
-            pushToast({ type: 'error', message: 'Impossible de retirer cette salle des favoris.' });
+        if (!type || !message) {
             return;
         }
 
-        setFavorites((current) => current.filter((favorite) => favorite.room_id !== roomId));
-        setFavoriteRoomToRemove(null);
-        pushToast({ type: 'success', message: 'Salle retirée des favoris.' });
-    } catch {
-        pushToast({ type: 'error', message: 'La requête de favoris a échoué.' });
-    } finally {
-        setFavoritePendingRoomId(null);
-    }
-};
+        pushToast({
+            type: type === 'success' ? 'success' : 'error',
+            message,
+        });
+    };
+
+    const requestFavoriteRemoval = (roomId: number, title: string, location: string) => {
+        setFavoriteRoomToRemove({
+            roomId,
+            title,
+            location,
+        });
+    };
+
+    const handleRemoveFavorite = async () => {
+        if (!user || !favoriteRoomToRemove) {
+            return;
+        }
+
+        const roomId = favoriteRoomToRemove.roomId;
+        setFavoritePendingRoomId(roomId);
+
+        try {
+            const { error } = await api.DELETE('/users/{userId}/favorites/{roomId}', {
+                params: {
+                    path: {
+                        userId: user.id,
+                        roomId,
+                    },
+                },
+            });
+
+            if (error) {
+                const errorCode = getErrorCode(error);
+
+                if (errorCode === 'UNAUTHORIZED') {
+                    navigate('/login', { replace: true });
+                    return;
+                }
+
+                if (errorCode === 'FAVORITE_NOT_FOUND') {
+                    setFavorites((current) => current.filter((favorite) => favorite.room_id !== roomId));
+                    setFavoriteRoomToRemove(null);
+                    pushToast({ type: 'info', message: "Ce favori n'existe plus." });
+                    return;
+                }
+
+                pushToast({ type: 'error', message: 'Impossible de retirer cette salle des favoris.' });
+                return;
+            }
+
+            setFavorites((current) => current.filter((favorite) => favorite.room_id !== roomId));
+            setFavoriteRoomToRemove(null);
+            pushToast({ type: 'success', message: 'Salle retirée des favoris.' });
+        } catch {
+            pushToast({ type: 'error', message: 'La requête de favoris a échoué.' });
+        } finally {
+            setFavoritePendingRoomId(null);
+        }
+    };
 
     return (
         <div className="flex flex-col gap-12 max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-12 w-full">
@@ -353,7 +348,6 @@ export default function Dashboard() {
                         Rafraîchir
                     </button>
                 </div>
-
 
                 {activeOrUpcomingReservations.length === 0 ? (
                     <div className="bg-surface-container border-[3px] border-on-surface p-6 neo-shadow text-center">

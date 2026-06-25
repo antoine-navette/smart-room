@@ -550,7 +550,7 @@ export default function Admin() {
                 if (errorCode === 'FORBIDDEN') {
                     pushFeedback('error', 'Seul un admin peut supprimer un bâtiment.');
                 } else if (errorCode === 'BUILDING_HAS_FLOORS') {
-                    pushFeedback('error', "Veuillez supprimer les étages de ce bâtiment.");
+                    pushFeedback('error', 'Veuillez supprimer les étages de ce bâtiment.');
                 } else if (errorCode === 'BUILDING_NOT_FOUND') {
                     pushFeedback('error', "Ce bâtiment n'existe plus.");
                 } else {
@@ -736,7 +736,7 @@ export default function Admin() {
                 if (errorCode === 'FORBIDDEN') {
                     pushFeedback('error', 'Seul un admin peut supprimer un étage.');
                 } else if (errorCode === 'FLOOR_HAS_ROOMS') {
-                    pushFeedback('error', "Veuillez supprimer les salles de cet étage.");
+                    pushFeedback('error', 'Veuillez supprimer les salles de cet étage.');
                 } else if (errorCode === 'FLOOR_NOT_FOUND') {
                     pushFeedback('error', "Cet étage n'existe plus.");
                 } else {
@@ -1412,10 +1412,7 @@ export default function Admin() {
             setNewUnavailabilityFrom('');
             setNewUnavailabilityTo('');
             setNewUnavailabilityReason('');
-            pushFeedback(
-                'success',
-                'Indisponibilité créée. Les réservations en conflit ont pu être annulées.',
-            );
+            pushFeedback('success', 'Indisponibilité créée. Les réservations en conflit ont pu être annulées.');
         } catch {
             pushFeedback('error', "La requête de création de l'indisponibilité a échoué.");
         } finally {
@@ -1484,7 +1481,7 @@ export default function Admin() {
                 if (errorCode === 'FORBIDDEN') {
                     pushFeedback('error', 'Seul un admin peut modifier une indisponibilité.');
                 } else if (errorCode === 'ROOM_UNAVAILABILITY_CONFLICT' || errorCode === 'INVALID_DATE_RANGE') {
-                    pushFeedback('error', 'Le nouveau créneau d\'indisponibilité entre en conflit ou est invalide.');
+                    pushFeedback('error', "Le nouveau créneau d'indisponibilité entre en conflit ou est invalide.");
                 } else if (errorCode === 'ROOM_UNAVAILABILITY_NOT_FOUND') {
                     pushFeedback('error', "Cette indisponibilité n'existe plus.");
                 } else if (errorCode === 'ROOM_NOT_FOUND') {
@@ -1509,10 +1506,7 @@ export default function Admin() {
             setEditingUnavailabilityFrom('');
             setEditingUnavailabilityTo('');
             setEditingUnavailabilityReason('');
-            pushFeedback(
-                'success',
-                'Indisponibilité modifiée. Les réservations en conflit ont pu être recalculées.',
-            );
+            pushFeedback('success', 'Indisponibilité modifiée. Les réservations en conflit ont pu être recalculées.');
         } catch {
             pushFeedback('error', "La requête de modification de l'indisponibilité a échoué.");
         } finally {
@@ -2124,7 +2118,7 @@ export default function Admin() {
                             min={1}
                             value={newRoomCapacity}
                             onChange={(event) => setNewRoomCapacity(event.target.value)}
-                            placeholder="Capacite"
+                            placeholder="Capacité"
                             disabled={floors.length === 0 || savingKey === 'room:new'}
                         />
 

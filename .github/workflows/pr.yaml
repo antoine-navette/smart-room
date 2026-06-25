@@ -26,12 +26,26 @@ jobs:
       - run: npm run test:unit
         working-directory: backend
 
+  quality_frontend:
+    name: Frontend checks (format, tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run format:check
+        working-directory: frontend
+      - run: npm run test
+        working-directory: frontend
+
   # ==========================================
   # 2. BUILD IMAGES
   # ==========================================
   build_frontend:
     name: Build Frontend
-    needs: [quality_backend]
+    needs: [quality_frontend]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -107,11 +121,15 @@ jobs:
   deploy_staging:
     name: Deploy to Staging
     needs: [build_frontend, test_integration]
+    if: always()
     runs-on: [self-hosted, smart-room]
     env:
       TARGET_PATH: /srv/apps/smart-room/staging
       IMAGE_TAG: ${{ github.event.pull_request.head.sha }}
     steps:
+      - name: Fail if dependencies failed or were cancelled
+        if: needs.build_frontend.result != 'success' || needs.test_integration.result != 'success'
+        run: exit 1
       - name: Checkout PR code
         run: |
           cd "$TARGET_PATH"

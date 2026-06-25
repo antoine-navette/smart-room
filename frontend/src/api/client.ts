@@ -2,8 +2,8 @@ import createClient from 'openapi-fetch';
 import type { paths } from './schema.d.ts';
 
 export const api = createClient<paths>({
-  baseUrl: import.meta.env.VITE_API_URL,
-  credentials: 'include',
+    baseUrl: import.meta.env.VITE_API_URL,
+    credentials: 'include',
 });
 
 // const { data, error } = await api.GET('/reservations');
