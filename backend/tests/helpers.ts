@@ -11,5 +11,9 @@ export async function login(email: string, password: string) {
 }
 
 export function authed(cookie: string): HeadersInit {
-    return { 'Content-Type': 'application/json', Cookie: cookie };
+    return { Cookie: cookie };
+}
+
+export function authedJson(cookie: string): HeadersInit {
+    return { Cookie: cookie, 'Content-Type': 'application/json' };
 }

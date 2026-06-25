@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { API_URL, login, authed } from './helpers.js';
+import { API_URL, login, authed, authedJson } from './helpers.js';
 
 const START = '2030-06-01T10:00:00.000Z';
 const END = '2030-06-01T12:00:00.000Z';
@@ -25,7 +25,7 @@ describe('Reservations', () => {
     it('POST /reservations crée une réservation', async () => {
         const res = await fetch(`${API_URL}/reservations`, {
             method: 'POST',
-            headers: authed(cookie),
+            headers: authedJson(cookie),
             body: JSON.stringify({ room_id: 1, start_time: START, end_time: END }),
         });
         expect(res.status).toBe(201);
@@ -36,7 +36,7 @@ describe('Reservations', () => {
     it('POST /reservations retourne 409 sur un créneau déjà pris', async () => {
         const res = await fetch(`${API_URL}/reservations`, {
             method: 'POST',
-            headers: authed(cookie),
+            headers: authedJson(cookie),
             body: JSON.stringify({ room_id: 1, start_time: START, end_time: END }),
         });
         expect(res.status).toBe(409);
@@ -45,7 +45,7 @@ describe('Reservations', () => {
     it('DELETE /reservations/:id supprime la réservation', async () => {
         const created = await fetch(`${API_URL}/reservations`, {
             method: 'POST',
-            headers: authed(cookie),
+            headers: authedJson(cookie),
             body: JSON.stringify({
                 room_id: 1,
                 start_time: '2030-07-01T10:00:00.000Z',
