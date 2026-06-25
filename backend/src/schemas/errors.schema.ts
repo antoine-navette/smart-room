@@ -137,6 +137,10 @@ export const InvalidDateRangeErrorDto = z
     .object({ code: z.literal('INVALID_DATE_RANGE'), message: z.string() })
     .meta({ id: 'InvalidDateRangeError' });
 
+export const ReservationStartTimeInPastErrorDto = z
+    .object({ code: z.literal('RESERVATION_START_TIME_IN_PAST'), message: z.string() })
+    .meta({ id: 'ReservationStartTimeInPastError' });
+
 export const InvalidQueryErrorDto = z
     .object({
         code: z.literal('INVALID_QUERY'),

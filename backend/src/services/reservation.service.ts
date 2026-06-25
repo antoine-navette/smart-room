@@ -18,11 +18,18 @@ export class ReservationService {
         return currentUser.role === 'ADMIN' || reservation.user_id === currentUser.id;
     }
 
+    private isStartTimeInPast(startTime: Date): boolean {
+        return startTime.getTime() < Date.now();
+    }
+
     async create(roomId: number | null, user: User, startTime: Date, endTime: Date) {
         let room: Room | null = null;
         if (roomId != null) {
             room = await this.roomRepo.findById(roomId);
             if (!room) return { success: false, code: 'ROOM_NOT_FOUND' } as const;
+
+            if (this.isStartTimeInPast(startTime))
+                return { success: false, code: 'RESERVATION_START_TIME_IN_PAST' } as const;
 
             if (!(await this.checkAvailability(roomId, startTime, endTime)))
                 return { success: false, code: 'ROOM_NOT_AVAILABLE' } as const;
@@ -63,6 +70,9 @@ export class ReservationService {
         if (roomId != null) {
             room = await this.roomRepo.findById(roomId);
             if (!room) return { success: false, code: 'ROOM_NOT_FOUND' } as const;
+
+            if (this.isStartTimeInPast(startTime))
+                return { success: false, code: 'RESERVATION_START_TIME_IN_PAST' } as const;
 
             if (!(await this.checkAvailability(roomId, startTime, endTime, id)))
                 return { success: false, code: 'ROOM_NOT_AVAILABLE' } as const;
