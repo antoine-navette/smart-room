@@ -66,7 +66,7 @@ describe('ManageableReservationCard', () => {
 
         expect(screen.getByText('Salle Atlas')).toBeInTheDocument();
         expect(screen.getByText('Batiment A - Etage 2')).toBeInTheDocument();
-        expect(screen.getByText('Reservation #99')).toBeInTheDocument();
+        expect(screen.getByText('Réservation #99')).toBeInTheDocument();
         expect(screen.getByRole('link', { name: 'Voir la salle' })).toHaveAttribute('href', '/room/10');
     });
 
@@ -75,9 +75,9 @@ describe('ManageableReservationCard', () => {
 
         fireEvent.click(screen.getByRole('button', { name: /^Modifier$/ }));
 
-        expect(screen.getByRole('dialog', { name: 'Modifier la reservation' })).toBeInTheDocument();
+        expect(screen.getByRole('dialog', { name: 'Modifier la réservation' })).toBeInTheDocument();
         expect(
-            screen.getByText('Tu peux ajuster la salle et le creneau tant que la reservation est encore a venir.'),
+            screen.getByText('Vous pouvez ajuster la salle et le créneau tant que la réservation est encore à venir.'),
         ).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /^Enregistrer les modifications$/ })).toBeInTheDocument();
     });
@@ -102,7 +102,7 @@ describe('ManageableReservationCard', () => {
             expect(onDeleted).toHaveBeenCalledWith(99);
         });
 
-        expect(onFeedback).toHaveBeenLastCalledWith('success', 'La reservation a bien ete annulee.');
+        expect(onFeedback).toHaveBeenLastCalledWith('success', 'La réservation a bien été annulée.');
     });
 
     it('bloque la sauvegarde si le nouveau debut est dans le passe', async () => {
@@ -112,7 +112,7 @@ describe('ManageableReservationCard', () => {
 
         fireEvent.click(screen.getByRole('button', { name: /^Modifier$/ }));
 
-        const dialog = screen.getByRole('dialog', { name: 'Modifier la reservation' });
+        const dialog = screen.getByRole('dialog', { name: 'Modifier la réservation' });
         const dateInputs = Array.from(dialog.querySelectorAll('input[type="datetime-local"]')) as HTMLInputElement[];
 
         expect(dateInputs).toHaveLength(2);
@@ -125,7 +125,10 @@ describe('ManageableReservationCard', () => {
         fireEvent.click(screen.getByRole('button', { name: /^Enregistrer les modifications$/ }));
 
         await waitFor(() => {
-            expect(onFeedback).toHaveBeenLastCalledWith('error', 'Le nouveau debut doit rester dans le futur.');
+            expect(onFeedback).toHaveBeenLastCalledWith(
+                'error',
+                'Le début de la réservation doit rester dans le futur.',
+            );
         });
 
         expect(mockPut).not.toHaveBeenCalled();
@@ -155,6 +158,6 @@ describe('ManageableReservationCard', () => {
         });
 
         expect(mockPut).toHaveBeenCalledTimes(1);
-        expect(onFeedback).toHaveBeenLastCalledWith('success', 'La reservation a bien ete modifiee.');
+        expect(onFeedback).toHaveBeenLastCalledWith('success', 'La réservation a bien été modifiée.');
     });
 });

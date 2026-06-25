@@ -163,7 +163,7 @@ async function waitForInitialRooms() {
 }
 
 function getHeroControls(container: HTMLElement) {
-    const queryInput = screen.getByPlaceholderText('Salle, batiment, etage...');
+    const queryInput = screen.getByPlaceholderText('Salle, bâtiment, étage...');
     const [buildingSelect, floorSelect, capacitySelect] = screen.getAllByRole('combobox') as HTMLSelectElement[];
     const dateInputs = Array.from(container.querySelectorAll('input[type="datetime-local"]')) as HTMLInputElement[];
 
@@ -198,7 +198,7 @@ describe('Home', () => {
         await waitForInitialRooms();
 
         expect(screen.getByRole('heading', { name: 'Salle Orion' })).toBeInTheDocument();
-        expect(screen.queryByText('Disponible sur ce creneau')).not.toBeInTheDocument();
+        expect(screen.queryByText('Disponible sur ce créneau')).not.toBeInTheDocument();
         expect(screen.getByText('Ecran, Tableau')).toBeInTheDocument();
 
         expect(mockGet.mock.calls.filter(([path]) => path === '/rooms')).toHaveLength(1);
@@ -222,7 +222,7 @@ describe('Home', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Rechercher' }));
 
         await waitFor(() => {
-            expect(screen.getByText('Disponible sur ce creneau')).toBeInTheDocument();
+            expect(screen.getByText('Disponible sur ce créneau')).toBeInTheDocument();
         });
 
         expect(screen.getByRole('heading', { name: 'Salle Orion' })).toBeInTheDocument();
@@ -255,7 +255,7 @@ describe('Home', () => {
 
         expect(alert).toHaveTextContent('Filtres invalides');
         expect(alert).toHaveTextContent(
-            'Renseigne une date de debut et une date de fin pour filtrer la disponibilite.',
+            'Renseignez une date de début et une date de fin pour filtrer la disponibilité.',
         );
         expect(mockGet).not.toHaveBeenCalled();
     });
@@ -275,12 +275,12 @@ describe('Home', () => {
         fireEvent.change(endInput, { target: { value: '2099-06-26T11:00' } });
         fireEvent.click(screen.getByRole('button', { name: 'Rechercher' }));
 
-        await screen.findByText('Disponible sur ce creneau');
+        await screen.findByText('Disponible sur ce créneau');
 
-        fireEvent.click(screen.getByRole('button', { name: 'Reinitialiser les filtres' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Réinitialiser les filtres' }));
 
         await waitFor(() => {
-            expect(screen.queryByText('Disponible sur ce creneau')).not.toBeInTheDocument();
+            expect(screen.queryByText('Disponible sur ce créneau')).not.toBeInTheDocument();
         });
 
         expect(screen.getByRole('heading', { name: 'Salle Atlas' })).toBeInTheDocument();

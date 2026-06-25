@@ -299,9 +299,9 @@ describe('Dashboard', () => {
         renderDashboard();
         await waitForDashboardToLoad();
 
-        expect(screen.getByText('Reservations a venir')).toBeInTheDocument();
+        expect(screen.getByText('Réservations à venir')).toBeInTheDocument();
         expect(screen.getByText('Salles favorites')).toBeInTheDocument();
-        expect(screen.getByText('Historique recent')).toBeInTheDocument();
+        expect(screen.getByText('Historique récent')).toBeInTheDocument();
 
         expect(screen.getByText('Salle Orion')).toBeInTheDocument();
         expect(screen.getByText('Salle Atlas')).toBeInTheDocument();
@@ -314,8 +314,8 @@ describe('Dashboard', () => {
             return reservationDate.getMonth() === now.getMonth() && reservationDate.getFullYear() === now.getFullYear();
         }).length;
 
-        expectStatCardToContain('Reservations ce mois-ci', String(reservationsThisMonth));
-        expectStatCardToContain('Creneaux actifs ou a venir', '1');
+        expectStatCardToContain('Réservations du mois', String(reservationsThisMonth));
+        expectStatCardToContain('Créneaux actifs ou à venir', '1');
     });
 
     it('redirige vers /login si la recuperation des reservations renvoie UNAUTHORIZED', async () => {
@@ -338,10 +338,10 @@ describe('Dashboard', () => {
         renderDashboard();
 
         expect(
-            await screen.findByText('Impossible de charger ton tableau de bord pour le moment.'),
+            await screen.findByText('Impossible de charger votre tableau de bord pour le moment.'),
         ).toBeInTheDocument();
 
-        expect(screen.getByRole('button', { name: 'Reessayer' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Réessayer' })).toBeInTheDocument();
     });
 
     it('affiche une erreur de favoris sans bloquer le reste du dashboard', async () => {
@@ -354,7 +354,7 @@ describe('Dashboard', () => {
         await waitForDashboardToLoad();
 
         expect(screen.getByText('Salle Orion')).toBeInTheDocument();
-        expect(screen.getByText('Impossible de charger tes favoris pour le moment.')).toBeInTheDocument();
+        expect(screen.getByText('Impossible de charger vos favoris pour le moment.')).toBeInTheDocument();
     });
 
     it('affiche un message si aucun utilisateur n est disponible', () => {
@@ -375,7 +375,7 @@ describe('Dashboard', () => {
         renderDashboard();
         await waitForDashboardToLoad();
 
-        expect(screen.getByText('Aucune reservation a venir')).toBeInTheDocument();
+        expect(screen.getByText('Aucune réservation à venir')).toBeInTheDocument();
         expect(screen.getByRole('link', { name: 'Trouver une salle' })).toBeInTheDocument();
     });
 

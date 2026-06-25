@@ -80,8 +80,8 @@ describe('Navbar', () => {
 
         renderNavbar('/dashboard');
 
-        expect(screen.getByRole('link', { name: 'Mes reservations' })).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: 'Mes reservations' })).toHaveClass('border-primary');
+        expect(screen.getByRole('link', { name: 'Mes réservations' })).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'Mes réservations' })).toHaveClass('border-primary');
     });
 
     it('affiche le lien admin pour un administrateur et le marque actif', () => {
@@ -106,7 +106,7 @@ describe('Navbar', () => {
 
         const mobileMenu = within(mobileNavigation as HTMLElement);
         expect(mobileMenu.getByText('Alice Brown')).toBeInTheDocument();
-        expect(mobileMenu.getByText('Utilisateur connecte')).toBeInTheDocument();
+        expect(mobileMenu.getByText('Utilisateur connecté')).toBeInTheDocument();
         expect(mobileMenu.getByRole('link', { name: 'Ouvrir mon espace' })).toBeInTheDocument();
     });
 
@@ -122,7 +122,7 @@ describe('Navbar', () => {
         expect(mobileNavigation).not.toBeNull();
 
         const mobileMenu = within(mobileNavigation as HTMLElement);
-        await user.click(mobileMenu.getByRole('link', { name: 'Mes reservations' }));
+        await user.click(mobileMenu.getByRole('link', { name: 'Mes réservations' }));
 
         await waitFor(() => {
             expect(document.getElementById('mobile-navigation')).not.toBeInTheDocument();
@@ -135,7 +135,7 @@ describe('Navbar', () => {
 
         renderNavbar('/dashboard');
 
-        await user.click(screen.getByRole('button', { name: 'Se deconnecter' }));
+        await user.click(screen.getByRole('button', { name: 'Se déconnecter' }));
 
         await waitFor(() => {
             expect(mockLogout).toHaveBeenCalledTimes(1);

@@ -24,7 +24,7 @@ describe('FavoriteRemovalModal', () => {
         renderModal();
 
         expect(screen.getByRole('dialog', { name: 'Retirer cette salle des favoris ?' })).toBeInTheDocument();
-        expect(screen.getByText('Salle concernee')).toBeInTheDocument();
+        expect(screen.getByText('Salle concernée')).toBeInTheDocument();
         expect(screen.getByText('Salle Atlas')).toBeInTheDocument();
         expect(screen.getByText('Batiment A - Etage 2')).toBeInTheDocument();
     });

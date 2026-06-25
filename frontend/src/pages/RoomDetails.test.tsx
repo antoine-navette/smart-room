@@ -320,7 +320,7 @@ describe('RoomDetails', () => {
 
         renderRoomDetails();
 
-        expect(screen.getByText('Chargement des details de la salle...')).toBeInTheDocument();
+        expect(screen.getByText('Chargement des détails de la salle...')).toBeInTheDocument();
 
         await waitForRoomToLoad();
 
@@ -329,8 +329,8 @@ describe('RoomDetails', () => {
         expect(screen.getByRole('button', { name: 'Ajouter aux favoris' })).toBeInTheDocument();
         expect(screen.getByText('Ecran')).toBeInTheDocument();
         expect(screen.getByText('Projecteur defectueux')).toBeInTheDocument();
-        expect(screen.getByText('Aucune reservation pour cette salle.')).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'Reserve Now' })).toBeInTheDocument();
+        expect(screen.getByText('Aucune réservation pour cette salle.')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Réserver maintenant' })).toBeInTheDocument();
     });
 
     it('affiche une erreur si l identifiant de salle est invalide', async () => {
@@ -358,7 +358,7 @@ describe('RoomDetails', () => {
 
         expect(
             screen.getByText(
-                "Certaines informations secondaires n'ont pas pu etre chargees : ressources, indisponibilites, incidents.",
+                "Certaines informations secondaires n'ont pas pu être chargées : ressources, indisponibilités, incidents.",
             ),
         ).toBeInTheDocument();
 
@@ -384,7 +384,7 @@ describe('RoomDetails', () => {
             });
         });
 
-        expect(await screen.findByText('Salle ajoutee aux favoris.')).toBeInTheDocument();
+        expect(await screen.findByText('Salle ajoutée aux favoris.')).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Dans vos favoris' })).toHaveAttribute('aria-pressed', 'true');
     });
 
@@ -414,7 +414,7 @@ describe('RoomDetails', () => {
             });
         });
 
-        expect(await screen.findByText('Salle retiree des favoris.')).toBeInTheDocument();
+        expect(await screen.findByText('Salle retirée des favoris.')).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Ajouter aux favoris' })).toHaveAttribute('aria-pressed', 'false');
     });
 
@@ -436,7 +436,7 @@ describe('RoomDetails', () => {
         fireEvent.change(startInput, { target: { value: '2099-06-26T10:00' } });
         fireEvent.change(endInput, { target: { value: '2099-06-26T11:00' } });
 
-        fireEvent.click(screen.getByRole('button', { name: 'Reserve Now' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Réserver maintenant' }));
 
         await waitFor(() => {
             expect(mockPost).toHaveBeenCalledWith('/reservations', {
@@ -448,7 +448,7 @@ describe('RoomDetails', () => {
             });
         });
 
-        expect(await screen.findByText('Reservation creee avec succes.')).toBeInTheDocument();
+        expect(await screen.findByText('Reservation créée avec succès.')).toBeInTheDocument();
     });
 
     it('cree un signalement puis affiche le toast de succes', async () => {
@@ -460,13 +460,13 @@ describe('RoomDetails', () => {
 
         await waitForRoomToLoad();
 
-        expect(screen.getByText('Aucun incident signale pour cette salle.')).toBeInTheDocument();
+        expect(screen.getByText('Aucun incident signalé pour cette salle.')).toBeInTheDocument();
 
-        fireEvent.change(screen.getByPlaceholderText('Projecteur defectueux'), {
+        fireEvent.change(screen.getByPlaceholderText('Projecteur défectueux'), {
             target: { value: 'Micro coupe' },
         });
 
-        fireEvent.change(screen.getByPlaceholderText('Decris le probleme constate...'), {
+        fireEvent.change(screen.getByPlaceholderText('Décrivez le problème constaté...'), {
             target: { value: 'Le son se coupe apres quelques minutes.' },
         });
 
@@ -482,12 +482,12 @@ describe('RoomDetails', () => {
             });
         });
 
-        expect(await screen.findByText('Signalement envoye avec succes.')).toBeInTheDocument();
+        expect(await screen.findByText('Signalement envoyé avec succès.')).toBeInTheDocument();
         expect(screen.getByText('Micro coupe')).toBeInTheDocument();
         expect(screen.queryByText('Aucun incident signale pour cette salle.')).not.toBeInTheDocument();
 
-        expect(screen.getByPlaceholderText('Projecteur defectueux')).toHaveValue('');
-        expect(screen.getByPlaceholderText('Decris le probleme constate...')).toHaveValue('');
+        expect(screen.getByPlaceholderText('Projecteur défectueux')).toHaveValue('');
+        expect(screen.getByPlaceholderText('Décrivez le problème constaté...')).toHaveValue('');
     });
 
     it('redirige vers /login si un utilisateur anonyme tente d ajouter un favori', async () => {

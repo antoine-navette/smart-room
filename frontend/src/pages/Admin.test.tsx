@@ -322,7 +322,7 @@ function renderAdmin() {
 async function waitForAdminToLoad() {
     await screen.findByRole('heading', {
         level: 1,
-        name: /Command Center/i,
+        name: /Centre de commandes/i,
     });
 }
 
@@ -358,9 +358,9 @@ describe('Admin', () => {
 
         await waitForAdminToLoad();
 
-        expect(screen.getByText('Provisioning utilisateurs')).toBeInTheDocument();
-        expect(screen.getByPlaceholderText('Prenom')).toBeInTheDocument();
-        expect(screen.getByPlaceholderText('Etage 1')).toBeInTheDocument();
+        expect(screen.getByText('Ajouter des utilisateurs')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Prénom')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Étage 1')).toBeInTheDocument();
         expect(screen.getByPlaceholderText('Salle 101')).toBeInTheDocument();
     });
 
@@ -373,7 +373,7 @@ describe('Admin', () => {
 
         expect(await screen.findByText("Impossible de charger le centre d'administration.")).toBeInTheDocument();
 
-        expect(screen.getByRole('button', { name: 'Reessayer' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Réessayer' })).toBeInTheDocument();
     });
 
     it('filtre l affichage des etages puis des salles selon les selects admin', async () => {
@@ -382,7 +382,7 @@ describe('Admin', () => {
         renderAdmin();
         await waitForAdminToLoad();
 
-        const floorNameInput = screen.getByPlaceholderText('Etage 1');
+        const floorNameInput = screen.getByPlaceholderText('Étage 1');
         const floorForm = floorNameInput.closest('form') as HTMLFormElement;
         const floorsSection = floorForm.parentElement as HTMLElement;
         const floorBuildingSelect = within(floorForm).getByRole('combobox') as HTMLSelectElement;
@@ -393,7 +393,7 @@ describe('Admin', () => {
 
         await waitFor(() => {
             expect(
-                within(floorsSection).getByText(`Affichage limite au batiment ${buildingB.name}.`),
+                within(floorsSection).getByText(`Affichage limité au bâtiment ${buildingB.name}.`),
             ).toBeInTheDocument();
         });
 
@@ -414,7 +414,7 @@ describe('Admin', () => {
 
         await waitFor(() => {
             expect(
-                within(roomsSection).getByText(`Affichage limite a l'etage ${floorB.name} (${buildingB.name}).`),
+                within(roomsSection).getByText(`Affichage limité à l'étage ${floorB.name} (${buildingB.name}).`),
             ).toBeInTheDocument();
         });
 
@@ -431,7 +431,7 @@ describe('Admin', () => {
         renderAdmin();
         await waitForAdminToLoad();
 
-        fireEvent.change(screen.getByPlaceholderText('Prenom'), {
+        fireEvent.change(screen.getByPlaceholderText('Prénom'), {
             target: { value: 'Jeanne' },
         });
         fireEvent.change(screen.getByPlaceholderText('Nom'), {
@@ -440,11 +440,11 @@ describe('Admin', () => {
         fireEvent.change(screen.getByPlaceholderText('email@entreprise.com'), {
             target: { value: 'jeanne@example.com' },
         });
-        fireEvent.change(screen.getByPlaceholderText('Mot de passe (8 caracteres min.)'), {
+        fireEvent.change(screen.getByPlaceholderText('Mot de passe (8 caractères min.)'), {
             target: { value: 'password123' },
         });
 
-        fireEvent.click(screen.getByRole('button', { name: 'Creer le compte' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Créer le compte' }));
 
         await waitFor(() => {
             expect(mockPost).toHaveBeenCalledWith('/users', {
@@ -457,11 +457,11 @@ describe('Admin', () => {
             });
         });
 
-        expect(await screen.findByText('Dernier compte cree : Jeanne Durand - jeanne@example.com')).toBeInTheDocument();
+        expect(await screen.findByText('Dernier compte créé : Jeanne Durand - jeanne@example.com')).toBeInTheDocument();
 
         expect(mockPushToast).toHaveBeenCalledWith({
             type: 'success',
-            message: 'Compte utilisateur cree avec succes.',
+            message: 'Compte utilisateur créé avec succès.',
         });
     });
 
@@ -473,7 +473,7 @@ describe('Admin', () => {
         renderAdmin();
         await waitForAdminToLoad();
 
-        fireEvent.change(screen.getByPlaceholderText('Prenom'), {
+        fireEvent.change(screen.getByPlaceholderText('Prénom'), {
             target: { value: 'Jeanne' },
         });
         fireEvent.change(screen.getByPlaceholderText('Nom'), {
@@ -482,16 +482,16 @@ describe('Admin', () => {
         fireEvent.change(screen.getByPlaceholderText('email@entreprise.com'), {
             target: { value: 'jeanne@example.com' },
         });
-        fireEvent.change(screen.getByPlaceholderText('Mot de passe (8 caracteres min.)'), {
+        fireEvent.change(screen.getByPlaceholderText('Mot de passe (8 caractères min.)'), {
             target: { value: 'password123' },
         });
 
-        fireEvent.click(screen.getByRole('button', { name: 'Creer le compte' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Créer le compte' }));
 
         await waitFor(() => {
             expect(mockPushToast).toHaveBeenCalledWith({
                 type: 'error',
-                message: 'Cette adresse email existe deja.',
+                message: 'Cette adresse email existe déjà.',
             });
         });
 
@@ -510,7 +510,7 @@ describe('Admin', () => {
             target: { value: 'Batiment C' },
         });
 
-        fireEvent.click(screen.getByRole('button', { name: 'Ajouter le batiment' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Ajouter le bâtiment' }));
 
         await waitFor(() => {
             expect(mockPost).toHaveBeenCalledWith('/buildings', {
@@ -525,7 +525,7 @@ describe('Admin', () => {
 
         expect(mockPushToast).toHaveBeenCalledWith({
             type: 'success',
-            message: 'Batiment cree avec succes.',
+            message: 'Bâtiment créé avec succès.',
         });
     });
 
@@ -535,7 +535,7 @@ describe('Admin', () => {
         renderAdmin();
         await waitForAdminToLoad();
 
-        const input = screen.getByPlaceholderText('Etage 1') as HTMLInputElement;
+        const input = screen.getByPlaceholderText('Étage 1') as HTMLInputElement;
         const form = input.closest('form') as HTMLFormElement;
         const buildingSelect = within(form).getByRole('combobox') as HTMLSelectElement;
 
@@ -547,7 +547,7 @@ describe('Admin', () => {
             target: { value: 'Etage B2' },
         });
 
-        fireEvent.click(within(form).getByRole('button', { name: "Ajouter l'etage" }));
+        fireEvent.click(within(form).getByRole('button', { name: "Ajouter l'étage" }));
 
         await waitFor(() => {
             expect(mockPost).toHaveBeenCalledWith('/floors', {
@@ -563,7 +563,7 @@ describe('Admin', () => {
 
         expect(mockPushToast).toHaveBeenCalledWith({
             type: 'success',
-            message: 'Etage cree avec succes.',
+            message: 'Etage créé avec succès.',
         });
     });
 
@@ -608,7 +608,7 @@ describe('Admin', () => {
 
         expect(mockPushToast).toHaveBeenCalledWith({
             type: 'success',
-            message: 'Salle creee avec succes.',
+            message: 'Salle créée avec succès.',
         });
     });
 
@@ -639,7 +639,7 @@ describe('Admin', () => {
 
         expect(mockPushToast).toHaveBeenCalledWith({
             type: 'success',
-            message: 'Ressource creee avec succes.',
+            message: 'Ressource créée avec succès.',
         });
     });
 
@@ -700,7 +700,7 @@ describe('Admin', () => {
 
         expect(mockPushToast).toHaveBeenCalledWith({
             type: 'success',
-            message: 'Ressource affectee a la salle.',
+            message: 'Ressource affectée à la salle.',
         });
     });
 
@@ -710,7 +710,7 @@ describe('Admin', () => {
         renderAdmin();
         await waitForAdminToLoad();
 
-        const submitButton = screen.getByRole('button', { name: 'Ajouter une indisponibilite' });
+        const submitButton = screen.getByRole('button', { name: 'Ajouter une indisponibilité' });
         const form = submitButton.closest('form') as HTMLFormElement;
         const roomSelect = within(form).getByRole('combobox') as HTMLSelectElement;
         const reasonInput = within(form).getByPlaceholderText('Maintenance, travaux...') as HTMLInputElement;
@@ -756,7 +756,7 @@ describe('Admin', () => {
 
         expect(mockPushToast).toHaveBeenCalledWith({
             type: 'success',
-            message: 'Indisponibilite creee. Les reservations en conflit ont pu etre annulees par le backend.',
+            message: 'Indisponibilité créée. Les réservations en conflit ont pu être annulées.',
         });
     });
 });
