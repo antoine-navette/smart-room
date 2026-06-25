@@ -3,7 +3,7 @@ import { ReservationService } from './reservation.service.js';
 import type { Reservation } from '../entities/reservation.entity.js';
 import type { User } from '../entities/user.entity.js';
 
-const t = (h: number) => new Date(2024, 0, 1, h, 0, 0);
+const t = (h: number) => new Date(2030, 0, 1, h, 0, 0);
 
 const user: User = { id: 1, email: 'a@b.com', first_name: 'A', last_name: 'B', role: 'USER', password_hash: '' };
 const admin: User = { ...user, id: 2, role: 'ADMIN' };
