@@ -121,11 +121,15 @@ jobs:
   deploy_staging:
     name: Deploy to Staging
     needs: [build_frontend, test_integration]
+    if: always()
     runs-on: [self-hosted, smart-room]
     env:
       TARGET_PATH: /srv/apps/smart-room/staging
       IMAGE_TAG: ${{ github.event.pull_request.head.sha }}
     steps:
+      - name: Fail if dependencies failed or were cancelled
+        if: needs.build_frontend.result != 'success' || needs.test_integration.result != 'success'
+        run: exit 1
       - name: Checkout PR code
         run: |
           cd "$TARGET_PATH"
