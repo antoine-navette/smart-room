@@ -17,6 +17,7 @@ import {
     InvalidBodyErrorDto,
     InvalidParamsErrorDto,
     InvalidDateRangeErrorDto,
+    ReservationStartTimeInPastErrorDto,
     UnauthorizedErrorDto,
     ForbiddenErrorDto,
     InternalServerErrorDto,
@@ -48,7 +49,7 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (
                 body: CreateReservationBodyDto,
                 response: {
                     201: ReservationDto,
-                    400: z.union([InvalidBodyErrorDto, InvalidDateRangeErrorDto]),
+                    400: z.union([InvalidBodyErrorDto, InvalidDateRangeErrorDto, ReservationStartTimeInPastErrorDto]),
                     401: UnauthorizedErrorDto,
                     404: z.union([RoomNotFoundErrorDto, UserNotFoundErrorDto]),
                     409: RoomNotAvailableErrorDto,
@@ -73,6 +74,12 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (
                     .send({ code: 'INVALID_DATE_RANGE', message: 'End time must be after start time' });
             }
 
+            if (body.data.start_time.getTime() < Date.now()) {
+                return reply
+                    .status(400)
+                    .send({ code: 'RESERVATION_START_TIME_IN_PAST', message: 'Reservation cannot start in the past' });
+            }
+
             const result = await reservationService.create(
                 body.data.room_id,
                 auth.user,
@@ -82,6 +89,11 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (
             if (!result.success) {
                 if (result.code === 'ROOM_NOT_FOUND') {
                     return reply.status(404).send({ code: 'ROOM_NOT_FOUND', message: 'Room not found' });
+                }
+                if (result.code === 'RESERVATION_START_TIME_IN_PAST') {
+                    return reply
+                        .status(400)
+                        .send({ code: 'RESERVATION_START_TIME_IN_PAST', message: 'Reservation cannot start in the past' });
                 }
                 if (result.code === 'ROOM_NOT_AVAILABLE') {
                     return reply
@@ -230,7 +242,7 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (
                 body: UpdateReservationBodyDto,
                 response: {
                     200: ReservationDto,
-                    400: z.union([InvalidParamsErrorDto, InvalidBodyErrorDto, InvalidDateRangeErrorDto]),
+                    400: z.union([InvalidParamsErrorDto, InvalidBodyErrorDto, InvalidDateRangeErrorDto, ReservationStartTimeInPastErrorDto]),
                     401: UnauthorizedErrorDto,
                     403: ForbiddenErrorDto,
                     404: z.union([ReservationNotFoundErrorDto, RoomNotFoundErrorDto]),
@@ -270,6 +282,12 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (
                     .send({ code: 'INVALID_DATE_RANGE', message: 'End time must be after start time' });
             }
 
+            if (body.data.start_time.getTime() < Date.now()) {
+                return reply
+                    .status(400)
+                    .send({ code: 'RESERVATION_START_TIME_IN_PAST', message: 'Reservation cannot start in the past' });
+            }
+
             const result = await reservationService.update(
                 params.data.id,
                 body.data.room_id,
@@ -289,6 +307,11 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (
                 }
                 if (result.code === 'ROOM_NOT_FOUND') {
                     return reply.status(404).send({ code: 'ROOM_NOT_FOUND', message: 'Room not found' });
+                }
+                if (result.code === 'RESERVATION_START_TIME_IN_PAST') {
+                    return reply
+                        .status(400)
+                        .send({ code: 'RESERVATION_START_TIME_IN_PAST', message: 'Reservation cannot start in the past' });
                 }
                 if (result.code === 'ROOM_NOT_AVAILABLE') {
                     return reply
