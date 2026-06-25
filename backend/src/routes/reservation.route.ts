@@ -14,14 +14,13 @@ import {
     ReservationNotFoundErrorDto,
     RoomNotFoundErrorDto,
     RoomNotAvailableErrorDto,
-    UserNotFoundErrorDto,
-    ForbiddenErrorDto,
     InvalidBodyErrorDto,
     InvalidParamsErrorDto,
     InvalidDateRangeErrorDto,
     UnauthorizedErrorDto,
     ForbiddenErrorDto,
     InternalServerErrorDto,
+    UserNotFoundErrorDto
 } from '../schemas/errors.schema.js';
 
 type Options = {
