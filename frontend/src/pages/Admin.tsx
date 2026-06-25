@@ -2124,7 +2124,7 @@ export default function Admin() {
                             min={1}
                             value={newRoomCapacity}
                             onChange={(event) => setNewRoomCapacity(event.target.value)}
-                            placeholder="Capacite"
+                            placeholder="Capacité"
                             disabled={floors.length === 0 || savingKey === 'room:new'}
                         />
 
