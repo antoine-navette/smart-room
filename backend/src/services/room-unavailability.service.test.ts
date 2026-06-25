@@ -18,7 +18,13 @@ const makeReservation = (id: number, userId: number, startH: number, endH: numbe
     end_time: t(endH),
 });
 
-const unavailability: RoomUnavailability = { id: 1, room_id: room.id, from_time: t(10), to_time: t(14), reason: 'Travaux' };
+const unavailability: RoomUnavailability = {
+    id: 1,
+    room_id: room.id,
+    from_time: t(10),
+    to_time: t(14),
+    reason: 'Travaux',
+};
 
 const makeRepo = () => ({
     findById: vi.fn<() => Promise<RoomUnavailability | null>>(),

@@ -45,7 +45,12 @@ describe('ReservationService', () => {
         repo = makeRepo();
         roomRepo = makeRoomRepo();
         mailer = makeMailer();
-        service = new ReservationService(repo as never, roomRepo as never, { findById: vi.fn() } as never, mailer as never);
+        service = new ReservationService(
+            repo as never,
+            roomRepo as never,
+            { findById: vi.fn() } as never,
+            mailer as never,
+        );
     });
 
     describe('create', () => {
