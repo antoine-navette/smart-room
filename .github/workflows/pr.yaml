@@ -106,7 +106,7 @@ jobs:
   # ==========================================
   deploy_staging:
     name: Deploy to Staging
-    needs: [build_frontend, build_backend]
+    needs: [build_frontend, test_integration]
     runs-on: [self-hosted, smart-room]
     env:
       TARGET_PATH: /srv/apps/smart-room/staging
