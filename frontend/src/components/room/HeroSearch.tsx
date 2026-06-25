@@ -48,7 +48,7 @@ export function HeroSearch({
 
       <div className="max-w-6xl mx-auto relative z-10">
         <h1 className="font-headline-xl text-[32px] md:text-[64px] leading-tight md:leading-[72px] mb-6 max-w-2xl font-black">
-          Trouve la salle ideale, <br />
+          Trouvez la salle idéale, <br />
           <span className="text-primary bg-secondary-container px-2 neo-border inline-block rotate-[-2deg]">
             en quelques secondes.
           </span>
@@ -73,7 +73,7 @@ export function HeroSearch({
                   type="text"
                   value={filters.query}
                   onChange={(event) => onFilterChange("query", event.target.value)}
-                  placeholder="Salle, batiment, etage..."
+                  placeholder="Salle, bâtiment, étage..."
                   className="pl-10"
                 />
               </div>
@@ -81,7 +81,7 @@ export function HeroSearch({
 
             <div className="flex flex-col gap-2 xl:col-span-2">
               <label className="font-label-bold text-[14px] leading-[20px] font-bold text-on-surface-variant">
-                Batiment
+                Bâtiment
               </label>
               <div className="relative">
                 <Icon
@@ -93,7 +93,7 @@ export function HeroSearch({
                   onChange={(event) => onFilterChange("buildingId", event.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-surface-container neo-border rounded-DEFAULT focus:outline-none focus:border-primary focus:shadow-[4px_4px_0px_0px_#fddc00] transition-all appearance-none cursor-pointer"
                 >
-                  <option value="all">Tous les batiments</option>
+                  <option value="all">Tous les bâtiments</option>
                   {buildings.map((building) => (
                     <option key={building.id} value={String(building.id)}>
                       {building.name}
@@ -105,7 +105,7 @@ export function HeroSearch({
 
             <div className="flex flex-col gap-2 xl:col-span-2">
               <label className="font-label-bold text-[14px] leading-[20px] font-bold text-on-surface-variant">
-                Etage
+                Étage
               </label>
               <div className="relative">
                 <Icon
@@ -118,7 +118,7 @@ export function HeroSearch({
                   className="w-full pl-10 pr-4 py-3 bg-surface-container neo-border rounded-DEFAULT focus:outline-none focus:border-primary focus:shadow-[4px_4px_0px_0px_#fddc00] transition-all appearance-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                   disabled={visibleFloors.length === 0}
                 >
-                  <option value="all">Tous les etages</option>
+                  <option value="all">Tous les étages</option>
                   {visibleFloors.map((floor) => (
                     <option key={floor.id} value={String(floor.id)}>
                       {floor.name}
@@ -130,7 +130,7 @@ export function HeroSearch({
 
             <div className="flex flex-col gap-2 xl:col-span-2">
               <label className="font-label-bold text-[14px] leading-[20px] font-bold text-on-surface-variant">
-                Capacite
+                Capacité
               </label>
               <div className="relative">
                 <Icon
@@ -152,7 +152,7 @@ export function HeroSearch({
 
             <div className="flex flex-col gap-2 xl:col-span-2">
               <label className="font-label-bold text-[14px] leading-[20px] font-bold text-on-surface-variant">
-                Debut
+                Début
               </label>
               <div className="relative">
                 <Icon
@@ -205,7 +205,7 @@ export function HeroSearch({
                 disabled={isLoading}
               >
                 <Icon name="restart_alt" />
-                Reinitialiser les filtres
+                Réinitialiser les filtres
               </Button>
             </div>
           </form>

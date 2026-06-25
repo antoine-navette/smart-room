@@ -94,7 +94,7 @@ function getRoomStatus(reservations: Reservation[], unavailabilities: RoomUnavai
     if (activeReservation) {
         return {
             variant: 'warning' as const,
-            label: `Occupee jusqu'a ${formatTime(activeReservation.end_time)}`,
+            label: `Occupée jusqu'à ${formatTime(activeReservation.end_time)}`,
         };
     }
 
@@ -131,7 +131,7 @@ function getIncidentStatusLabel(status: Incident['status']) {
         return 'En cours';
     }
 
-    return 'Resolue';
+    return 'Résolu';
 }
 
 export default function RoomDetails() {
@@ -208,7 +208,7 @@ export default function RoomDetails() {
 
         if (roomResponse.error || !roomResponse.data) {
             setRoom(null);
-            setErrorMessage('Salle introuvable ou impossible a charger.');
+            setErrorMessage('Salle introuvable ou impossible à charger.');
             setIsLoading(false);
             return;
         }
@@ -222,7 +222,7 @@ export default function RoomDetails() {
             !buildingsResponse.data
         ) {
             setRoom(null);
-            setErrorMessage('Impossible de charger les details principaux de la salle.');
+            setErrorMessage('Impossible de charger les détails principaux de la salle.');
             setIsLoading(false);
             return;
         }
@@ -238,7 +238,7 @@ export default function RoomDetails() {
 
         if (unavailabilitiesResponse.error || !unavailabilitiesResponse.data) {
             setUnavailabilities([]);
-            warnings.push('indisponibilites');
+            warnings.push('indisponibilités');
         } else {
             setUnavailabilities(sortUnavailabilities(unavailabilitiesResponse.data));
         }
@@ -252,7 +252,7 @@ export default function RoomDetails() {
 
         if (warnings.length > 0) {
             setPageWarningMessage(
-                `Certaines informations secondaires n'ont pas pu etre chargees : ${warnings.join(', ')}.`,
+                `Certaines informations secondaires n'ont pas pu être chargées : ${warnings.join(', ')}.`,
             );
         }
 
@@ -339,7 +339,7 @@ export default function RoomDetails() {
         }
 
         if (!startTime || !endTime) {
-            pushToast({ type: 'error', message: 'Renseigne un debut et une fin pour reserver.' });
+            pushToast({ type: 'error', message: 'Renseigner un début et une fin pour réserver.' });
             return;
         }
 
@@ -352,12 +352,12 @@ export default function RoomDetails() {
         }
 
         if (nextStartDate >= nextEndDate) {
-            pushToast({ type: 'error', message: 'La fin doit etre apres le debut.' });
+            pushToast({ type: 'error', message: 'La fin doit être après le début.' });
             return;
         }
 
         if (nextStartDate.getTime() <= Date.now()) {
-            pushToast({ type: 'error', message: 'Le debut de la reservation doit etre dans le futur.' });
+            pushToast({ type: 'error', message: 'Le début de la réservation doit être dans le futur.' });
             return;
         }
 
@@ -374,7 +374,7 @@ export default function RoomDetails() {
         const errorCode = getErrorCode(error);
 
         if (errorCode === 'UNAUTHORIZED') {
-            pushToast({ type: 'error', message: 'Ta session a expire. Reconnecte-toi.' });
+            pushToast({ type: 'error', message: 'Votre session a expiré. Veuillez vous reconnecter.' });
             navigate('/login');
             setIsSubmitting(false);
             return;
@@ -382,13 +382,13 @@ export default function RoomDetails() {
 
         if (error) {
             if (errorCode === 'ROOM_NOT_AVAILABLE') {
-                pushToast({ type: 'error', message: "La salle n'est pas disponible sur ce creneau." });
+                pushToast({ type: 'error', message: "La salle n'est pas disponible sur ce créneau." });
             } else if (errorCode === 'INVALID_DATE_RANGE') {
-                pushToast({ type: 'error', message: 'Le creneau est invalide.' });
+                pushToast({ type: 'error', message: 'Le créneau est invalide.' });
             } else if (errorCode === 'RESERVATION_START_TIME_IN_PAST') {
-                pushToast({ type: 'error', message: 'Le debut de la reservation doit etre dans le futur.' });
+                pushToast({ type: 'error', message: 'Le début de la réservation doit être dans le futur.' });
             } else {
-                pushToast({ type: 'error', message: 'Impossible de creer la reservation.' });
+                pushToast({ type: 'error', message: 'Impossible de créer la réservation.' });
             }
 
             setIsSubmitting(false);
@@ -396,7 +396,7 @@ export default function RoomDetails() {
         }
 
         if (data) {
-            pushToast({ type: 'success', message: 'Reservation creee avec succes.' });
+            pushToast({ type: 'success', message: 'Reservation créée avec succès.' });
             setStartTime('');
             setEndTime('');
             await loadRoomDetails();
@@ -447,7 +447,7 @@ export default function RoomDetails() {
             if (error) {
                 if (errorCode === 'FAVORITE_ALREADY_EXISTS') {
                     setIsFavorite(true);
-                    pushToast({ type: 'info', message: 'Cette salle est deja dans tes favoris.' });
+                    pushToast({ type: 'info', message: 'Cette salle est déjà dans vos favoris.' });
                 } else if (errorCode === 'ROOM_NOT_FOUND') {
                     pushToast({ type: 'error', message: "Cette salle n'existe plus." });
                 } else {
@@ -458,9 +458,9 @@ export default function RoomDetails() {
             }
 
             setIsFavorite(true);
-            pushToast({ type: 'success', message: 'Salle ajoutee aux favoris.' });
+            pushToast({ type: 'success', message: 'Salle ajoutée aux favoris.' });
         } catch {
-            pushToast({ type: 'error', message: 'La requete de favoris a echoue.' });
+            pushToast({ type: 'error', message: 'La requête de favoris a échoué.' });
         } finally {
             setIsFavoritePending(false);
         }
@@ -504,9 +504,9 @@ export default function RoomDetails() {
 
             setIsFavorite(false);
             setIsFavoriteRemovalModalOpen(false);
-            pushToast({ type: 'success', message: 'Salle retiree des favoris.' });
+            pushToast({ type: 'success', message: 'Salle retirée des favoris.' });
         } catch {
-            pushToast({ type: 'error', message: 'La requete de favoris a echoue.' });
+            pushToast({ type: 'error', message: 'La requête de favoris a échoué.' });
         } finally {
             setIsFavoritePending(false);
         }
@@ -556,23 +556,23 @@ export default function RoomDetails() {
                 if (errorCode === 'ROOM_NOT_FOUND') {
                     pushToast({ type: 'error', message: "Cette salle n'existe plus." });
                 } else {
-                    pushToast({ type: 'error', message: 'Impossible de creer le signalement.' });
+                    pushToast({ type: 'error', message: 'Impossible de créer le signalement.' });
                 }
 
                 return;
             }
 
             if (!data) {
-                pushToast({ type: 'error', message: 'La reponse du serveur est invalide.' });
+                pushToast({ type: 'error', message: 'La réponse du serveur est invalide.' });
                 return;
             }
 
             setIncidents((current) => sortIncidents([data, ...current]));
             setIncidentTitle('');
             setIncidentDescription('');
-            pushToast({ type: 'success', message: 'Signalement envoye avec succes.' });
+            pushToast({ type: 'success', message: 'Signalement envoyé avec succès.' });
         } catch {
-            pushToast({ type: 'error', message: 'La requete de signalement a echoue.' });
+            pushToast({ type: 'error', message: 'La requête de signalement a échoué.' });
         } finally {
             setIsIncidentSubmitting(false);
         }
@@ -603,7 +603,7 @@ export default function RoomDetails() {
         return (
             <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-12">
                 <div className="bg-surface border-[3px] border-on-surface p-6 neo-shadow text-center font-bold">
-                    Chargement des details de la salle...
+                    Chargement des détails de la salle...
                 </div>
             </div>
         );
@@ -617,7 +617,7 @@ export default function RoomDetails() {
                     className="inline-flex items-center gap-2 font-label-bold font-bold hover:text-primary transition-colors"
                 >
                     <Icon name="arrow_back" />
-                    Retour a la recherche
+                    Retour à la recherche
                 </Link>
 
                 <div className="bg-error-container text-on-error-container border-[3px] border-on-surface p-6 neo-shadow font-bold">
@@ -634,7 +634,7 @@ export default function RoomDetails() {
                 className="inline-flex items-center gap-2 font-label-bold font-bold hover:text-primary transition-colors"
             >
                 <Icon name="arrow_back" />
-                Retour a la recherche
+                Retour à la recherche
             </Link>
 
             {pageWarningMessage ? (
@@ -652,7 +652,7 @@ export default function RoomDetails() {
                                     {room.name}
                                 </h1>
                                 <p className="font-body-lg text-[18px] leading-[28px] font-medium text-on-surface-variant">
-                                    {building?.name ?? 'Batiment inconnu'}, {floor?.name ?? 'Etage inconnu'}
+                                    {building?.name ?? 'Batiment inconnu'}, {floor?.name ?? 'Étage inconnu'}
                                 </p>
                             </div>
 
@@ -686,7 +686,7 @@ export default function RoomDetails() {
                                     <Icon name="favorite" fill={isFavorite} />
                                     <span>
                                         {isFavoritePending
-                                            ? 'Mise a jour...'
+                                            ? 'Mise à jour...'
                                             : isFavorite
                                               ? 'Dans vos favoris'
                                               : 'Ajouter aux favoris'}
@@ -715,10 +715,10 @@ export default function RoomDetails() {
                                 <Icon name="groups" className="text-3xl" />
                             </div>
                             <h3 className="font-label-bold font-bold text-on-surface-variant uppercase mb-1">
-                                Capacity
+                                Capacité
                             </h3>
                             <p className="font-headline-md font-bold text-[24px] text-on-surface">
-                                {room.capacity} People
+                                {room.capacity} personnes
                             </p>
                         </div>
 
@@ -727,7 +727,7 @@ export default function RoomDetails() {
                                 <Icon name="domain" className="text-3xl" />
                             </div>
                             <h3 className="font-label-bold font-bold text-on-surface-variant uppercase mb-1">
-                                Building
+                                Bâtiment
                             </h3>
                             <p className="font-headline-md font-bold text-[24px] text-on-surface">
                                 {building?.name ?? 'Inconnu'}
@@ -739,7 +739,7 @@ export default function RoomDetails() {
                                 <Icon name="inventory_2" className="text-3xl" />
                             </div>
                             <h3 className="font-label-bold font-bold text-on-surface-variant uppercase mb-1">
-                                Resources
+                                Ressources
                             </h3>
                             <p className="font-headline-md font-bold text-[24px] text-on-surface">{resources.length}</p>
                         </div>
@@ -749,7 +749,7 @@ export default function RoomDetails() {
                                 <Icon name="schedule" className="text-3xl" />
                             </div>
                             <h3 className="font-label-bold font-bold text-on-surface-variant uppercase mb-1">
-                                Next Booking
+                                Prochaine réservation
                             </h3>
                             <p className="font-headline-md font-bold text-[20px] text-on-surface">
                                 {nextReservation
@@ -769,7 +769,7 @@ export default function RoomDetails() {
 
                         {resources.length === 0 ? (
                             <div className="bg-surface-container border-[3px] border-on-surface p-4 font-bold text-center">
-                                Aucune ressource declaree pour cette salle.
+                                Aucune ressource définie pour cette salle.
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -780,9 +780,6 @@ export default function RoomDetails() {
                                     >
                                         <div>
                                             <h3 className="font-headline-md font-bold text-[24px]">{resource.name}</h3>
-                                            <p className="font-body-md text-on-surface-variant">
-                                                Ressource configuree pour cette salle
-                                            </p>
                                         </div>
 
                                         <span className="bg-primary text-on-primary font-label-bold font-bold px-4 py-2 border-[3px] border-on-surface">
@@ -798,20 +795,20 @@ export default function RoomDetails() {
                         <div className="border-b-[3px] border-on-surface pb-4">
                             <h2 className="font-headline-lg font-black text-[24px] uppercase flex items-center gap-3">
                                 <Icon name="construction" className="text-3xl" />
-                                Indisponibilites
+                                Indisponibilités
                             </h2>
                         </div>
 
                         {currentUnavailability ? (
                             <div className="bg-error-container text-on-error-container border-[3px] border-on-surface p-4 neo-shadow font-bold">
-                                Indisponibilite active : {currentUnavailability.reason} jusqu'a{' '}
+                                Indisponibilité active : {currentUnavailability.reason} jusqu'à{' '}
                                 {formatDateTime(currentUnavailability.to_time)}.
                             </div>
                         ) : null}
 
                         {visibleUnavailabilities.length === 0 ? (
                             <div className="bg-surface-container border-[3px] border-on-surface p-4 font-bold text-center">
-                                Aucune indisponibilite a venir.
+                                Aucune indisponibilité à venir.
                             </div>
                         ) : (
                             <div className="flex flex-col gap-4">
@@ -848,7 +845,7 @@ export default function RoomDetails() {
 
                         {visibleIncidents.length === 0 ? (
                             <div className="bg-surface-container border-[3px] border-on-surface p-4 font-bold text-center">
-                                Aucun incident signale pour cette salle.
+                                Aucun incident signalé pour cette salle.
                             </div>
                         ) : (
                             <div className="flex flex-col gap-4">
@@ -863,7 +860,7 @@ export default function RoomDetails() {
                                                     {incident.title}
                                                 </h3>
                                                 <p className="font-body-md text-on-surface-variant">
-                                                    Signale le {formatDateTime(incident.created_at)}
+                                                    Signalé le {formatDateTime(incident.created_at)}
                                                 </p>
                                             </div>
 
@@ -885,13 +882,13 @@ export default function RoomDetails() {
                 <div className="lg:col-span-4 flex flex-col gap-8">
                     <div className="bg-surface border-[3px] border-on-surface p-6 neo-shadow">
                         <h2 className="font-headline-lg font-black text-[24px] text-on-surface mb-6 border-b-[3px] border-on-surface pb-4">
-                            Schedule
+                            Réservations
                         </h2>
 
                         <div className="flex flex-col gap-4 mb-8 max-h-[480px] overflow-y-auto pr-1">
                             {reservations.length === 0 ? (
                                 <div className="bg-tertiary-fixed border-[3px] border-on-surface p-4 neo-shadow-sm font-bold">
-                                    Aucune reservation pour cette salle.
+                                    Aucune réservation pour cette salle.
                                 </div>
                             ) : (
                                 reservations.map((reservation) => (
@@ -917,7 +914,7 @@ export default function RoomDetails() {
                         <div className="flex flex-col gap-4 mb-6">
                             <div>
                                 <label className="font-label-bold font-bold block mb-2 text-on-surface-variant">
-                                    Debut
+                                    Début
                                 </label>
                                 <Input
                                     type="datetime-local"
@@ -950,21 +947,21 @@ export default function RoomDetails() {
                         >
                             {status === 'authenticated'
                                 ? isSubmitting
-                                    ? 'Reservation...'
-                                    : 'Reserve Now'
-                                : 'Login to Reserve'}
+                                    ? 'Réservation...'
+                                    : 'Réserver maintenant'
+                                : 'Se connecter pour réserver'}
                         </Button>
                     </div>
 
                     <div className="bg-surface border-[3px] border-on-surface p-6 neo-shadow flex flex-col gap-4">
                         <div className="border-b-[3px] border-on-surface pb-4">
                             <h2 className="font-headline-lg font-black text-[24px] text-on-surface">
-                                Signaler un probleme
+                                Signaler un problème
                             </h2>
                         </div>
 
                         <p className="font-body-md text-on-surface-variant">
-                            Signale un incident sur cette salle pour qu'un administrateur puisse le traiter.
+                            Signalez un incident sur cette salle pour qu'un administrateur puisse le traiter.
                         </p>
 
                         <div className="flex flex-col gap-2">
@@ -972,7 +969,7 @@ export default function RoomDetails() {
                             <Input
                                 value={incidentTitle}
                                 onChange={(event) => setIncidentTitle(event.target.value)}
-                                placeholder="Projecteur defectueux"
+                                placeholder="Projecteur défectueux"
                                 disabled={isIncidentSubmitting}
                             />
                         </div>
@@ -982,7 +979,7 @@ export default function RoomDetails() {
                             <textarea
                                 value={incidentDescription}
                                 onChange={(event) => setIncidentDescription(event.target.value)}
-                                placeholder="Decris le probleme constate..."
+                                placeholder="Décrivez le problème constaté..."
                                 disabled={isIncidentSubmitting}
                                 className={textareaClassName}
                             />
@@ -999,7 +996,7 @@ export default function RoomDetails() {
                                 ? isIncidentSubmitting
                                     ? 'Signalement...'
                                     : 'Envoyer le signalement'
-                                : 'Login to Report'}
+                                : 'Se connecter pour envoyer un signalement'}
                         </Button>
                     </div>
                 </div>

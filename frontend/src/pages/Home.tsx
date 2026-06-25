@@ -33,7 +33,7 @@ function buildLocation(room: Room, floorById: Map<number, Floor>, buildingById: 
     const floor = floorById.get(room.floor_id);
 
     if (!floor) {
-        return 'Etage inconnu';
+        return 'Étage inconnu';
     }
 
     const building = buildingById.get(floor.building_id);
@@ -84,7 +84,7 @@ function toRoomCard(
         return {
             ...baseCard,
             status: 'available',
-            statusLabel: 'Disponible sur ce creneau',
+            statusLabel: 'Disponible sur ce créneau',
         };
     }
 
@@ -285,7 +285,7 @@ export default function Home() {
             pushToast({
                 type: 'error',
                 title: 'Filtres invalides',
-                message: 'Renseigne une date de debut et une date de fin pour filtrer la disponibilite.',
+                message: 'Renseignez une date de début et une date de fin pour filtrer la disponibilité.',
             });
             return;
         }
@@ -294,7 +294,7 @@ export default function Home() {
             pushToast({
                 type: 'error',
                 title: 'Filtres invalides',
-                message: 'Le debut du creneau doit etre avant la fin.',
+                message: 'Le début du créneau doit être avant la fin.',
             });
             return;
         }
@@ -325,9 +325,9 @@ export default function Home() {
                 <div className="mb-8">
                     <h2 className="font-headline-lg font-black text-[32px] leading-[40px]">Toutes les salles</h2>
                     <p className="font-body-md text-on-surface-variant mt-2">
-                        {visibleRoomCards.length} salle{visibleRoomCards.length > 1 ? 's' : ''} trouvee
+                        {visibleRoomCards.length} salle{visibleRoomCards.length > 1 ? 's' : ''} trouvée
                         {visibleRoomCards.length > 1 ? 's' : ''}
-                        {hasAvailabilityFilter ? ' sur ce creneau' : ''}
+                        {hasAvailabilityFilter ? ' sur ce créneau' : ''}
                     </p>
                 </div>
 
@@ -347,7 +347,7 @@ export default function Home() {
                     <div className="mb-8 bg-surface-container neo-border p-6 text-center font-bold">
                         {rooms.length === 0
                             ? 'Aucune salle disponible pour le moment.'
-                            : 'Aucune salle ne correspond a tes filtres.'}
+                            : 'Aucune salle ne correspond aux critères de filtre.'}
                     </div>
                 ) : null}
 
@@ -367,7 +367,7 @@ export default function Home() {
                         disabled={isLoading}
                     >
                         <Icon name="refresh" />
-                        Rafraichir
+                        Rafraîchir
                     </Button>
                 </div>
             </section>

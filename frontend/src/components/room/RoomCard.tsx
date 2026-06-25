@@ -52,13 +52,13 @@ export function RoomCard({
                 return (
                     <div className="absolute top-4 right-4 bg-secondary-container text-on-secondary-container px-3 py-1 neo-border font-label-bold font-bold text-[14px] leading-[20px] rounded-DEFAULT flex items-center gap-1 shadow-[4px_4px_0px_0px_#000]">
                         <Icon name="schedule" className="text-[16px]" />
-                        {statusLabel || 'Occupee'}
+                        {statusLabel || 'Occupée'}
                     </div>
                 );
             case 'upcoming':
                 return (
                     <div className="absolute top-4 right-4 bg-secondary-fixed text-on-secondary-fixed px-3 py-1 neo-border font-label-bold font-bold text-[14px] leading-[20px] rounded-DEFAULT flex items-center gap-1 shadow-[4px_4px_0px_0px_#000]">
-                        {statusLabel || 'A venir'}
+                        {statusLabel || 'À venir'}
                     </div>
                 );
         }

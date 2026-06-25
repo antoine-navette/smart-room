@@ -28,20 +28,20 @@ export function BookingCard({ time, meridiem, title, status, capacity, hasVc, is
             <span className={`${statusBgClass} font-label-bold font-bold px-3 py-1 border-[3px] border-on-surface text-xs uppercase`}>{status}</span>
           </div>
           <p className="font-body-md text-on-surface-variant flex items-center gap-2">
-            <Icon name="group" className="text-sm" /> Capacity: {capacity}
+            <Icon name="group" className="text-sm" /> Capacité: {capacity}
             {hasVc && (
               <>
-                <Icon name="videocam" className="text-sm ml-2" /> VC Equipped
+                <Icon name="videocam" className="text-sm ml-2" /> Vidéoconférence Équipée
               </>
             )}
           </p>
         </div>
         <div className="flex gap-4 mt-4">
           <Button variant="outline" className="flex-1 neo-shadow-sm neo-active-sm py-2">
-            Modify
+            Modifier
           </Button>
           <Button variant="danger" className="flex-1 neo-shadow-sm neo-active-sm py-2">
-            Cancel
+            Annuler
           </Button>
         </div>
       </div>
