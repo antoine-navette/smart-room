@@ -72,7 +72,37 @@ jobs:
             ./backend
 
   # ==========================================
-  # 3. DEPLOY TO STAGING
+  # 3. INTEGRATION TESTS
+  # ==========================================
+  test_integration:
+    name: Backend integration tests
+    needs: [build_backend]
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u antoine-navette --password-stdin
+      - run: npm ci
+        working-directory: backend
+      - name: Start stack
+        run: docker compose -f compose.yaml -f compose.test.yaml up -d
+      - name: Run migrations
+        run: docker compose -f compose.yaml -f compose.test.yaml run --rm backend npm run migrate:up
+      - name: Wait for backend
+        run: until curl -sf http://localhost:3000/health; do sleep 2; done
+      - name: Run tests
+        run: npm run test:integration
+        working-directory: backend
+      - name: Teardown
+        if: always()
+        run: docker compose -f compose.yaml -f compose.test.yaml down
+
+  # ==========================================
+  # 4. DEPLOY TO STAGING
   # ==========================================
   deploy_staging:
     name: Deploy to Staging
