@@ -91,12 +91,10 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (
                     return reply.status(404).send({ code: 'ROOM_NOT_FOUND', message: 'Room not found' });
                 }
                 if (result.code === 'RESERVATION_START_TIME_IN_PAST') {
-                    return reply
-                        .status(400)
-                        .send({
-                            code: 'RESERVATION_START_TIME_IN_PAST',
-                            message: 'Reservation cannot start in the past',
-                        });
+                    return reply.status(400).send({
+                        code: 'RESERVATION_START_TIME_IN_PAST',
+                        message: 'Reservation cannot start in the past',
+                    });
                 }
                 if (result.code === 'ROOM_NOT_AVAILABLE') {
                     return reply
@@ -317,12 +315,10 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (
                     return reply.status(404).send({ code: 'ROOM_NOT_FOUND', message: 'Room not found' });
                 }
                 if (result.code === 'RESERVATION_START_TIME_IN_PAST') {
-                    return reply
-                        .status(400)
-                        .send({
-                            code: 'RESERVATION_START_TIME_IN_PAST',
-                            message: 'Reservation cannot start in the past',
-                        });
+                    return reply.status(400).send({
+                        code: 'RESERVATION_START_TIME_IN_PAST',
+                        message: 'Reservation cannot start in the past',
+                    });
                 }
                 if (result.code === 'ROOM_NOT_AVAILABLE') {
                     return reply
