@@ -99,7 +99,7 @@ export default function Dashboard() {
             setBuildings([]);
             setFavorites([]);
             setFavoriteLoadError('');
-            setErrorMessage('Impossible de charger ton tableau de bord pour le moment.');
+            setErrorMessage('Impossible de charger votre tableau de bord pour le moment.');
             setIsLoading(false);
             return;
         }
@@ -111,7 +111,7 @@ export default function Dashboard() {
 
         if (favoritesResponse.error || !favoritesResponse.data) {
             setFavorites([]);
-            setFavoriteLoadError('Impossible de charger tes favoris pour le moment.');
+            setFavoriteLoadError('Impossible de charger vos favoris pour le moment.');
         } else {
             setFavorites(favoritesResponse.data);
             setFavoriteLoadError('');
@@ -157,7 +157,7 @@ export default function Dashboard() {
                     className="w-fit bg-primary text-on-primary font-label-bold font-bold px-6 py-3 border-[3px] border-on-surface neo-shadow neo-shadow-active transition-transform flex items-center gap-2"
                 >
                     <Icon name="refresh" />
-                    Reessayer
+                    Réessayer
                 </button>
             </div>
         );
@@ -274,9 +274,9 @@ export default function Dashboard() {
 
         setFavorites((current) => current.filter((favorite) => favorite.room_id !== roomId));
         setFavoriteRoomToRemove(null);
-        pushToast({ type: 'success', message: 'Salle retiree des favoris.' });
+        pushToast({ type: 'success', message: 'Salle retirée des favoris.' });
     } catch {
-        pushToast({ type: 'error', message: 'La requete de favoris a echoue.' });
+        pushToast({ type: 'error', message: 'La requête de favoris a échoué.' });
     } finally {
         setFavoritePendingRoomId(null);
     }
@@ -290,7 +290,7 @@ export default function Dashboard() {
                         Bonjour, {user.first_name}
                     </h1>
                     <p className="font-body-lg text-[18px] leading-[28px] font-medium text-on-surface-variant">
-                        Voici le suivi de tes reservations et de tes prochains creneaux.
+                        Voici le suivi de vos réservations et de vos prochains créneaux.
                     </p>
                 </div>
 
@@ -299,7 +299,7 @@ export default function Dashboard() {
                     className="font-label-bold font-bold bg-primary text-on-primary px-6 py-3 border-[3px] border-on-surface neo-shadow neo-shadow-active transition-transform flex items-center gap-2"
                 >
                     <Icon name="add" fill />
-                    Reserver une salle
+                    Réserver une salle
                 </Link>
             </header>
 
@@ -310,7 +310,7 @@ export default function Dashboard() {
                         {reservationsThisMonth}
                     </p>
                     <p className="font-label-bold font-bold uppercase tracking-wide text-on-surface-variant">
-                        Reservations ce mois-ci
+                        Réservations du mois
                     </p>
                 </div>
 
@@ -320,7 +320,7 @@ export default function Dashboard() {
                         {activeOrUpcomingReservations.length}
                     </p>
                     <p className="font-label-bold font-bold uppercase tracking-wide text-on-surface-variant">
-                        Creneaux actifs ou a venir
+                        Créneaux actifs ou à venir
                     </p>
                 </div>
 
@@ -332,7 +332,7 @@ export default function Dashboard() {
                             : 'Aucun'}
                     </p>
                     <p className="font-label-bold font-bold uppercase tracking-wide text-on-surface-variant">
-                        Prochain creneau
+                        Prochain créneau
                     </p>
                 </div>
             </section>
@@ -341,7 +341,7 @@ export default function Dashboard() {
                 <div className="flex flex-wrap justify-between items-center border-b-[3px] border-on-surface pb-4">
                     <h2 className="font-headline-lg font-black text-[32px] flex items-center gap-3">
                         <Icon name="event_upcoming" className="text-3xl" />
-                        Reservations a venir
+                        Réservations à venir
                     </h2>
 
                     <button
@@ -350,7 +350,7 @@ export default function Dashboard() {
                         className="bg-surface border-[3px] border-on-surface px-4 py-2 font-label-bold font-bold neo-shadow-sm neo-active-sm flex items-center gap-2"
                     >
                         <Icon name="refresh" />
-                        Rafraichir
+                        Rafraîchir
                     </button>
                 </div>
 
@@ -358,10 +358,10 @@ export default function Dashboard() {
                 {activeOrUpcomingReservations.length === 0 ? (
                     <div className="bg-surface-container border-[3px] border-on-surface p-6 neo-shadow text-center">
                         <p className="font-headline-md font-bold text-[24px] text-on-surface mb-2">
-                            Aucune reservation a venir
+                            Aucune réservation à venir
                         </p>
                         <p className="font-body-md text-on-surface-variant mb-6">
-                            Tu peux reserver une salle depuis la page d'accueil ou depuis la fiche d'une salle.
+                            Vous pouvez réserver une salle depuis la page d'accueil ou depuis la fiche d'une salle.
                         </p>
                         <Link
                             to="/"
@@ -415,7 +415,7 @@ export default function Dashboard() {
                             className="w-fit bg-surface text-on-surface font-label-bold font-bold px-4 py-2 border-[3px] border-on-surface neo-shadow-sm neo-active-sm flex items-center gap-2"
                         >
                             <Icon name="refresh" />
-                            Reessayer
+                            Réessayer
                         </button>
                     </div>
                 ) : favoriteRooms.length === 0 ? (
@@ -425,7 +425,7 @@ export default function Dashboard() {
                         </p>
 
                         <p className="font-body-md text-on-surface-variant mb-6">
-                            Ajoute des salles en favoris depuis leur fiche pour les retrouver ici rapidement.
+                            Ajoutez des salles en favoris depuis leur fiche pour les retrouver ici rapidement.
                         </p>
 
                         <Link
@@ -458,13 +458,13 @@ export default function Dashboard() {
                 <div className="border-b-[3px] border-on-surface pb-4">
                     <h2 className="font-headline-lg font-black text-[32px] flex items-center gap-3">
                         <Icon name="schedule" className="text-3xl" />
-                        Historique recent
+                        Historique récent
                     </h2>
                 </div>
 
                 {recentPastReservations.length === 0 ? (
                     <div className="bg-surface-container border-[3px] border-on-surface p-6 neo-shadow text-center font-bold">
-                        Aucune reservation passee pour le moment.
+                        Aucune réservation passée pour le moment.
                     </div>
                 ) : (
                     <div className="flex flex-col gap-6">

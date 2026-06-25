@@ -95,7 +95,7 @@ function buildRoomLocation(room: Room, floorById: Map<number, Floor>, buildingBy
     const floor = floorById.get(room.floor_id);
 
     if (!floor) {
-        return 'Etage inconnu';
+        return 'Étage inconnu';
     }
 
     const building = buildingById.get(floor.building_id);
@@ -128,7 +128,7 @@ function getIncidentStatusLabel(status: IncidentStatus) {
         return 'En cours';
     }
 
-    return 'Resolue';
+    return 'Résolu';
 }
 
 function getIncidentStatusClass(status: IncidentStatus) {
@@ -275,7 +275,7 @@ export default function Admin() {
             setUnavailabilities(sortUnavailabilities(unavailabilitiesResponse.data));
             setIncidents(sortIncidents(incidentsResponse.data));
         } catch {
-            setErrorMessage("La requete de chargement de l'admin a echoue.");
+            setErrorMessage("La requête de chargement de l'admin a échoué.");
         } finally {
             setIsLoading(false);
         }
@@ -302,7 +302,7 @@ export default function Admin() {
 
             if (error || !data) {
                 if (errorCode === 'ROOM_NOT_FOUND') {
-                    setAssignmentErrorMessage("La salle selectionnee n'existe plus.");
+                    setAssignmentErrorMessage("La salle selectionnée n'existe plus.");
                 } else {
                     setAssignmentErrorMessage('Impossible de charger les ressources de cette salle.');
                 }
@@ -317,7 +317,7 @@ export default function Admin() {
                 Object.fromEntries(data.map((assignment) => [assignment.resource_id, String(assignment.quantity)])),
             );
         } catch {
-            setAssignmentErrorMessage('La requete de chargement des ressources affectees a echoue.');
+            setAssignmentErrorMessage('La requête de chargement des ressources affectées a échoué.');
             setRoomAssignments([]);
             setAssignmentQuantityDrafts({});
         } finally {
@@ -417,7 +417,7 @@ export default function Admin() {
         const name = newBuildingName.trim();
 
         if (!name) {
-            pushFeedback('error', 'Renseigne un nom de batiment.');
+            pushFeedback('error', 'Renseigner un nom de bâtiment.');
             return;
         }
 
@@ -437,26 +437,26 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut creer un batiment.');
+                    pushFeedback('error', 'Seul un admin peut créer un bâtiment.');
                 } else if (errorCode === 'BUILDING_NAME_EXISTS') {
-                    pushFeedback('error', 'Un batiment porte deja ce nom.');
+                    pushFeedback('error', 'Un bâtiment porte déjà ce nom.');
                 } else {
-                    pushFeedback('error', 'Impossible de creer le batiment.');
+                    pushFeedback('error', 'Impossible de créer le bâtiment.');
                 }
 
                 return;
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
             setBuildings((current) => sortByName([...current, data]));
             setNewBuildingName('');
-            pushFeedback('success', 'Batiment cree avec succes.');
+            pushFeedback('success', 'Bâtiment créé avec succès.');
         } catch {
-            pushFeedback('error', 'La requete de creation du batiment a echoue.');
+            pushFeedback('error', 'La requête de création du bâtiment a échoué.');
         } finally {
             setSavingKey('');
         }
@@ -472,7 +472,7 @@ export default function Admin() {
         const name = editingBuildingName.trim();
 
         if (!name) {
-            pushFeedback('error', 'Le nom du batiment est obligatoire.');
+            pushFeedback('error', 'Le nom du bâtiment est obligatoire.');
             return;
         }
 
@@ -495,36 +495,36 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut modifier un batiment.');
+                    pushFeedback('error', 'Seul un admin peut modifier un bâtiment.');
                 } else if (errorCode === 'BUILDING_NAME_EXISTS') {
-                    pushFeedback('error', 'Un batiment porte deja ce nom.');
+                    pushFeedback('error', 'Un bâtiment porte déjà ce nom.');
                 } else if (errorCode === 'BUILDING_NOT_FOUND') {
-                    pushFeedback('error', "Ce batiment n'existe plus.");
+                    pushFeedback('error', "Ce bâtiment n'existe plus.");
                 } else {
-                    pushFeedback('error', 'Impossible de modifier le batiment.');
+                    pushFeedback('error', 'Impossible de modifier le bâtiment.');
                 }
 
                 return;
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
             setBuildings((current) => sortByName(current.map((item) => (item.id === buildingId ? data : item))));
             setEditingBuildingId(null);
             setEditingBuildingName('');
-            pushFeedback('success', 'Batiment modifie avec succes.');
+            pushFeedback('success', 'Bâtiment modifié avec succès.');
         } catch {
-            pushFeedback('error', 'La requete de modification du batiment a echoue.');
+            pushFeedback('error', 'La requête de modification du bâtiment a échoué.');
         } finally {
             setSavingKey('');
         }
     };
 
     const deleteBuilding = async (building: Building) => {
-        const confirmed = window.confirm(`Supprimer le batiment "${building.name}" ?`);
+        const confirmed = window.confirm(`Supprimer le bâtiment "${building.name}" ?`);
 
         if (!confirmed) {
             return;
@@ -548,13 +548,13 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut supprimer un batiment.');
+                    pushFeedback('error', 'Seul un admin peut supprimer un bâtiment.');
                 } else if (errorCode === 'BUILDING_HAS_FLOORS') {
-                    pushFeedback('error', "Supprime d'abord les etages de ce batiment.");
+                    pushFeedback('error', "Veuillez supprimer les étages de ce bâtiment.");
                 } else if (errorCode === 'BUILDING_NOT_FOUND') {
-                    pushFeedback('error', "Ce batiment n'existe plus.");
+                    pushFeedback('error', "Ce bâtiment n'existe plus.");
                 } else {
-                    pushFeedback('error', 'Impossible de supprimer le batiment.');
+                    pushFeedback('error', 'Impossible de supprimer le bâtiment.');
                 }
 
                 return;
@@ -565,9 +565,9 @@ export default function Admin() {
                 setEditingBuildingId(null);
                 setEditingBuildingName('');
             }
-            pushFeedback('success', 'Batiment supprime avec succes.');
+            pushFeedback('success', 'Bâtiment supprimé avec succès.');
         } catch {
-            pushFeedback('error', 'La requete de suppression du batiment a echoue.');
+            pushFeedback('error', 'La requête de suppression du bâtiment a échoué.');
         } finally {
             setDeletingKey('');
         }
@@ -580,12 +580,12 @@ export default function Admin() {
         const buildingId = parsePositiveInteger(newFloorBuildingId);
 
         if (!name) {
-            pushFeedback('error', "Renseigne un nom d'etage.");
+            pushFeedback('error', "Renseigner un nom d'étage.");
             return;
         }
 
         if (!buildingId) {
-            pushFeedback('error', 'Selectionne un batiment.');
+            pushFeedback('error', 'Sélectionner un bâtiment.');
             return;
         }
 
@@ -608,28 +608,28 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut creer un etage.');
+                    pushFeedback('error', 'Seul un admin peut créer un étage.');
                 } else if (errorCode === 'FLOOR_NAME_EXISTS') {
-                    pushFeedback('error', 'Un etage porte deja ce nom.');
+                    pushFeedback('error', 'Un étage porte déjà ce nom.');
                 } else if (errorCode === 'BUILDING_NOT_FOUND') {
-                    pushFeedback('error', "Le batiment selectionne n'existe plus.");
+                    pushFeedback('error', "Le bâtiment sélectionné n'existe plus.");
                 } else {
-                    pushFeedback('error', "Impossible de creer l'etage.");
+                    pushFeedback('error', "Impossible de créer l'étage.");
                 }
 
                 return;
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
             setFloors((current) => sortByName([...current, data]));
             setNewFloorName('');
-            pushFeedback('success', 'Etage cree avec succes.');
+            pushFeedback('success', 'Etage créé avec succès.');
         } catch {
-            pushFeedback('error', "La requete de creation de l'etage a echoue.");
+            pushFeedback('error', "La requête de création de l'étage a échoué.");
         } finally {
             setSavingKey('');
         }
@@ -647,12 +647,12 @@ export default function Admin() {
         const buildingId = parsePositiveInteger(editingFloorBuildingId);
 
         if (!name) {
-            pushFeedback('error', "Le nom de l'etage est obligatoire.");
+            pushFeedback('error', "Le nom de l'étage est obligatoire.");
             return;
         }
 
         if (!buildingId) {
-            pushFeedback('error', 'Selectionne un batiment valide.');
+            pushFeedback('error', 'Sélectionner un bâtiment valide.');
             return;
         }
 
@@ -678,22 +678,22 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut modifier un etage.');
+                    pushFeedback('error', 'Seul un admin peut modifier un étage.');
                 } else if (errorCode === 'FLOOR_NAME_EXISTS') {
-                    pushFeedback('error', 'Un etage porte deja ce nom.');
+                    pushFeedback('error', 'Un étage porte déjà ce nom.');
                 } else if (errorCode === 'BUILDING_NOT_FOUND') {
-                    pushFeedback('error', "Le batiment selectionne n'existe plus.");
+                    pushFeedback('error', "Le bâtiment sélectionné n'existe plus.");
                 } else if (errorCode === 'FLOOR_NOT_FOUND') {
-                    pushFeedback('error', "Cet etage n'existe plus.");
+                    pushFeedback('error', "Cet étage n'existe plus.");
                 } else {
-                    pushFeedback('error', "Impossible de modifier l'etage.");
+                    pushFeedback('error', "Impossible de modifier l'étage.");
                 }
 
                 return;
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
@@ -701,16 +701,16 @@ export default function Admin() {
             setEditingFloorId(null);
             setEditingFloorName('');
             setEditingFloorBuildingId('');
-            pushFeedback('success', 'Etage modifie avec succes.');
+            pushFeedback('success', 'Etage modifié avec succès.');
         } catch {
-            pushFeedback('error', "La requete de modification de l'etage a echoue.");
+            pushFeedback('error', "La requête de modification de l'étage a échoué.");
         } finally {
             setSavingKey('');
         }
     };
 
     const deleteFloor = async (floor: Floor) => {
-        const confirmed = window.confirm(`Supprimer l'etage "${floor.name}" ?`);
+        const confirmed = window.confirm(`Supprimer l'étage "${floor.name}" ?`);
 
         if (!confirmed) {
             return;
@@ -734,13 +734,13 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut supprimer un etage.');
+                    pushFeedback('error', 'Seul un admin peut supprimer un étage.');
                 } else if (errorCode === 'FLOOR_HAS_ROOMS') {
-                    pushFeedback('error', "Supprime d'abord les salles de cet etage.");
+                    pushFeedback('error', "Veuillez supprimer les salles de cet étage.");
                 } else if (errorCode === 'FLOOR_NOT_FOUND') {
-                    pushFeedback('error', "Cet etage n'existe plus.");
+                    pushFeedback('error', "Cet étage n'existe plus.");
                 } else {
-                    pushFeedback('error', "Impossible de supprimer l'etage.");
+                    pushFeedback('error', "Impossible de supprimer l'étage.");
                 }
 
                 return;
@@ -752,9 +752,9 @@ export default function Admin() {
                 setEditingFloorName('');
                 setEditingFloorBuildingId('');
             }
-            pushFeedback('success', 'Etage supprime avec succes.');
+            pushFeedback('success', 'Etage supprimé avec succès.');
         } catch {
-            pushFeedback('error', "La requete de suppression de l'etage a echoue.");
+            pushFeedback('error', "La requête de suppression de l'étage a échoué.");
         } finally {
             setDeletingKey('');
         }
@@ -768,17 +768,17 @@ export default function Admin() {
         const capacity = parsePositiveInteger(newRoomCapacity);
 
         if (!name) {
-            pushFeedback('error', 'Renseigne un nom de salle.');
+            pushFeedback('error', 'Renseigner un nom de salle.');
             return;
         }
 
         if (!floorId) {
-            pushFeedback('error', 'Selectionne un etage.');
+            pushFeedback('error', 'Sélectionner un étage.');
             return;
         }
 
         if (!capacity) {
-            pushFeedback('error', 'La capacite doit etre un entier positif.');
+            pushFeedback('error', 'La capacité doit être un entier positif.');
             return;
         }
 
@@ -802,29 +802,29 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut creer une salle.');
+                    pushFeedback('error', 'Seul un admin peut créer une salle.');
                 } else if (errorCode === 'ROOM_NAME_EXISTS') {
-                    pushFeedback('error', 'Une salle porte deja ce nom.');
+                    pushFeedback('error', 'Une salle porte déjà ce nom.');
                 } else if (errorCode === 'FLOOR_NOT_FOUND') {
-                    pushFeedback('error', "L'etage selectionne n'existe plus.");
+                    pushFeedback('error', "L'étage sélectionné n'existe plus.");
                 } else {
-                    pushFeedback('error', 'Impossible de creer la salle.');
+                    pushFeedback('error', 'Impossible de créer la salle.');
                 }
 
                 return;
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
             setRooms((current) => sortByName([...current, data]));
             setNewRoomName('');
             setNewRoomCapacity('');
-            pushFeedback('success', 'Salle creee avec succes.');
+            pushFeedback('success', 'Salle créée avec succès.');
         } catch {
-            pushFeedback('error', 'La requete de creation de la salle a echoue.');
+            pushFeedback('error', 'La requête de création de la salle a échoué.');
         } finally {
             setSavingKey('');
         }
@@ -849,12 +849,12 @@ export default function Admin() {
         }
 
         if (!floorId) {
-            pushFeedback('error', 'Selectionne un etage valide.');
+            pushFeedback('error', 'Sélectionner un étage valide.');
             return;
         }
 
         if (!capacity) {
-            pushFeedback('error', 'La capacite doit etre un entier positif.');
+            pushFeedback('error', 'La capacité doit être un entier positif.');
             return;
         }
 
@@ -883,9 +883,9 @@ export default function Admin() {
                 if (errorCode === 'FORBIDDEN') {
                     pushFeedback('error', 'Seul un admin peut modifier une salle.');
                 } else if (errorCode === 'ROOM_NAME_EXISTS') {
-                    pushFeedback('error', 'Une salle porte deja ce nom.');
+                    pushFeedback('error', 'Une salle porte déjà ce nom.');
                 } else if (errorCode === 'FLOOR_NOT_FOUND') {
-                    pushFeedback('error', "L'etage selectionne n'existe plus.");
+                    pushFeedback('error', "L'étage sélectionné n'existe plus.");
                 } else if (errorCode === 'ROOM_NOT_FOUND') {
                     pushFeedback('error', "Cette salle n'existe plus.");
                 } else {
@@ -896,7 +896,7 @@ export default function Admin() {
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
@@ -905,9 +905,9 @@ export default function Admin() {
             setEditingRoomName('');
             setEditingRoomCapacity('');
             setEditingRoomFloorId('');
-            pushFeedback('success', 'Salle modifiee avec succes.');
+            pushFeedback('success', 'Salle modifiée avec succès.');
         } catch {
-            pushFeedback('error', 'La requete de modification de la salle a echoue.');
+            pushFeedback('error', 'La requête de modification de la salle a échoué.');
         } finally {
             setSavingKey('');
         }
@@ -958,9 +958,9 @@ export default function Admin() {
                 setEditingRoomFloorId('');
             }
 
-            pushFeedback('success', 'Salle supprimee avec succes.');
+            pushFeedback('success', 'Salle supprimée avec succès.');
         } catch {
-            pushFeedback('error', 'La requete de suppression de la salle a echoue.');
+            pushFeedback('error', 'La requête de suppression de la salle a échoué.');
         } finally {
             setDeletingKey('');
         }
@@ -972,7 +972,7 @@ export default function Admin() {
         const name = newResourceName.trim();
 
         if (!name) {
-            pushFeedback('error', 'Renseigne un nom de ressource.');
+            pushFeedback('error', 'Renseigner un nom de ressource.');
             return;
         }
 
@@ -992,26 +992,26 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut creer une ressource.');
+                    pushFeedback('error', 'Seul un admin peut créer une ressource.');
                 } else if (errorCode === 'ROOM_RESOURCE_NAME_EXISTS') {
-                    pushFeedback('error', 'Une ressource porte deja ce nom.');
+                    pushFeedback('error', 'Une ressource porte déjà ce nom.');
                 } else {
-                    pushFeedback('error', 'Impossible de creer la ressource.');
+                    pushFeedback('error', 'Impossible de créer la ressource.');
                 }
 
                 return;
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
             setRoomResources((current) => sortByName([...current, data]));
             setNewResourceName('');
-            pushFeedback('success', 'Ressource creee avec succes.');
+            pushFeedback('success', 'Ressource créée avec succès.');
         } catch {
-            pushFeedback('error', 'La requete de creation de la ressource a echoue.');
+            pushFeedback('error', 'La requête de création de la ressource a échoué.');
         } finally {
             setSavingKey('');
         }
@@ -1052,7 +1052,7 @@ export default function Admin() {
                 if (errorCode === 'FORBIDDEN') {
                     pushFeedback('error', 'Seul un admin peut modifier une ressource.');
                 } else if (errorCode === 'ROOM_RESOURCE_NAME_EXISTS') {
-                    pushFeedback('error', 'Une ressource porte deja ce nom.');
+                    pushFeedback('error', 'Une ressource porte déjà ce nom.');
                 } else if (errorCode === 'ROOM_RESOURCE_NOT_FOUND') {
                     pushFeedback('error', "Cette ressource n'existe plus.");
                 } else {
@@ -1063,7 +1063,7 @@ export default function Admin() {
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
@@ -1075,9 +1075,9 @@ export default function Admin() {
             );
             setEditingResourceId(null);
             setEditingResourceName('');
-            pushFeedback('success', 'Ressource modifiee avec succes.');
+            pushFeedback('success', 'Ressource modifiée avec succès.');
         } catch {
-            pushFeedback('error', 'La requete de modification de la ressource a echoue.');
+            pushFeedback('error', 'La requête de modification de la ressource a échoué.');
         } finally {
             setSavingKey('');
         }
@@ -1126,9 +1126,9 @@ export default function Admin() {
                 setEditingResourceName('');
             }
 
-            pushFeedback('success', 'Ressource supprimee avec succes.');
+            pushFeedback('success', 'Ressource supprimée avec succès.');
         } catch {
-            pushFeedback('error', 'La requete de suppression de la ressource a echoue.');
+            pushFeedback('error', 'La requête de suppression de la ressource a échoué.');
         } finally {
             setDeletingKey('');
         }
@@ -1142,17 +1142,17 @@ export default function Admin() {
         const quantity = parsePositiveInteger(newAssignmentQuantity);
 
         if (!roomId) {
-            pushFeedback('error', 'Selectionne une salle.');
+            pushFeedback('error', 'Sélectionner une salle.');
             return;
         }
 
         if (!resourceId) {
-            pushFeedback('error', 'Selectionne une ressource.');
+            pushFeedback('error', 'Sélectionner une ressource.');
             return;
         }
 
         if (!quantity) {
-            pushFeedback('error', 'La quantite doit etre un entier positif.');
+            pushFeedback('error', 'La quantité doit être un entier positif.');
             return;
         }
 
@@ -1182,9 +1182,9 @@ export default function Admin() {
                 if (errorCode === 'FORBIDDEN') {
                     pushFeedback('error', 'Seul un admin peut affecter une ressource.');
                 } else if (errorCode === 'ROOM_NOT_FOUND') {
-                    pushFeedback('error', "La salle selectionnee n'existe plus.");
+                    pushFeedback('error', "La salle selectionnée n'existe plus.");
                 } else if (errorCode === 'ROOM_RESOURCE_NOT_FOUND') {
-                    pushFeedback('error', "La ressource selectionnee n'existe plus.");
+                    pushFeedback('error', "La ressource selectionnée n'existe plus.");
                 } else {
                     pushFeedback('error', "Impossible d'affecter cette ressource.");
                 }
@@ -1193,7 +1193,7 @@ export default function Admin() {
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
@@ -1205,9 +1205,9 @@ export default function Admin() {
                 [data.resource_id]: String(data.quantity),
             }));
             setNewAssignmentQuantity('1');
-            pushFeedback('success', 'Ressource affectee a la salle.');
+            pushFeedback('success', 'Ressource affectée à la salle.');
         } catch {
-            pushFeedback('error', "La requete d'affectation de la ressource a echoue.");
+            pushFeedback('error', "La requête d'affectation de la ressource a échoué.");
         } finally {
             setSavingKey('');
         }
@@ -1218,12 +1218,12 @@ export default function Admin() {
         const quantity = parsePositiveInteger(assignmentQuantityDrafts[resourceId] ?? '');
 
         if (!roomId) {
-            pushFeedback('error', 'Selectionne une salle.');
+            pushFeedback('error', 'Sélectionner une salle.');
             return;
         }
 
         if (!quantity) {
-            pushFeedback('error', 'La quantite doit etre un entier positif.');
+            pushFeedback('error', 'La quantité doit être un entier positif.');
             return;
         }
 
@@ -1253,9 +1253,9 @@ export default function Admin() {
                 if (errorCode === 'FORBIDDEN') {
                     pushFeedback('error', 'Seul un admin peut modifier une affectation.');
                 } else if (errorCode === 'ROOM_NOT_FOUND') {
-                    pushFeedback('error', "La salle selectionnee n'existe plus.");
+                    pushFeedback('error', "La salle selectionnée n'existe plus.");
                 } else if (errorCode === 'ROOM_RESOURCE_NOT_FOUND') {
-                    pushFeedback('error', "La ressource selectionnee n'existe plus.");
+                    pushFeedback('error', "La ressource selectionnée n'existe plus.");
                 } else {
                     pushFeedback('error', 'Impossible de modifier cette affectation.');
                 }
@@ -1264,7 +1264,7 @@ export default function Admin() {
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
@@ -1275,9 +1275,9 @@ export default function Admin() {
                 ...current,
                 [data.resource_id]: String(data.quantity),
             }));
-            pushFeedback('success', 'Quantite mise a jour.');
+            pushFeedback('success', 'Quantité mise à jour.');
         } catch {
-            pushFeedback('error', "La requete de mise a jour de l'affectation a echoue.");
+            pushFeedback('error', "La requête de mise à jour de l'affectation a échoué.");
         } finally {
             setSavingKey('');
         }
@@ -1287,7 +1287,7 @@ export default function Admin() {
         const roomId = parsePositiveInteger(selectedAssignmentRoomId);
 
         if (!roomId) {
-            pushFeedback('error', 'Selectionne une salle.');
+            pushFeedback('error', 'Sélectionner une salle.');
             return;
         }
 
@@ -1334,9 +1334,9 @@ export default function Admin() {
                 delete next[assignment.resource_id];
                 return next;
             });
-            pushFeedback('success', 'Affectation supprimee.');
+            pushFeedback('success', 'Affectation supprimée.');
         } catch {
-            pushFeedback('error', "La requete de suppression de l'affectation a echoue.");
+            pushFeedback('error', "La requête de suppression de l'affectation a échoué.");
         } finally {
             setDeletingKey('');
         }
@@ -1351,22 +1351,22 @@ export default function Admin() {
         const reason = newUnavailabilityReason.trim();
 
         if (!roomId) {
-            pushFeedback('error', 'Selectionne une salle.');
+            pushFeedback('error', 'Sélectionner une salle.');
             return;
         }
 
         if (!fromTime || !toTime) {
-            pushFeedback('error', 'Renseigne un debut et une fin.');
+            pushFeedback('error', 'Renseigner un début et une fin.');
             return;
         }
 
         if (new Date(fromTime) >= new Date(toTime)) {
-            pushFeedback('error', 'La fin doit etre apres le debut.');
+            pushFeedback('error', 'La fin doit être après le début.');
             return;
         }
 
         if (!reason) {
-            pushFeedback('error', "Renseigne une raison d'indisponibilite.");
+            pushFeedback('error', "Renseigner une raison d'indisponibilité.");
             return;
         }
 
@@ -1391,20 +1391,20 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut creer une indisponibilite.');
+                    pushFeedback('error', 'Seul un admin peut créer une indisponibilité.');
                 } else if (errorCode === 'ROOM_NOT_FOUND') {
-                    pushFeedback('error', "La salle selectionnee n'existe plus.");
+                    pushFeedback('error', "La salle selectionnée n'existe plus.");
                 } else if (errorCode === 'ROOM_UNAVAILABILITY_CONFLICT' || errorCode === 'INVALID_DATE_RANGE') {
-                    pushFeedback('error', "Le creneau d'indisponibilite est invalide ou entre en conflit.");
+                    pushFeedback('error', "Le créneau d'indisponibilité est invalide ou entre en conflit.");
                 } else {
-                    pushFeedback('error', "Impossible de creer l'indisponibilite.");
+                    pushFeedback('error', "Impossible de créer l'indisponibilité.");
                 }
 
                 return;
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
@@ -1414,10 +1414,10 @@ export default function Admin() {
             setNewUnavailabilityReason('');
             pushFeedback(
                 'success',
-                'Indisponibilite creee. Les reservations en conflit ont pu etre annulees par le backend.',
+                'Indisponibilité créée. Les réservations en conflit ont pu être annulées.',
             );
         } catch {
-            pushFeedback('error', "La requete de creation de l'indisponibilite a echoue.");
+            pushFeedback('error', "La requête de création de l'indisponibilité a échoué.");
         } finally {
             setSavingKey('');
         }
@@ -1439,17 +1439,17 @@ export default function Admin() {
         const reason = editingUnavailabilityReason.trim();
 
         if (!roomId) {
-            pushFeedback('error', 'Selectionne une salle valide.');
+            pushFeedback('error', 'Sélectionner une salle valide.');
             return;
         }
 
         if (!fromTime || !toTime) {
-            pushFeedback('error', 'Renseigne un debut et une fin.');
+            pushFeedback('error', 'Renseigner un début et une fin.');
             return;
         }
 
         if (new Date(fromTime) >= new Date(toTime)) {
-            pushFeedback('error', 'La fin doit etre apres le debut.');
+            pushFeedback('error', 'La fin doit être après le début.');
             return;
         }
 
@@ -1482,22 +1482,22 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut modifier une indisponibilite.');
+                    pushFeedback('error', 'Seul un admin peut modifier une indisponibilité.');
                 } else if (errorCode === 'ROOM_UNAVAILABILITY_CONFLICT' || errorCode === 'INVALID_DATE_RANGE') {
-                    pushFeedback('error', 'Le nouveau creneau entre en conflit ou est invalide.');
+                    pushFeedback('error', 'Le nouveau créneau d\'indisponibilité entre en conflit ou est invalide.');
                 } else if (errorCode === 'ROOM_UNAVAILABILITY_NOT_FOUND') {
-                    pushFeedback('error', "Cette indisponibilite n'existe plus.");
+                    pushFeedback('error', "Cette indisponibilité n'existe plus.");
                 } else if (errorCode === 'ROOM_NOT_FOUND') {
-                    pushFeedback('error', "La salle selectionnee n'existe plus.");
+                    pushFeedback('error', "La salle selectionnée n'existe plus.");
                 } else {
-                    pushFeedback('error', "Impossible de modifier l'indisponibilite.");
+                    pushFeedback('error', "Impossible de modifier l'indisponibilité.");
                 }
 
                 return;
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
@@ -1511,17 +1511,17 @@ export default function Admin() {
             setEditingUnavailabilityReason('');
             pushFeedback(
                 'success',
-                'Indisponibilite modifiee. Les reservations en conflit ont pu etre recalculées par le backend.',
+                'Indisponibilité modifiée. Les réservations en conflit ont pu être recalculées.',
             );
         } catch {
-            pushFeedback('error', "La requete de modification de l'indisponibilite a echoue.");
+            pushFeedback('error', "La requête de modification de l'indisponibilité a échoué.");
         } finally {
             setSavingKey('');
         }
     };
 
     const deleteUnavailability = async (item: RoomUnavailability) => {
-        const confirmed = window.confirm(`Supprimer l'indisponibilite "${item.reason}" ?`);
+        const confirmed = window.confirm(`Supprimer l'indisponibilité "${item.reason}" ?`);
 
         if (!confirmed) {
             return;
@@ -1545,11 +1545,11 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut supprimer une indisponibilite.');
+                    pushFeedback('error', 'Seul un admin peut supprimer une indisponibilité.');
                 } else if (errorCode === 'ROOM_UNAVAILABILITY_NOT_FOUND') {
-                    pushFeedback('error', "Cette indisponibilite n'existe plus.");
+                    pushFeedback('error', "Cette indisponibilité n'existe plus.");
                 } else {
-                    pushFeedback('error', "Impossible de supprimer l'indisponibilite.");
+                    pushFeedback('error', "Impossible de supprimer l'indisponibilité.");
                 }
 
                 return;
@@ -1565,9 +1565,9 @@ export default function Admin() {
                 setEditingUnavailabilityReason('');
             }
 
-            pushFeedback('success', 'Indisponibilite supprimee.');
+            pushFeedback('success', 'Indisponibilité supprimée.');
         } catch {
-            pushFeedback('error', "La requete de suppression de l'indisponibilite a echoue.");
+            pushFeedback('error', "La requête de suppression de l'indisponibilité a échoué.");
         } finally {
             setDeletingKey('');
         }
@@ -1601,27 +1601,27 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut moderer un incident.');
+                    pushFeedback('error', 'Seul un admin peut modérer un incident.');
                 } else if (errorCode === 'INCIDENT_ALREADY_RESOLVED' || errorCode === 'INCIDENT_INVALID_TRANSITION') {
                     pushFeedback('error', 'La transition de statut est invalide pour cet incident.');
                 } else if (errorCode === 'INCIDENT_NOT_FOUND') {
                     pushFeedback('error', "Cet incident n'existe plus.");
                 } else {
-                    pushFeedback('error', "Impossible de mettre a jour l'incident.");
+                    pushFeedback('error', "Impossible de mettre à jour l'incident.");
                 }
 
                 return;
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
             setIncidents((current) => sortIncidents(current.map((item) => (item.id === incident.id ? data : item))));
-            pushFeedback('success', "Statut de l'incident mis a jour.");
+            pushFeedback('success', "Statut de l'incident mis à jour.");
         } catch {
-            pushFeedback('error', "La requete de mise a jour de l'incident a echoue.");
+            pushFeedback('error', "La requête de mise à jour de l'incident a échoué.");
         } finally {
             setSavingKey('');
         }
@@ -1663,9 +1663,9 @@ export default function Admin() {
             }
 
             setIncidents((current) => current.filter((item) => item.id !== incident.id));
-            pushFeedback('success', 'Incident supprime.');
+            pushFeedback('success', 'Incident supprimé.');
         } catch {
-            pushFeedback('error', "La requete de suppression de l'incident a echoue.");
+            pushFeedback('error', "La requête de suppression de l'incident a échoué.");
         } finally {
             setDeletingKey('');
         }
@@ -1687,12 +1687,12 @@ export default function Admin() {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!emailPattern.test(email)) {
-            pushFeedback('error', 'Renseigne une adresse email valide.');
+            pushFeedback('error', 'Renseigner une adresse email valide.');
             return;
         }
 
         if (password.length < 8) {
-            pushFeedback('error', 'Le mot de passe doit contenir au moins 8 caracteres.');
+            pushFeedback('error', 'Le mot de passe doit contenir au moins 8 caractères.');
             return;
         }
 
@@ -1717,23 +1717,23 @@ export default function Admin() {
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', 'Seul un admin peut creer un compte.');
+                    pushFeedback('error', 'Seul un admin peut créer un compte.');
                 } else if (errorCode === 'EMAIL_ALREADY_EXISTS') {
-                    pushFeedback('error', 'Cette adresse email existe deja.');
+                    pushFeedback('error', 'Cette adresse email existe déjà.');
                 } else if (errorCode === 'INVALID_BODY') {
                     pushFeedback(
                         'error',
-                        "Les donnees du formulaire sont invalides. Verifie l'email et un mot de passe d'au moins 8 caracteres.",
+                        "Les données du formulaire sont invalides. Vérifiez l'email et le mot de passe (min 8 caractères).",
                     );
                 } else {
-                    pushFeedback('error', 'Impossible de creer le compte utilisateur.');
+                    pushFeedback('error', 'Impossible de créer le compte utilisateur.');
                 }
 
                 return;
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
@@ -1742,9 +1742,9 @@ export default function Admin() {
             setNewUserLastName('');
             setNewUserEmail('');
             setNewUserPassword('');
-            pushFeedback('success', 'Compte utilisateur cree avec succes.');
+            pushFeedback('success', 'Compte utilisateur créé avec succès.');
         } catch {
-            pushFeedback('error', 'La requete de creation du compte a echoue.');
+            pushFeedback('error', 'La requête de création du compte a échoué.');
         } finally {
             setSavingKey('');
         }
@@ -1769,7 +1769,7 @@ export default function Admin() {
 
                 <Button variant="primary" className="w-fit" onClick={() => void loadAdminData()}>
                     <Icon name="refresh" />
-                    Reessayer
+                    Réessayer
                 </Button>
             </div>
         );
@@ -1782,44 +1782,44 @@ export default function Admin() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
                     <h1 className="font-headline-xl text-[48px] leading-[56px] font-black text-on-surface uppercase border-b-[6px] border-primary inline-block pb-2">
-                        Command Center
+                        Centre de commandes
                     </h1>
                     <p className="font-body-lg text-[18px] leading-[28px] mt-2 font-medium text-on-surface-variant max-w-3xl">
-                        Administration reelle des batiments, salles, ressources, indisponibilites et incidents.
-                        {user ? ` Connecte en tant que ${user.first_name} ${user.last_name}.` : ''}
+                        Administration des bâtiments, salles, ressources, indisponibilités et incidents.
+                        {user ? ` Connecté en tant que ${user.first_name} ${user.last_name}.` : ''}
                     </p>
                 </div>
 
                 <Button variant="outline" onClick={() => void loadAdminData()}>
                     <Icon name="refresh" />
-                    Rafraichir
+                    Rafraîchir
                 </Button>
             </div>
 
             <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
                 <AdminStatCard
-                    title="Buildings"
+                    title="Bâtiments"
                     value={buildings.length}
-                    subtitle="Batiments"
+                    subtitle="Bâtiments"
                     icon="domain"
                     bgClass="bg-primary-fixed"
                 />
                 <AdminStatCard
-                    title="Floors"
+                    title="Étages"
                     value={floors.length}
-                    subtitle="Etages"
+                    subtitle="Étages"
                     icon="layers"
                     bgClass="bg-secondary-container"
                 />
                 <AdminStatCard
-                    title="Rooms"
+                    title="Salles"
                     value={rooms.length}
                     subtitle="Salles"
                     icon="meeting_room"
                     bgClass="bg-tertiary-fixed"
                 />
                 <AdminStatCard
-                    title="Alerts"
+                    title="Alertes"
                     value={activeIncidentCount}
                     subtitle="Incidents actifs"
                     icon="warning"
@@ -1831,7 +1831,7 @@ export default function Admin() {
             <section className="grid grid-cols-1 xl:grid-cols-3 gap-gutter">
                 <div className="bg-surface-container-highest border-[3px] border-on-surface neo-shadow p-6 flex flex-col gap-4">
                     <div className="flex items-center justify-between border-b-[3px] border-on-surface pb-3">
-                        <h2 className="font-headline-md font-bold text-[24px] uppercase">Buildings</h2>
+                        <h2 className="font-headline-md font-bold text-[24px] uppercase">Bâtiments</h2>
                         <span className="font-label-bold font-bold bg-surface border-[3px] border-on-surface px-3 py-1">
                             {buildings.length}
                         </span>
@@ -1846,13 +1846,13 @@ export default function Admin() {
                         />
                         <Button type="submit" variant="primary" disabled={savingKey === 'building:new'}>
                             <Icon name="add_box" />
-                            {savingKey === 'building:new' ? 'Creation...' : 'Ajouter le batiment'}
+                            {savingKey === 'building:new' ? 'Création...' : 'Ajouter le bâtiment'}
                         </Button>
                     </form>
 
                     {buildings.length === 0 ? (
                         <div className="bg-surface border-[3px] border-on-surface p-4 text-center font-bold">
-                            Aucun batiment pour le moment.
+                            Aucun bâtiment pour le moment.
                         </div>
                     ) : (
                         buildings.map((building) => {
@@ -1901,7 +1901,7 @@ export default function Admin() {
                                                     {building.name}
                                                 </h3>
                                                 <p className="font-body-md text-on-surface-variant">
-                                                    {floorsCount} etage(s)
+                                                    {floorsCount} étage(s)
                                                 </p>
                                             </div>
                                             <div className="flex flex-wrap gap-3">
@@ -1934,11 +1934,11 @@ export default function Admin() {
                 <div className="bg-surface-container-highest border-[3px] border-on-surface neo-shadow p-6 flex flex-col gap-4">
                     <div className="flex items-center justify-between border-b-[3px] border-on-surface pb-3">
                         <div className="flex flex-col gap-1">
-                            <h2 className="font-headline-md font-bold text-[24px] uppercase">Floors</h2>
+                            <h2 className="font-headline-md font-bold text-[24px] uppercase">Étages</h2>
                             <p className="font-body-md text-on-surface-variant">
                                 {selectedBuildingForFloorSection
-                                    ? `Affichage limite au batiment ${selectedBuildingForFloorSection.name}.`
-                                    : 'Affichage de tous les etages.'}
+                                    ? `Affichage limité au bâtiment ${selectedBuildingForFloorSection.name}.`
+                                    : 'Affichage de tous les étages.'}
                             </p>
                         </div>
 
@@ -1955,7 +1955,7 @@ export default function Admin() {
                             disabled={buildings.length === 0 || savingKey === 'floor:new'}
                         >
                             {buildings.length === 0 ? (
-                                <option value="">Aucun batiment</option>
+                                <option value="">Aucun bâtiment</option>
                             ) : (
                                 buildings.map((building) => (
                                     <option key={building.id} value={String(building.id)}>
@@ -1968,7 +1968,7 @@ export default function Admin() {
                         <Input
                             value={newFloorName}
                             onChange={(event) => setNewFloorName(event.target.value)}
-                            placeholder="Etage 1"
+                            placeholder="Étage 1"
                             disabled={buildings.length === 0 || savingKey === 'floor:new'}
                         />
 
@@ -1978,15 +1978,15 @@ export default function Admin() {
                             disabled={buildings.length === 0 || savingKey === 'floor:new'}
                         >
                             <Icon name="add_box" />
-                            {savingKey === 'floor:new' ? 'Creation...' : "Ajouter l'etage"}
+                            {savingKey === 'floor:new' ? 'Création...' : "Ajouter l'étage"}
                         </Button>
                     </form>
 
                     {filteredFloorsForSelectedBuilding.length === 0 ? (
                         <div className="bg-surface border-[3px] border-on-surface p-4 text-center font-bold">
                             {selectedBuildingForFloorSection
-                                ? "Aucun etage n'est encore rattache a ce batiment."
-                                : 'Aucun etage pour le moment.'}
+                                ? "Aucun étage n'est encore rattaché à ce bâtiment."
+                                : 'Aucun étage pour le moment.'}
                         </div>
                     ) : (
                         filteredFloorsForSelectedBuilding.map((floor) => {
@@ -2045,7 +2045,7 @@ export default function Admin() {
                                             <div>
                                                 <h3 className="font-headline-md font-bold text-[24px]">{floor.name}</h3>
                                                 <p className="font-body-md text-on-surface-variant">
-                                                    {buildingById.get(floor.building_id)?.name ?? 'Batiment inconnu'} •{' '}
+                                                    {buildingById.get(floor.building_id)?.name ?? 'Bâtiment inconnu'} •{' '}
                                                     {roomsCount} salle(s)
                                                 </p>
                                             </div>
@@ -2079,10 +2079,10 @@ export default function Admin() {
                 <div className="bg-surface-container-highest border-[3px] border-on-surface neo-shadow p-6 flex flex-col gap-4">
                     <div className="flex items-center justify-between border-b-[3px] border-on-surface pb-3">
                         <div className="flex flex-col gap-1">
-                            <h2 className="font-headline-md font-bold text-[24px] uppercase">Rooms</h2>
+                            <h2 className="font-headline-md font-bold text-[24px] uppercase">Salles</h2>
                             <p className="font-body-md text-on-surface-variant">
                                 {selectedFloorForRoomSection
-                                    ? `Affichage limite a l'etage ${selectedFloorForRoomSection.name}${
+                                    ? `Affichage limité à l'étage ${selectedFloorForRoomSection.name}${
                                           selectedRoomSectionBuilding ? ` (${selectedRoomSectionBuilding.name})` : ''
                                       }.`
                                     : 'Affichage de toutes les salles.'}
@@ -2102,11 +2102,11 @@ export default function Admin() {
                             disabled={floors.length === 0 || savingKey === 'room:new'}
                         >
                             {floors.length === 0 ? (
-                                <option value="">Aucun etage</option>
+                                <option value="">Aucun étage</option>
                             ) : (
                                 floors.map((floor) => (
                                     <option key={floor.id} value={String(floor.id)}>
-                                        {floor.name} - {buildingById.get(floor.building_id)?.name ?? 'Batiment inconnu'}
+                                        {floor.name} - {buildingById.get(floor.building_id)?.name ?? 'Bâtiment inconnu'}
                                     </option>
                                 ))
                             )}
@@ -2134,14 +2134,14 @@ export default function Admin() {
                             disabled={floors.length === 0 || savingKey === 'room:new'}
                         >
                             <Icon name="add_box" />
-                            {savingKey === 'room:new' ? 'Creation...' : 'Ajouter la salle'}
+                            {savingKey === 'room:new' ? 'Création...' : 'Ajouter la salle'}
                         </Button>
                     </form>
 
                     {filteredRoomsForSelectedFloor.length === 0 ? (
                         <div className="bg-surface border-[3px] border-on-surface p-4 text-center font-bold">
                             {selectedFloorForRoomSection
-                                ? "Aucune salle n'est encore rattachee a cet etage."
+                                ? "Aucune salle n'est encore rattachée à cet étage."
                                 : 'Aucune salle pour le moment.'}
                         </div>
                     ) : (
@@ -2172,7 +2172,7 @@ export default function Admin() {
                                                     <option key={floor.id} value={String(floor.id)}>
                                                         {floor.name} -{' '}
                                                         {buildingById.get(floor.building_id)?.name ??
-                                                            'Batiment inconnu'}
+                                                            'Bâtiment inconnu'}
                                                     </option>
                                                 ))}
                                             </select>
@@ -2209,7 +2209,7 @@ export default function Admin() {
                                             <div>
                                                 <h3 className="font-headline-md font-bold text-[24px]">{room.name}</h3>
                                                 <p className="font-body-md text-on-surface-variant">
-                                                    Capacite : {room.capacity} •{' '}
+                                                    Capacité : {room.capacity} •{' '}
                                                     {buildRoomLocation(room, floorById, buildingById)}
                                                 </p>
                                             </div>
@@ -2244,7 +2244,7 @@ export default function Admin() {
             <section className="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
                 <div className="bg-surface-container-highest border-[3px] border-on-surface neo-shadow p-6 flex flex-col gap-4">
                     <div className="flex items-center justify-between border-b-[3px] border-on-surface pb-3">
-                        <h2 className="font-headline-md font-bold text-[24px] uppercase">Catalogue ressources</h2>
+                        <h2 className="font-headline-md font-bold text-[24px] uppercase">Catalogue de ressources</h2>
                         <span className="font-label-bold font-bold bg-surface border-[3px] border-on-surface px-3 py-1">
                             {roomResources.length}
                         </span>
@@ -2259,13 +2259,13 @@ export default function Admin() {
                         />
                         <Button type="submit" variant="secondary" disabled={savingKey === 'resource:new'}>
                             <Icon name="add_box" />
-                            {savingKey === 'resource:new' ? 'Creation...' : 'Ajouter la ressource'}
+                            {savingKey === 'resource:new' ? 'Création...' : 'Ajouter la ressource'}
                         </Button>
                     </form>
 
                     {roomResources.length === 0 ? (
                         <div className="bg-surface border-[3px] border-on-surface p-4 text-center font-bold">
-                            Aucune ressource cataloguee.
+                            Aucune ressource cataloguée.
                         </div>
                     ) : (
                         roomResources.map((resource) => {
@@ -2313,7 +2313,7 @@ export default function Admin() {
                                                     {resource.name}
                                                 </h3>
                                                 <p className="font-body-md text-on-surface-variant">
-                                                    Ressource reutilisable dans les affectations par salle.
+                                                    Ressource réutilisable dans les affectations par salle.
                                                 </p>
                                             </div>
                                             <div className="flex flex-wrap gap-3">
@@ -2407,7 +2407,7 @@ export default function Admin() {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="font-label-bold font-bold text-on-surface-variant">Quantite</label>
+                            <label className="font-label-bold font-bold text-on-surface-variant">Quantité</label>
                             <Input
                                 type="number"
                                 min={1}
@@ -2443,7 +2443,7 @@ export default function Admin() {
                         </div>
                     ) : roomAssignments.length === 0 ? (
                         <div className="bg-surface border-[3px] border-on-surface p-4 text-center font-bold">
-                            Aucune ressource affectee a cette salle.
+                            Aucune ressource affectée à cette salle.
                         </div>
                     ) : (
                         roomAssignments.map((assignment) => {
@@ -2459,15 +2459,12 @@ export default function Admin() {
                                 >
                                     <div>
                                         <h3 className="font-headline-md font-bold text-[24px]">{assignment.name}</h3>
-                                        <p className="font-body-md text-on-surface-variant">
-                                            Ressource actuellement affectee a la salle selectionnee.
-                                        </p>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-[120px_auto_auto] gap-3 items-end">
                                         <div className="flex flex-col gap-2">
                                             <label className="font-label-bold font-bold text-on-surface-variant">
-                                                Quantite
+                                                Quantité
                                             </label>
                                             <Input
                                                 type="number"
@@ -2490,7 +2487,7 @@ export default function Admin() {
                                             onClick={() => void saveAssignmentQuantity(assignment.resource_id)}
                                             disabled={isSaving || isDeleting}
                                         >
-                                            {isSaving ? 'Maj...' : 'Mettre a jour'}
+                                            {isSaving ? 'Maj...' : 'Mettre à jour'}
                                         </Button>
 
                                         <Button
@@ -2512,10 +2509,10 @@ export default function Admin() {
 
             <section className="bg-surface-container-highest border-[3px] border-on-surface neo-shadow p-6 flex flex-col gap-6">
                 <div className="flex flex-col gap-2 border-b-[3px] border-on-surface pb-4">
-                    <h2 className="font-headline-lg font-black text-[24px] uppercase">Indisponibilites</h2>
+                    <h2 className="font-headline-lg font-black text-[24px] uppercase">Indisponibilités</h2>
                     <p className="font-body-md text-on-surface-variant">
-                        La creation ou la modification d'une indisponibilite peut annuler automatiquement des
-                        reservations en conflit cote backend.
+                        La création ou la modification d'une indisponibilité peut annuler automatiquement des
+                        réservations en conflit.
                     </p>
                 </div>
 
@@ -2576,14 +2573,14 @@ export default function Admin() {
                     <div className="lg:col-span-4">
                         <Button type="submit" variant="primary" disabled={savingKey === 'unavailability:new'}>
                             <Icon name="build" />
-                            {savingKey === 'unavailability:new' ? 'Creation...' : 'Ajouter une indisponibilite'}
+                            {savingKey === 'unavailability:new' ? 'Création...' : 'Ajouter une indisponibilité'}
                         </Button>
                     </div>
                 </form>
 
                 {unavailabilities.length === 0 ? (
                     <div className="bg-surface border-[3px] border-on-surface p-4 text-center font-bold">
-                        Aucune indisponibilite enregistree.
+                        Aucune indisponibilité enregistrée.
                     </div>
                 ) : (
                     <div className="flex flex-col gap-4">
@@ -2720,14 +2717,14 @@ export default function Admin() {
                 <div className="flex flex-col gap-2 border-b-[3px] border-on-surface pb-4">
                     <h2 className="font-headline-lg font-black text-[24px] uppercase">Incidents</h2>
                     <p className="font-body-md text-on-surface-variant">
-                        Un incident en cours ne peut pas repasser a l'etat ouvert, et un incident resolu devient
-                        verrouille cote backend.
+                        Un incident "en cours" ne peut pas repasser à l'état "ouvert", et un incident "résolu" devient
+                        verrouillé.
                     </p>
                 </div>
 
                 {incidents.length === 0 ? (
                     <div className="bg-surface border-[3px] border-on-surface p-4 text-center font-bold">
-                        Aucun incident a moderer.
+                        Aucun incident à modérer.
                     </div>
                 ) : (
                     <div className="flex flex-col gap-4">
@@ -2777,7 +2774,7 @@ export default function Admin() {
                                     <div className="flex flex-col gap-2 text-sm font-medium text-on-surface-variant">
                                         <p>Signale le {formatDateTime(incident.created_at)}</p>
                                         {incident.resolved_at ? (
-                                            <p>Resolue le {formatDateTime(incident.resolved_at)}</p>
+                                            <p>Résolu le {formatDateTime(incident.resolved_at)}</p>
                                         ) : null}
                                     </div>
 
@@ -2812,7 +2809,7 @@ export default function Admin() {
                                             onClick={() => void saveIncidentStatus(incident)}
                                             disabled={!canSave || isSaving || isDeleting}
                                         >
-                                            {isSaving ? 'Mise a jour...' : 'Mettre a jour'}
+                                            {isSaving ? 'Mise à jour...' : 'Mettre à jour'}
                                         </Button>
 
                                         <Button
@@ -2834,10 +2831,9 @@ export default function Admin() {
 
             <section className="bg-surface-container-highest border-[3px] border-on-surface neo-shadow p-6 flex flex-col gap-6">
                 <div className="flex flex-col gap-2 border-b-[3px] border-on-surface pb-4">
-                    <h2 className="font-headline-lg font-black text-[24px] uppercase">Provisioning utilisateurs</h2>
+                    <h2 className="font-headline-lg font-black text-[24px] uppercase">Ajouter des utilisateurs</h2>
                     <p className="font-body-md text-on-surface-variant">
-                        Ce bloc suit directement `POST /users`. L'API ne fournit pas encore de liste complete des
-                        utilisateurs depuis le front.
+                        Le compte créé via ce formulaire aura le rôle USER.
                     </p>
                 </div>
 
@@ -2845,7 +2841,7 @@ export default function Admin() {
                     <Input
                         value={newUserFirstName}
                         onChange={(event) => setNewUserFirstName(event.target.value)}
-                        placeholder="Prenom"
+                        placeholder="Prénom"
                         autoComplete="given-name"
                         required
                         disabled={savingKey === 'user:new'}
@@ -2871,26 +2867,22 @@ export default function Admin() {
                         type="password"
                         value={newUserPassword}
                         onChange={(event) => setNewUserPassword(event.target.value)}
-                        placeholder="Mot de passe (8 caracteres min.)"
+                        placeholder="Mot de passe (8 caractères min.)"
                         autoComplete="new-password"
                         minLength={8}
                         required
                         disabled={savingKey === 'user:new'}
                     />
 
-                    <p className="lg:col-span-2 font-body-md text-on-surface-variant">
-                        Le compte cree via ce formulaire aura le role USER.
-                    </p>
-
                     <div className="lg:col-span-2 flex flex-wrap gap-3 items-center">
                         <Button type="submit" variant="primary" disabled={savingKey === 'user:new'}>
                             <Icon name="person_add" />
-                            {savingKey === 'user:new' ? 'Creation...' : 'Creer le compte'}
+                            {savingKey === 'user:new' ? 'Création...' : 'Créer le compte'}
                         </Button>
 
                         {lastCreatedUser ? (
                             <span className="font-body-md text-on-surface-variant">
-                                Dernier compte cree : {lastCreatedUser.first_name} {lastCreatedUser.last_name} -{' '}
+                                Dernier compte créé : {lastCreatedUser.first_name} {lastCreatedUser.last_name} -{' '}
                                 {lastCreatedUser.email}
                             </span>
                         ) : null}

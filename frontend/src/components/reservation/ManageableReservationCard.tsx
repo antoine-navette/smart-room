@@ -85,7 +85,7 @@ export function ManageableReservationCard({
 
     const startEditing = () => {
         if (!isEditable) {
-            pushFeedback('error', 'Seules les reservations a venir peuvent etre modifiees.');
+            pushFeedback('error', 'Seules les réservations à venir peuvent être modifiées.');
             return;
         }
 
@@ -114,7 +114,7 @@ export function ManageableReservationCard({
 
     const handleSaveEdit = async () => {
         if (!isEditable) {
-            pushFeedback('error', 'Cette reservation ne peut plus etre modifiee.');
+            pushFeedback('error', 'Cette réservation ne peut plus être modifiée.');
             return;
         }
 
@@ -123,12 +123,12 @@ export function ManageableReservationCard({
             : (reservation.room_id ?? editableRooms[0]?.id ?? null);
 
         if (!selectedRoomId || Number.isNaN(selectedRoomId)) {
-            pushFeedback('error', 'Selectionne une salle valide.');
+            pushFeedback('error', 'Sélectionner une salle valide.');
             return;
         }
 
         if (!editStartTime || !editEndTime) {
-            pushFeedback('error', 'Renseigne une date de debut et une date de fin.');
+            pushFeedback('error', 'Renseigner une date de début et une date de fin.');
             return;
         }
 
@@ -141,12 +141,12 @@ export function ManageableReservationCard({
         }
 
         if (nextStartDate >= nextEndDate) {
-            pushFeedback('error', 'La fin doit etre apres le debut.');
+            pushFeedback('error', 'La fin doit être après le début.');
             return;
         }
 
         if (nextStartDate.getTime() <= Date.now()) {
-            pushFeedback('error', 'Le nouveau debut doit rester dans le futur.');
+            pushFeedback('error', 'Le début de la réservation doit rester dans le futur.');
             return;
         }
 
@@ -176,32 +176,32 @@ export function ManageableReservationCard({
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', "Tu n'as pas le droit de modifier cette reservation.");
+                    pushFeedback('error', "Vous n'avez pas le droit de modifier cette réservation.");
                 } else if (errorCode === 'ROOM_NOT_AVAILABLE') {
-                    pushFeedback('error', "La salle n'est pas disponible sur ce nouveau creneau.");
+                    pushFeedback('error', "La salle n'est pas disponible sur ce nouveau créneau.");
                 } else if (errorCode === 'ROOM_NOT_FOUND') {
-                    pushFeedback('error', "La salle selectionnee n'existe plus.");
+                    pushFeedback('error', "La salle selectionnée n'existe plus.");
                 } else if (errorCode === 'RESERVATION_NOT_FOUND') {
-                    pushFeedback('error', "Cette reservation n'existe plus.");
+                    pushFeedback('error', "Cette réservation n'existe plus.");
                 } else if (errorCode === 'INVALID_DATE_RANGE') {
-                    pushFeedback('error', 'Le creneau modifie est invalide.');
+                    pushFeedback('error', 'Le créneau modifié est invalide.');
                 } else {
-                    pushFeedback('error', 'Impossible de modifier la reservation pour le moment.');
+                    pushFeedback('error', 'Impossible de modifier la réservation pour le moment.');
                 }
 
                 return;
             }
 
             if (!data) {
-                pushFeedback('error', 'La reponse du serveur est invalide.');
+                pushFeedback('error', 'La réponse du serveur est invalide.');
                 return;
             }
 
             onUpdated(data);
             resetEditing();
-            pushFeedback('success', 'La reservation a bien ete modifiee.');
+            pushFeedback('success', 'La réservation a bien été modifiée.');
         } catch {
-            pushFeedback('error', 'La requete de modification a echoue.');
+            pushFeedback('error', 'La requête de modification a échoué.');
         } finally {
             setIsSavingEdit(false);
         }
@@ -209,12 +209,12 @@ export function ManageableReservationCard({
 
     const handleCancel = async () => {
         if (!isCancelable) {
-            pushFeedback('error', 'Seules les reservations a venir peuvent etre annulees.');
+            pushFeedback('error', 'Seules les réservations à venir peuvent etre annulées.');
             return;
         }
 
         const confirmed = window.confirm(
-            `Annuler la reservation de ${roomTitle} du ${formatDateTime(reservation.start_time)} ?`,
+            `Annuler la réservation de ${roomTitle} du ${formatDateTime(reservation.start_time)} ?`,
         );
 
         if (!confirmed) {
@@ -242,20 +242,20 @@ export function ManageableReservationCard({
 
             if (error) {
                 if (errorCode === 'FORBIDDEN') {
-                    pushFeedback('error', "Tu n'as pas le droit d'annuler cette reservation.");
+                    pushFeedback('error', "Vous n'avez pas le droit d'annuler cette réservation.");
                 } else if (errorCode === 'RESERVATION_NOT_FOUND') {
-                    pushFeedback('error', "Cette reservation n'existe plus.");
+                    pushFeedback('error', "Cette réservation n'existe plus.");
                 } else {
-                    pushFeedback('error', "Impossible d'annuler la reservation pour le moment.");
+                    pushFeedback('error', "Impossible d'annuler la réservation pour le moment.");
                 }
 
                 return;
             }
 
             onDeleted(reservation.id);
-            pushFeedback('success', 'La reservation a bien ete annulee.');
+            pushFeedback('success', 'La réservation a bien été annulée.');
         } catch {
-            pushFeedback('error', "La requete d'annulation a echoue.");
+            pushFeedback('error', "La requête d'annulation a échoué.");
         } finally {
             setIsCancelling(false);
         }
@@ -276,7 +276,7 @@ export function ManageableReservationCard({
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div>
                         <p className="font-label-bold font-bold text-on-surface-variant uppercase mb-1">
-                            Reservation #{reservation.id}
+                            Réservation #{reservation.id}
                         </p>
                         <h3 className="font-headline-md font-bold text-[24px] text-on-surface">{roomTitle}</h3>
                         {showLocation ? <p className="font-body-md text-on-surface-variant">{location}</p> : null}
@@ -297,7 +297,7 @@ export function ManageableReservationCard({
 
                     <p className="flex items-center gap-2">
                         <Icon name="groups" className="text-sm" />
-                        Capacite : {room?.capacity ?? 'Inconnue'}
+                        Capacité : {room?.capacity ?? 'Inconnue'}
                     </p>
                 </div>
 
@@ -305,8 +305,8 @@ export function ManageableReservationCard({
                     <Modal
                         open={isEditing}
                         onClose={closeEditModal}
-                        title="Modifier la reservation"
-                        description="Tu peux ajuster la salle et le creneau tant que la reservation est encore a venir."
+                        title="Modifier la réservation"
+                        description="Vous pouvez ajuster la salle et le créneau tant que la réservation est encore à venir."
                         className="max-w-2xl"
                         footer={
                             <>
@@ -334,7 +334,7 @@ export function ManageableReservationCard({
                         <div className="flex flex-col gap-4">
                             <div className="border-[3px] border-on-surface bg-surface-container-lowest p-4">
                                 <p className="font-label-bold font-bold uppercase text-on-surface-variant">
-                                    Reservation #{reservation.id}
+                                    Réservation #{reservation.id}
                                 </p>
                                 <p className="mt-2 font-headline-md font-bold text-[24px] text-on-surface">
                                     {roomTitle}
@@ -375,7 +375,7 @@ export function ManageableReservationCard({
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-2">
-                                    <label className="font-label-bold font-bold text-on-surface-variant">Debut</label>
+                                    <label className="font-label-bold font-bold text-on-surface-variant">Début</label>
                                     <Input
                                         type="datetime-local"
                                         value={editStartTime}
@@ -438,7 +438,7 @@ export function ManageableReservationCard({
 
                     {hasManageAccess && isCurrentlyRunning ? (
                         <span className="bg-surface-container border-[3px] border-on-surface px-4 py-2 font-label-bold font-bold opacity-70">
-                            Creneau deja demarre
+                            Créneau déjà démarré, impossible de modifier ou annuler
                         </span>
                     ) : null}
                 </div>

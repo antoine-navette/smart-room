@@ -18,13 +18,13 @@ export function AdminRoomRow({ title, capacity, equipment, status }: AdminRoomRo
         </div>
         <div>
           <h3 className="font-headline-md font-bold text-[24px]">{title}</h3>
-          <p className="font-body-md text-on-surface-variant">Capacity: {capacity} • {equipment}</p>
+          <p className="font-body-md text-on-surface-variant">Capacité: {capacity} • {equipment}</p>
         </div>
       </div>
       <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
         {isAvailable ? (
           <span className="bg-tertiary-fixed text-on-tertiary-fixed border-[3px] border-on-surface px-3 py-1 font-label-bold font-bold neo-shadow-sm">
-            Available
+            Disponible
           </span>
         ) : (
           <span className="bg-secondary-fixed text-on-secondary-fixed border-[3px] border-on-surface px-3 py-1 font-label-bold font-bold neo-shadow-sm">
@@ -33,7 +33,7 @@ export function AdminRoomRow({ title, capacity, equipment, status }: AdminRoomRo
         )}
         
         <button className="bg-surface text-on-surface border-[3px] border-on-surface neo-shadow-sm font-label-bold font-bold px-4 py-2 hover:bg-secondary-fixed hover:text-on-secondary-fixed transition-colors neo-active-sm">
-          {isAvailable ? 'Set Unavailable' : 'Restore'}
+          {isAvailable ? 'Rendre indisponible' : 'Restaurer la disponibilité'}
         </button>
       </div>
     </div>

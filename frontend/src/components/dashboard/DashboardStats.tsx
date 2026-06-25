@@ -6,14 +6,14 @@ export function DashboardStats() {
       <div className="bg-secondary-container p-6 border-[3px] border-on-surface neo-shadow flex flex-col items-center justify-center text-center">
         <Icon name="calendar_month" className="text-4xl mb-2 text-on-secondary-container" />
         <h3 className="font-headline-lg font-black text-[32px] text-on-secondary-container">12</h3>
-        <p className="font-label-bold font-bold text-on-surface-variant uppercase tracking-wide">Rooms Booked This Month</p>
+        <p className="font-label-bold font-bold text-on-surface-variant uppercase tracking-wide">Salles réservées ce mois-ci</p>
       </div>
       
       {/* Notifications */}
       <div className="bg-surface-container-lowest border-[3px] border-on-surface neo-shadow flex-grow flex flex-col">
         <div className="p-4 border-b-[3px] border-on-surface flex items-center gap-2 bg-surface-container">
           <Icon name="notifications" />
-          <h2 className="font-headline-md font-bold text-[24px]">Alerts</h2>
+          <h2 className="font-headline-md font-bold text-[24px]">Alertes</h2>
         </div>
         <div className="p-4 flex flex-col gap-4">
           <div className="flex items-start gap-3">
@@ -21,8 +21,8 @@ export function DashboardStats() {
               <Icon name="check_circle" className="text-sm" />
             </div>
             <div>
-              <p className="font-label-bold font-bold">Reservation Confirmed</p>
-              <p className="font-body-md text-on-surface-variant text-sm">Boardroom Alpha at 10:00 AM</p>
+              <p className="font-label-bold font-bold">Réservation confirmée</p>
+              <p className="font-body-md text-on-surface-variant text-sm">Salle Alpha réservée pour 10h00</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
@@ -30,8 +30,8 @@ export function DashboardStats() {
               <Icon name="warning" className="text-sm" />
             </div>
             <div>
-              <p className="font-label-bold font-bold">Schedule Conflict</p>
-              <p className="font-body-md text-on-surface-variant text-sm">Meeting Room C requires your attention.</p>
+              <p className="font-label-bold font-bold">Conflit de réservation</p>
+              <p className="font-body-md text-on-surface-variant text-sm">La Salle C requiert votre attention.</p>
             </div>
           </div>
         </div>

@@ -28,7 +28,7 @@ export function FavoriteRemovalModal({
         }
       }}
       title="Retirer cette salle des favoris ?"
-      description="Tu pourras toujours la retrouver depuis la recherche et la remettre en favoris plus tard."
+      description="Vous pourrez toujours la retrouver depuis la recherche et la remettre en favoris plus tard."
       footer={
         <>
           <Button
@@ -55,7 +55,7 @@ export function FavoriteRemovalModal({
     >
       <div className="border-[3px] border-on-surface bg-surface-container-lowest p-4">
         <p className="font-label-bold font-bold uppercase text-on-surface-variant">
-          Salle concernee
+          Salle concernée
         </p>
         <p className="mt-2 font-headline-md font-bold text-[24px] text-on-surface">
           {roomName}

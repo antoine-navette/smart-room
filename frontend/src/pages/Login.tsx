@@ -58,7 +58,7 @@ export default function Login() {
           </Link>
           <h2 className="font-headline-lg font-black text-[32px] text-surface-container-lowest uppercase">Bienvenue</h2>
           <p className="font-body-lg font-bold text-primary-fixed-dim mt-2">
-            Connectez-vous pour gerer vos reservations
+            Connectez-vous pour gérer vos réservations
           </p>
         </div>
 
@@ -109,13 +109,13 @@ export default function Login() {
                 className="w-full bg-primary text-on-primary font-headline-md font-bold text-[20px] py-3 border-[3px] border-on-surface neo-shadow neo-shadow-hover neo-shadow-active transition-all rounded-DEFAULT flex justify-center items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <span className="material-symbols-outlined">login</span>
-                {isSubmitting ? 'Connexion...' : 'Se Connecter'}
+                {isSubmitting ? 'Connexion...' : 'Se connecter'}
               </button>
             </form>
 
-            <div className="text-center mt-4 flex flex-col gap-2">
+            {/* <div className="text-center mt-4 flex flex-col gap-2">
               <a href="#" className="font-label-bold font-bold text-primary hover:underline">
-                Mot de passe oublie ?
+                Mot de passe oublié ?
               </a>
               <Link
                 to="/register"
@@ -123,13 +123,13 @@ export default function Login() {
               >
                 Pas encore de compte ? S'inscrire
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
 
         <div className="text-center">
           <Link to="/" className="font-label-bold font-bold text-on-primary hover:underline">
-            Retour a l'accueil
+            Retour à l'accueil
           </Link>
         </div>
       </div>
