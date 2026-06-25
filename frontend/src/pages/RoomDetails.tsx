@@ -33,6 +33,13 @@ const DEFAULT_ROOM_IMAGE =
 const textareaClassName =
     'w-full min-h-28 bg-white px-3 py-2 text-base neo-border shadow-[4px_4px_0px_0px_#1A1D5C] focus:outline-none focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_0px_#1A1D5C] transition-all disabled:cursor-not-allowed disabled:opacity-50 font-body resize-y';
 
+function getCurrentDateTimeLocalValue() {
+    const now = new Date();
+    const timezoneOffset = now.getTimezoneOffset() * 60_000;
+
+    return new Date(now.getTime() - timezoneOffset).toISOString().slice(0, 16);
+}
+
 function sortUnavailabilities(unavailabilities: RoomUnavailability[]) {
     return [...unavailabilities].sort((a, b) => new Date(a.from_time).getTime() - new Date(b.from_time).getTime());
 }
@@ -147,15 +154,6 @@ export default function RoomDetails() {
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [pageWarningMessage, setPageWarningMessage] = useState('');
-
-    // const [submitMessage, setSubmitMessage] = useState('');
-    // const [submitMessageType, setSubmitMessageType] = useState<ReservationFeedbackType>('');
-    // const [reservationFeedbackMessage, setReservationFeedbackMessage] = useState('');
-    // const [reservationFeedbackType, setReservationFeedbackType] = useState<ReservationFeedbackType>('');
-    // const [favoriteMessage, setFavoriteMessage] = useState('');
-    // const [favoriteMessageType, setFavoriteMessageType] = useState<ReservationFeedbackType>('');
-    // const [incidentMessage, setIncidentMessage] = useState('');
-    // const [incidentMessageType, setIncidentMessageType] = useState<ReservationFeedbackType>('');
 
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
@@ -324,6 +322,7 @@ export default function RoomDetails() {
     const visibleUnavailabilities = unavailabilities.filter((item) => new Date(item.to_time).getTime() > Date.now());
     const activeIncidents = incidents.filter((incident) => incident.status !== 'RESOLVED');
     const visibleIncidents = activeIncidents.length > 0 ? activeIncidents : incidents.slice(0, 3);
+    const minReservationDateTime = getCurrentDateTimeLocalValue();
 
     const handleReserve = async () => {
         if (!room) {
@@ -344,8 +343,21 @@ export default function RoomDetails() {
             return;
         }
 
-        if (new Date(startTime) >= new Date(endTime)) {
+        const nextStartDate = new Date(startTime);
+        const nextEndDate = new Date(endTime);
+
+        if (Number.isNaN(nextStartDate.getTime()) || Number.isNaN(nextEndDate.getTime())) {
+            pushToast({ type: 'error', message: 'Les dates saisies sont invalides.' });
+            return;
+        }
+
+        if (nextStartDate >= nextEndDate) {
             pushToast({ type: 'error', message: 'La fin doit etre apres le debut.' });
+            return;
+        }
+
+        if (nextStartDate.getTime() <= Date.now()) {
+            pushToast({ type: 'error', message: 'Le debut de la reservation doit etre dans le futur.' });
             return;
         }
 
@@ -354,8 +366,8 @@ export default function RoomDetails() {
         const { data, error } = await api.POST('/reservations', {
             body: {
                 room_id: room.id,
-                start_time: new Date(startTime).toISOString(),
-                end_time: new Date(endTime).toISOString(),
+                start_time: nextStartDate.toISOString(),
+                end_time: nextEndDate.toISOString(),
             },
         });
 
@@ -373,6 +385,8 @@ export default function RoomDetails() {
                 pushToast({ type: 'error', message: "La salle n'est pas disponible sur ce creneau." });
             } else if (errorCode === 'INVALID_DATE_RANGE') {
                 pushToast({ type: 'error', message: 'Le creneau est invalide.' });
+            } else if (errorCode === 'RESERVATION_START_TIME_IN_PAST') {
+                pushToast({ type: 'error', message: 'Le debut de la reservation doit etre dans le futur.' });
             } else {
                 pushToast({ type: 'error', message: 'Impossible de creer la reservation.' });
             }
@@ -909,6 +923,7 @@ export default function RoomDetails() {
                                     type="datetime-local"
                                     value={startTime}
                                     onChange={(event) => setStartTime(event.target.value)}
+                                    min={minReservationDateTime}
                                     disabled={isSubmitting}
                                 />
                             </div>
@@ -921,6 +936,7 @@ export default function RoomDetails() {
                                     type="datetime-local"
                                     value={endTime}
                                     onChange={(event) => setEndTime(event.target.value)}
+                                    min={startTime || minReservationDateTime}
                                     disabled={isSubmitting}
                                 />
                             </div>
