@@ -1,6 +1,4 @@
 import { useEffect, useId, type ReactNode } from 'react';
-import { Button } from './Button';
-import { Icon } from './Icon';
 import { cn } from '../../lib/utils';
 
 type ModalProps = {
