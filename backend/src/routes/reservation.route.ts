@@ -93,7 +93,10 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (
                 if (result.code === 'RESERVATION_START_TIME_IN_PAST') {
                     return reply
                         .status(400)
-                        .send({ code: 'RESERVATION_START_TIME_IN_PAST', message: 'Reservation cannot start in the past' });
+                        .send({
+                            code: 'RESERVATION_START_TIME_IN_PAST',
+                            message: 'Reservation cannot start in the past',
+                        });
                 }
                 if (result.code === 'ROOM_NOT_AVAILABLE') {
                     return reply
@@ -242,7 +245,12 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (
                 body: UpdateReservationBodyDto,
                 response: {
                     200: ReservationDto,
-                    400: z.union([InvalidParamsErrorDto, InvalidBodyErrorDto, InvalidDateRangeErrorDto, ReservationStartTimeInPastErrorDto]),
+                    400: z.union([
+                        InvalidParamsErrorDto,
+                        InvalidBodyErrorDto,
+                        InvalidDateRangeErrorDto,
+                        ReservationStartTimeInPastErrorDto,
+                    ]),
                     401: UnauthorizedErrorDto,
                     403: ForbiddenErrorDto,
                     404: z.union([ReservationNotFoundErrorDto, RoomNotFoundErrorDto]),
@@ -311,7 +319,10 @@ export const reservationRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (
                 if (result.code === 'RESERVATION_START_TIME_IN_PAST') {
                     return reply
                         .status(400)
-                        .send({ code: 'RESERVATION_START_TIME_IN_PAST', message: 'Reservation cannot start in the past' });
+                        .send({
+                            code: 'RESERVATION_START_TIME_IN_PAST',
+                            message: 'Reservation cannot start in the past',
+                        });
                 }
                 if (result.code === 'ROOM_NOT_AVAILABLE') {
                     return reply
