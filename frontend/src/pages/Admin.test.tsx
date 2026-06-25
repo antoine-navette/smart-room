@@ -6,8 +6,7 @@ import { createBuilding, createFloor, createRoom, createUser } from '../test/fac
 import { renderWithProviders } from '../test/renderWithProviders';
 import Admin from './Admin';
 
-const { mockDelete, mockGet, mockNavigate, mockPost, mockPushToast, mockPut, mockUseAuth } = vi.hoisted(
-  () => ({
+const { mockDelete, mockGet, mockNavigate, mockPost, mockPushToast, mockPut, mockUseAuth } = vi.hoisted(() => ({
     mockDelete: vi.fn(),
     mockGet: vi.fn(),
     mockNavigate: vi.fn(),
@@ -15,42 +14,41 @@ const { mockDelete, mockGet, mockNavigate, mockPost, mockPushToast, mockPut, moc
     mockPushToast: vi.fn(),
     mockPut: vi.fn(),
     mockUseAuth: vi.fn(),
-  }),
-);
+}));
 
 vi.mock('../api/client', () => ({
-  api: {
-    DELETE: mockDelete,
-    GET: mockGet,
-    POST: mockPost,
-    PUT: mockPut,
-  },
+    api: {
+        DELETE: mockDelete,
+        GET: mockGet,
+        POST: mockPost,
+        PUT: mockPut,
+    },
 }));
 
 vi.mock('../auth/AuthProvider', () => ({
-  useAuth: mockUseAuth,
+    useAuth: mockUseAuth,
 }));
 
 vi.mock('../components/ui/ToastProvider', async () => {
-  const actual = await vi.importActual<typeof import('../components/ui/ToastProvider')>(
-    '../components/ui/ToastProvider',
-  );
+    const actual = await vi.importActual<typeof import('../components/ui/ToastProvider')>(
+        '../components/ui/ToastProvider',
+    );
 
-  return {
-    ...actual,
-    useToast: () => ({
-      pushToast: mockPushToast,
-    }),
-  };
+    return {
+        ...actual,
+        useToast: () => ({
+            pushToast: mockPushToast,
+        }),
+    };
 });
 
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+    const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
 
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
+    return {
+        ...actual,
+        useNavigate: () => mockNavigate,
+    };
 });
 
 type RoomResource = components['schemas']['RoomResource'];
@@ -59,11 +57,11 @@ type RoomUnavailability = components['schemas']['RoomUnavailability'];
 type Incident = components['schemas']['Incident'];
 
 const adminUser = createUser({
-  id: 99,
-  first_name: 'Ada',
-  last_name: 'Root',
-  email: 'ada@example.com',
-  role: 'ADMIN',
+    id: 99,
+    first_name: 'Ada',
+    last_name: 'Root',
+    email: 'ada@example.com',
+    role: 'ADMIN',
 });
 
 const buildingA = createBuilding({ id: 1, name: 'Batiment A' });
@@ -76,695 +74,689 @@ const roomA = createRoom({ id: 100, name: 'Salle Atlas', floor_id: floorA.id, ca
 const roomB = createRoom({ id: 200, name: 'Salle Nova', floor_id: floorB.id, capacity: 12 });
 
 const resourceProjecteur = {
-  id: 1,
-  name: 'Projecteur',
+    id: 1,
+    name: 'Projecteur',
 } as RoomResource;
 
 const resourceTableau = {
-  id: 2,
-  name: 'Tableau blanc',
+    id: 2,
+    name: 'Tableau blanc',
 } as RoomResource;
 
 const existingAssignment = {
-  room_id: roomA.id,
-  resource_id: resourceProjecteur.id,
-  quantity: 1,
-  name: resourceProjecteur.name,
+    room_id: roomA.id,
+    resource_id: resourceProjecteur.id,
+    quantity: 1,
+    name: resourceProjecteur.name,
 } as RoomResourceAssignment;
 
 const unavailability = {
-  id: 1,
-  room_id: roomA.id,
-  from_time: '2099-06-26T08:00:00.000Z',
-  to_time: '2099-06-26T10:00:00.000Z',
-  reason: 'Maintenance',
+    id: 1,
+    room_id: roomA.id,
+    from_time: '2099-06-26T08:00:00.000Z',
+    to_time: '2099-06-26T10:00:00.000Z',
+    reason: 'Maintenance',
 } as RoomUnavailability;
 
 const incident = {
-  id: 1,
-  room_id: roomA.id,
-  user_id: 1,
-  title: 'Projecteur defectueux',
-  description: 'Image noire',
-  status: 'OPEN',
-  created_at: '2099-06-25T09:00:00.000Z',
-  resolved_at: null,
+    id: 1,
+    room_id: roomA.id,
+    user_id: 1,
+    title: 'Projecteur defectueux',
+    description: 'Image noire',
+    status: 'OPEN',
+    created_at: '2099-06-25T09:00:00.000Z',
+    resolved_at: null,
 } as Incident;
 
 type AdminApiConfig = {
-  failLoad?: boolean;
-  createUserErrorCode?: string;
+    failLoad?: boolean;
+    createUserErrorCode?: string;
 };
 
 function setupAdminApi({ failLoad = false, createUserErrorCode = '' }: AdminApiConfig = {}) {
-  mockGet.mockImplementation(async (path: string, options?: any) => {
-    if (path === '/buildings') {
-      return failLoad
-        ? { data: undefined, error: { code: 'INTERNAL_SERVER_ERROR' } }
-        : { data: [buildingA, buildingB], error: undefined };
-    }
+    mockGet.mockImplementation(async (path: string, options?: any) => {
+        if (path === '/buildings') {
+            return failLoad
+                ? { data: undefined, error: { code: 'INTERNAL_SERVER_ERROR' } }
+                : { data: [buildingA, buildingB], error: undefined };
+        }
 
-    if (path === '/floors') {
-      return {
-        data: [floorA, floorB],
-        error: undefined,
-      };
-    }
+        if (path === '/floors') {
+            return {
+                data: [floorA, floorB],
+                error: undefined,
+            };
+        }
 
-    if (path === '/rooms') {
-      return {
-        data: [roomA, roomB],
-        error: undefined,
-      };
-    }
+        if (path === '/rooms') {
+            return {
+                data: [roomA, roomB],
+                error: undefined,
+            };
+        }
 
-    if (path === '/room-resources') {
-      return {
-        data: [resourceProjecteur, resourceTableau],
-        error: undefined,
-      };
-    }
+        if (path === '/room-resources') {
+            return {
+                data: [resourceProjecteur, resourceTableau],
+                error: undefined,
+            };
+        }
 
-    if (path === '/room-unavailabilities') {
-      return {
-        data: [unavailability],
-        error: undefined,
-      };
-    }
+        if (path === '/room-unavailabilities') {
+            return {
+                data: [unavailability],
+                error: undefined,
+            };
+        }
 
-    if (path === '/incidents') {
-      return {
-        data: [incident],
-        error: undefined,
-      };
-    }
+        if (path === '/incidents') {
+            return {
+                data: [incident],
+                error: undefined,
+            };
+        }
 
-    if (path === '/rooms/{roomId}/resources') {
-      const roomId = options?.params?.path?.roomId as number;
+        if (path === '/rooms/{roomId}/resources') {
+            const roomId = options?.params?.path?.roomId as number;
 
-      return {
-        data: roomId === roomA.id ? [existingAssignment] : [],
-        error: undefined,
-      };
-    }
+            return {
+                data: roomId === roomA.id ? [existingAssignment] : [],
+                error: undefined,
+            };
+        }
 
-    throw new Error(`Unhandled GET ${path}`);
-  });
+        throw new Error(`Unhandled GET ${path}`);
+    });
 
-  mockPost.mockImplementation(async (path: string, options?: { body?: any }) => {
-    if (path === '/users') {
-      if (createUserErrorCode) {
+    mockPost.mockImplementation(async (path: string, options?: { body?: any }) => {
+        if (path === '/users') {
+            if (createUserErrorCode) {
+                return {
+                    data: undefined,
+                    error: { code: createUserErrorCode },
+                };
+            }
+
+            const body = options?.body as {
+                first_name: string;
+                last_name: string;
+                email: string;
+                password: string;
+            };
+
+            return {
+                data: createUser({
+                    id: 55,
+                    first_name: body.first_name,
+                    last_name: body.last_name,
+                    email: body.email,
+                    role: 'USER',
+                }),
+                error: undefined,
+            };
+        }
+
+        if (path === '/buildings') {
+            const body = options?.body as {
+                name: string;
+            };
+
+            return {
+                data: createBuilding({
+                    id: 3,
+                    name: body.name,
+                }),
+                error: undefined,
+            };
+        }
+
+        if (path === '/floors') {
+            const body = options?.body as {
+                name: string;
+                building_id: number;
+            };
+
+            return {
+                data: createFloor({
+                    id: 30,
+                    name: body.name,
+                    building_id: body.building_id,
+                }),
+                error: undefined,
+            };
+        }
+
+        if (path === '/rooms') {
+            const body = options?.body as {
+                name: string;
+                floor_id: number;
+                capacity: number;
+            };
+
+            return {
+                data: createRoom({
+                    id: 300,
+                    name: body.name,
+                    floor_id: body.floor_id,
+                    capacity: body.capacity,
+                }),
+                error: undefined,
+            };
+        }
+
+        if (path === '/room-resources') {
+            const body = options?.body as {
+                name: string;
+            };
+
+            return {
+                data: {
+                    id: 3,
+                    name: body.name,
+                } as RoomResource,
+                error: undefined,
+            };
+        }
+
+        if (path === '/room-unavailabilities') {
+            const body = options?.body as {
+                room_id: number;
+                from_time: string;
+                to_time: string;
+                reason: string;
+            };
+
+            return {
+                data: {
+                    id: 2,
+                    room_id: body.room_id,
+                    from_time: body.from_time,
+                    to_time: body.to_time,
+                    reason: body.reason,
+                } as RoomUnavailability,
+                error: undefined,
+            };
+        }
+
+        throw new Error(`Unhandled POST ${path}`);
+    });
+
+    mockPut.mockImplementation(async (path: string, options?: { params?: any; body?: any }) => {
+        if (path === '/rooms/{roomId}/resources/{resourceId}') {
+            const roomId = options?.params?.path?.roomId as number;
+            const resourceId = options?.params?.path?.resourceId as number;
+            const quantity = (options?.body as { quantity: number }).quantity;
+
+            const resourceName =
+                [resourceProjecteur, resourceTableau].find((resource) => resource.id === resourceId)?.name ??
+                `Ressource ${resourceId}`;
+
+            return {
+                data: {
+                    room_id: roomId,
+                    resource_id: resourceId,
+                    quantity,
+                    name: resourceName,
+                } as RoomResourceAssignment,
+                error: undefined,
+            };
+        }
+
         return {
-          data: undefined,
-          error: { code: createUserErrorCode },
+            data: undefined,
+            error: undefined,
         };
-      }
+    });
 
-      const body = options?.body as {
-        first_name: string;
-        last_name: string;
-        email: string;
-        password: string;
-      };
-
-      return {
-        data: createUser({
-          id: 55,
-          first_name: body.first_name,
-          last_name: body.last_name,
-          email: body.email,
-          role: 'USER',
-        }),
-        error: undefined,
-      };
-    }
-
-    if (path === '/buildings') {
-      const body = options?.body as {
-        name: string;
-      };
-
-      return {
-        data: createBuilding({
-          id: 3,
-          name: body.name,
-        }),
-        error: undefined,
-      };
-    }
-
-    if (path === '/floors') {
-      const body = options?.body as {
-        name: string;
-        building_id: number;
-      };
-
-      return {
-        data: createFloor({
-          id: 30,
-          name: body.name,
-          building_id: body.building_id,
-        }),
-        error: undefined,
-      };
-    }
-
-    if (path === '/rooms') {
-      const body = options?.body as {
-        name: string;
-        floor_id: number;
-        capacity: number;
-      };
-
-      return {
-        data: createRoom({
-          id: 300,
-          name: body.name,
-          floor_id: body.floor_id,
-          capacity: body.capacity,
-        }),
-        error: undefined,
-      };
-    }
-
-    if (path === '/room-resources') {
-      const body = options?.body as {
-        name: string;
-      };
-
-      return {
-        data: {
-          id: 3,
-          name: body.name,
-        } as RoomResource,
-        error: undefined,
-      };
-    }
-
-    if (path === '/room-unavailabilities') {
-      const body = options?.body as {
-        room_id: number;
-        from_time: string;
-        to_time: string;
-        reason: string;
-      };
-
-      return {
-        data: {
-          id: 2,
-          room_id: body.room_id,
-          from_time: body.from_time,
-          to_time: body.to_time,
-          reason: body.reason,
-        } as RoomUnavailability,
-        error: undefined,
-      };
-    }
-
-    throw new Error(`Unhandled POST ${path}`);
-  });
-
-  mockPut.mockImplementation(async (path: string, options?: { params?: any; body?: any }) => {
-    if (path === '/rooms/{roomId}/resources/{resourceId}') {
-      const roomId = options?.params?.path?.roomId as number;
-      const resourceId = options?.params?.path?.resourceId as number;
-      const quantity = (options?.body as { quantity: number }).quantity;
-
-      const resourceName =
-        [resourceProjecteur, resourceTableau].find((resource) => resource.id === resourceId)?.name ??
-        `Ressource ${resourceId}`;
-
-      return {
-        data: {
-          room_id: roomId,
-          resource_id: resourceId,
-          quantity,
-          name: resourceName,
-        } as RoomResourceAssignment,
-        error: undefined,
-      };
-    }
-
-    return {
-      data: undefined,
-      error: undefined,
-    };
-  });
-
-  mockDelete.mockResolvedValue({ data: undefined, error: undefined });
+    mockDelete.mockResolvedValue({ data: undefined, error: undefined });
 }
 
 function renderAdmin() {
-  return renderWithProviders(<Admin />, {
-    route: '/admin',
-    withToastProvider: false,
-  });
+    return renderWithProviders(<Admin />, {
+        route: '/admin',
+        withToastProvider: false,
+    });
 }
 
 async function waitForAdminToLoad() {
-  await screen.findByRole('heading', {
-    level: 1,
-    name: /Command Center/i,
-  });
+    await screen.findByRole('heading', {
+        level: 1,
+        name: /Command Center/i,
+    });
 }
 
 describe('Admin', () => {
-  beforeEach(() => {
-    mockDelete.mockReset();
-    mockGet.mockReset();
-    mockNavigate.mockReset();
-    mockPost.mockReset();
-    mockPushToast.mockReset();
-    mockPut.mockReset();
-    mockUseAuth.mockReset();
+    beforeEach(() => {
+        mockDelete.mockReset();
+        mockGet.mockReset();
+        mockNavigate.mockReset();
+        mockPost.mockReset();
+        mockPushToast.mockReset();
+        mockPut.mockReset();
+        mockUseAuth.mockReset();
 
-    mockUseAuth.mockReturnValue({
-      user: adminUser,
-      status: 'authenticated',
-      login: vi.fn(),
-      logout: vi.fn(),
-      refreshMe: vi.fn(),
-    });
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  it('charge le centre d administration et affiche les sections principales', async () => {
-    setupAdminApi();
-
-    renderAdmin();
-
-    expect(screen.getByText("Chargement du centre d'administration...")).toBeInTheDocument();
-
-    await waitForAdminToLoad();
-
-    expect(screen.getByText('Provisioning utilisateurs')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Prenom')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Etage 1')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Salle 101')).toBeInTheDocument();
-  });
-
-  it('affiche une erreur globale si le chargement initial echoue', async () => {
-    setupAdminApi({
-      failLoad: true,
+        mockUseAuth.mockReturnValue({
+            user: adminUser,
+            status: 'authenticated',
+            login: vi.fn(),
+            logout: vi.fn(),
+            refreshMe: vi.fn(),
+        });
     });
 
-    renderAdmin();
-
-    expect(
-      await screen.findByText("Impossible de charger le centre d'administration."),
-    ).toBeInTheDocument();
-
-    expect(screen.getByRole('button', { name: 'Reessayer' })).toBeInTheDocument();
-  });
-
-  it('filtre l affichage des etages puis des salles selon les selects admin', async () => {
-    setupAdminApi();
-
-    renderAdmin();
-    await waitForAdminToLoad();
-
-    const floorNameInput = screen.getByPlaceholderText('Etage 1');
-    const floorForm = floorNameInput.closest('form') as HTMLFormElement;
-    const floorsSection = floorForm.parentElement as HTMLElement;
-    const floorBuildingSelect = within(floorForm).getByRole('combobox') as HTMLSelectElement;
-
-    fireEvent.change(floorBuildingSelect, {
-      target: { value: String(buildingB.id) },
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
-    await waitFor(() => {
-      expect(
-        within(floorsSection).getByText(`Affichage limite au batiment ${buildingB.name}.`),
-      ).toBeInTheDocument();
+    it('charge le centre d administration et affiche les sections principales', async () => {
+        setupAdminApi();
+
+        renderAdmin();
+
+        expect(screen.getByText("Chargement du centre d'administration...")).toBeInTheDocument();
+
+        await waitForAdminToLoad();
+
+        expect(screen.getByText('Provisioning utilisateurs')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Prenom')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Etage 1')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Salle 101')).toBeInTheDocument();
     });
 
-    const visibleFloorTitles = within(floorsSection)
-      .getAllByRole('heading', { level: 3 })
-      .map((heading) => heading.textContent);
+    it('affiche une erreur globale si le chargement initial echoue', async () => {
+        setupAdminApi({
+            failLoad: true,
+        });
 
-    expect(visibleFloorTitles).toEqual([floorB.name]);
+        renderAdmin();
 
-    const roomNameInput = screen.getByPlaceholderText('Salle 101');
-    const roomForm = roomNameInput.closest('form') as HTMLFormElement;
-    const roomsSection = roomForm.parentElement as HTMLElement;
-    const roomFloorSelect = within(roomForm).getByRole('combobox') as HTMLSelectElement;
+        expect(await screen.findByText("Impossible de charger le centre d'administration.")).toBeInTheDocument();
 
-    fireEvent.change(roomFloorSelect, {
-      target: { value: String(floorB.id) },
+        expect(screen.getByRole('button', { name: 'Reessayer' })).toBeInTheDocument();
     });
 
-    await waitFor(() => {
-      expect(
-        within(roomsSection).getByText(`Affichage limite a l'etage ${floorB.name} (${buildingB.name}).`),
-      ).toBeInTheDocument();
+    it('filtre l affichage des etages puis des salles selon les selects admin', async () => {
+        setupAdminApi();
+
+        renderAdmin();
+        await waitForAdminToLoad();
+
+        const floorNameInput = screen.getByPlaceholderText('Etage 1');
+        const floorForm = floorNameInput.closest('form') as HTMLFormElement;
+        const floorsSection = floorForm.parentElement as HTMLElement;
+        const floorBuildingSelect = within(floorForm).getByRole('combobox') as HTMLSelectElement;
+
+        fireEvent.change(floorBuildingSelect, {
+            target: { value: String(buildingB.id) },
+        });
+
+        await waitFor(() => {
+            expect(
+                within(floorsSection).getByText(`Affichage limite au batiment ${buildingB.name}.`),
+            ).toBeInTheDocument();
+        });
+
+        const visibleFloorTitles = within(floorsSection)
+            .getAllByRole('heading', { level: 3 })
+            .map((heading) => heading.textContent);
+
+        expect(visibleFloorTitles).toEqual([floorB.name]);
+
+        const roomNameInput = screen.getByPlaceholderText('Salle 101');
+        const roomForm = roomNameInput.closest('form') as HTMLFormElement;
+        const roomsSection = roomForm.parentElement as HTMLElement;
+        const roomFloorSelect = within(roomForm).getByRole('combobox') as HTMLSelectElement;
+
+        fireEvent.change(roomFloorSelect, {
+            target: { value: String(floorB.id) },
+        });
+
+        await waitFor(() => {
+            expect(
+                within(roomsSection).getByText(`Affichage limite a l'etage ${floorB.name} (${buildingB.name}).`),
+            ).toBeInTheDocument();
+        });
+
+        const visibleRoomTitles = within(roomsSection)
+            .getAllByRole('heading', { level: 3 })
+            .map((heading) => heading.textContent);
+
+        expect(visibleRoomTitles).toEqual([roomB.name]);
     });
 
-    const visibleRoomTitles = within(roomsSection)
-      .getAllByRole('heading', { level: 3 })
-      .map((heading) => heading.textContent);
+    it('cree un utilisateur via POST /users', async () => {
+        setupAdminApi();
 
-    expect(visibleRoomTitles).toEqual([roomB.name]);
-  });
+        renderAdmin();
+        await waitForAdminToLoad();
 
-  it('cree un utilisateur via POST /users', async () => {
-    setupAdminApi();
+        fireEvent.change(screen.getByPlaceholderText('Prenom'), {
+            target: { value: 'Jeanne' },
+        });
+        fireEvent.change(screen.getByPlaceholderText('Nom'), {
+            target: { value: 'Durand' },
+        });
+        fireEvent.change(screen.getByPlaceholderText('email@entreprise.com'), {
+            target: { value: 'jeanne@example.com' },
+        });
+        fireEvent.change(screen.getByPlaceholderText('Mot de passe (8 caracteres min.)'), {
+            target: { value: 'password123' },
+        });
 
-    renderAdmin();
-    await waitForAdminToLoad();
+        fireEvent.click(screen.getByRole('button', { name: 'Creer le compte' }));
 
-    fireEvent.change(screen.getByPlaceholderText('Prenom'), {
-      target: { value: 'Jeanne' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Nom'), {
-      target: { value: 'Durand' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('email@entreprise.com'), {
-      target: { value: 'jeanne@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Mot de passe (8 caracteres min.)'), {
-      target: { value: 'password123' },
-    });
+        await waitFor(() => {
+            expect(mockPost).toHaveBeenCalledWith('/users', {
+                body: {
+                    first_name: 'Jeanne',
+                    last_name: 'Durand',
+                    email: 'jeanne@example.com',
+                    password: 'password123',
+                },
+            });
+        });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Creer le compte' }));
+        expect(await screen.findByText('Dernier compte cree : Jeanne Durand - jeanne@example.com')).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith('/users', {
-        body: {
-          first_name: 'Jeanne',
-          last_name: 'Durand',
-          email: 'jeanne@example.com',
-          password: 'password123',
-        },
-      });
-    });
-
-    expect(
-      await screen.findByText('Dernier compte cree : Jeanne Durand - jeanne@example.com'),
-    ).toBeInTheDocument();
-
-    expect(mockPushToast).toHaveBeenCalledWith({
-      type: 'success',
-      message: 'Compte utilisateur cree avec succes.',
-    });
-  });
-
-  it('affiche une erreur metier si l email existe deja', async () => {
-    setupAdminApi({
-      createUserErrorCode: 'EMAIL_ALREADY_EXISTS',
+        expect(mockPushToast).toHaveBeenCalledWith({
+            type: 'success',
+            message: 'Compte utilisateur cree avec succes.',
+        });
     });
 
-    renderAdmin();
-    await waitForAdminToLoad();
+    it('affiche une erreur metier si l email existe deja', async () => {
+        setupAdminApi({
+            createUserErrorCode: 'EMAIL_ALREADY_EXISTS',
+        });
 
-    fireEvent.change(screen.getByPlaceholderText('Prenom'), {
-      target: { value: 'Jeanne' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Nom'), {
-      target: { value: 'Durand' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('email@entreprise.com'), {
-      target: { value: 'jeanne@example.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Mot de passe (8 caracteres min.)'), {
-      target: { value: 'password123' },
-    });
+        renderAdmin();
+        await waitForAdminToLoad();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Creer le compte' }));
+        fireEvent.change(screen.getByPlaceholderText('Prenom'), {
+            target: { value: 'Jeanne' },
+        });
+        fireEvent.change(screen.getByPlaceholderText('Nom'), {
+            target: { value: 'Durand' },
+        });
+        fireEvent.change(screen.getByPlaceholderText('email@entreprise.com'), {
+            target: { value: 'jeanne@example.com' },
+        });
+        fireEvent.change(screen.getByPlaceholderText('Mot de passe (8 caracteres min.)'), {
+            target: { value: 'password123' },
+        });
 
-    await waitFor(() => {
-      expect(mockPushToast).toHaveBeenCalledWith({
-        type: 'error',
-        message: 'Cette adresse email existe deja.',
-      });
-    });
+        fireEvent.click(screen.getByRole('button', { name: 'Creer le compte' }));
 
-    expect(screen.queryByText(/Dernier compte cree :/i)).not.toBeInTheDocument();
-  });
+        await waitFor(() => {
+            expect(mockPushToast).toHaveBeenCalledWith({
+                type: 'error',
+                message: 'Cette adresse email existe deja.',
+            });
+        });
 
-  it('cree un batiment via POST /buildings', async () => {
-    setupAdminApi();
-
-    renderAdmin();
-    await waitForAdminToLoad();
-
-    const input = screen.getByPlaceholderText('Batiment A') as HTMLInputElement;
-
-    fireEvent.change(input, {
-      target: { value: 'Batiment C' },
+        expect(screen.queryByText(/Dernier compte cree :/i)).not.toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Ajouter le batiment' }));
+    it('cree un batiment via POST /buildings', async () => {
+        setupAdminApi();
 
-    await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith('/buildings', {
-        body: {
-          name: 'Batiment C',
-        },
-      });
+        renderAdmin();
+        await waitForAdminToLoad();
+
+        const input = screen.getByPlaceholderText('Batiment A') as HTMLInputElement;
+
+        fireEvent.change(input, {
+            target: { value: 'Batiment C' },
+        });
+
+        fireEvent.click(screen.getByRole('button', { name: 'Ajouter le batiment' }));
+
+        await waitFor(() => {
+            expect(mockPost).toHaveBeenCalledWith('/buildings', {
+                body: {
+                    name: 'Batiment C',
+                },
+            });
+        });
+
+        expect(await screen.findByRole('heading', { level: 3, name: 'Batiment C' })).toBeInTheDocument();
+        expect(input).toHaveValue('');
+
+        expect(mockPushToast).toHaveBeenCalledWith({
+            type: 'success',
+            message: 'Batiment cree avec succes.',
+        });
     });
 
-    expect(await screen.findByRole('heading', { level: 3, name: 'Batiment C' })).toBeInTheDocument();
-    expect(input).toHaveValue('');
+    it('cree un etage via POST /floors', async () => {
+        setupAdminApi();
 
-    expect(mockPushToast).toHaveBeenCalledWith({
-      type: 'success',
-      message: 'Batiment cree avec succes.',
-    });
-  });
+        renderAdmin();
+        await waitForAdminToLoad();
 
-  it('cree un etage via POST /floors', async () => {
-    setupAdminApi();
+        const input = screen.getByPlaceholderText('Etage 1') as HTMLInputElement;
+        const form = input.closest('form') as HTMLFormElement;
+        const buildingSelect = within(form).getByRole('combobox') as HTMLSelectElement;
 
-    renderAdmin();
-    await waitForAdminToLoad();
+        fireEvent.change(buildingSelect, {
+            target: { value: String(buildingB.id) },
+        });
 
-    const input = screen.getByPlaceholderText('Etage 1') as HTMLInputElement;
-    const form = input.closest('form') as HTMLFormElement;
-    const buildingSelect = within(form).getByRole('combobox') as HTMLSelectElement;
+        fireEvent.change(input, {
+            target: { value: 'Etage B2' },
+        });
 
-    fireEvent.change(buildingSelect, {
-      target: { value: String(buildingB.id) },
-    });
+        fireEvent.click(within(form).getByRole('button', { name: "Ajouter l'etage" }));
 
-    fireEvent.change(input, {
-      target: { value: 'Etage B2' },
-    });
+        await waitFor(() => {
+            expect(mockPost).toHaveBeenCalledWith('/floors', {
+                body: {
+                    name: 'Etage B2',
+                    building_id: buildingB.id,
+                },
+            });
+        });
 
-    fireEvent.click(within(form).getByRole('button', { name: "Ajouter l'etage" }));
+        expect(await screen.findByRole('heading', { level: 3, name: 'Etage B2' })).toBeInTheDocument();
+        expect(input).toHaveValue('');
 
-    await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith('/floors', {
-        body: {
-          name: 'Etage B2',
-          building_id: buildingB.id,
-        },
-      });
-    });
-
-    expect(await screen.findByRole('heading', { level: 3, name: 'Etage B2' })).toBeInTheDocument();
-    expect(input).toHaveValue('');
-
-    expect(mockPushToast).toHaveBeenCalledWith({
-      type: 'success',
-      message: 'Etage cree avec succes.',
-    });
-  });
-
-  it('cree une salle via POST /rooms', async () => {
-    setupAdminApi();
-
-    renderAdmin();
-    await waitForAdminToLoad();
-
-    const nameInput = screen.getByPlaceholderText('Salle 101') as HTMLInputElement;
-    const form = nameInput.closest('form') as HTMLFormElement;
-    const floorSelect = within(form).getByRole('combobox') as HTMLSelectElement;
-    const capacityInput = within(form).getByPlaceholderText('Capacité') as HTMLInputElement;
-
-    fireEvent.change(floorSelect, {
-      target: { value: String(floorB.id) },
+        expect(mockPushToast).toHaveBeenCalledWith({
+            type: 'success',
+            message: 'Etage cree avec succes.',
+        });
     });
 
-    fireEvent.change(nameInput, {
-      target: { value: 'Salle Vega' },
+    it('cree une salle via POST /rooms', async () => {
+        setupAdminApi();
+
+        renderAdmin();
+        await waitForAdminToLoad();
+
+        const nameInput = screen.getByPlaceholderText('Salle 101') as HTMLInputElement;
+        const form = nameInput.closest('form') as HTMLFormElement;
+        const floorSelect = within(form).getByRole('combobox') as HTMLSelectElement;
+        const capacityInput = within(form).getByPlaceholderText('Capacité') as HTMLInputElement;
+
+        fireEvent.change(floorSelect, {
+            target: { value: String(floorB.id) },
+        });
+
+        fireEvent.change(nameInput, {
+            target: { value: 'Salle Vega' },
+        });
+
+        fireEvent.change(capacityInput, {
+            target: { value: '14' },
+        });
+
+        fireEvent.click(within(form).getByRole('button', { name: 'Ajouter la salle' }));
+
+        await waitFor(() => {
+            expect(mockPost).toHaveBeenCalledWith('/rooms', {
+                body: {
+                    name: 'Salle Vega',
+                    floor_id: floorB.id,
+                    capacity: 14,
+                },
+            });
+        });
+
+        expect(await screen.findByRole('heading', { level: 3, name: 'Salle Vega' })).toBeInTheDocument();
+        expect(nameInput).toHaveValue('');
+        expect(capacityInput).toHaveValue(null);
+
+        expect(mockPushToast).toHaveBeenCalledWith({
+            type: 'success',
+            message: 'Salle creee avec succes.',
+        });
     });
 
-    fireEvent.change(capacityInput, {
-      target: { value: '14' },
+    it('cree une ressource via POST /room-resources', async () => {
+        setupAdminApi();
+
+        renderAdmin();
+        await waitForAdminToLoad();
+
+        const input = screen.getByPlaceholderText('Projecteur') as HTMLInputElement;
+
+        fireEvent.change(input, {
+            target: { value: 'Visioconference' },
+        });
+
+        fireEvent.click(screen.getByRole('button', { name: 'Ajouter la ressource' }));
+
+        await waitFor(() => {
+            expect(mockPost).toHaveBeenCalledWith('/room-resources', {
+                body: {
+                    name: 'Visioconference',
+                },
+            });
+        });
+
+        expect(await screen.findByRole('heading', { level: 3, name: 'Visioconference' })).toBeInTheDocument();
+        expect(input).toHaveValue('');
+
+        expect(mockPushToast).toHaveBeenCalledWith({
+            type: 'success',
+            message: 'Ressource creee avec succes.',
+        });
     });
 
-    fireEvent.click(within(form).getByRole('button', { name: 'Ajouter la salle' }));
+    it('affecte une ressource a une salle via PUT /rooms/{roomId}/resources/{resourceId}', async () => {
+        setupAdminApi();
 
-    await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith('/rooms', {
-        body: {
-          name: 'Salle Vega',
-          floor_id: floorB.id,
-          capacity: 14,
-        },
-      });
+        renderAdmin();
+        await waitForAdminToLoad();
+
+        const assignButton = screen.getByRole('button', { name: 'Affecter' });
+        const form = assignButton.closest('form') as HTMLFormElement;
+        const assignmentSection = form.parentElement as HTMLElement;
+
+        await waitFor(() => {
+            expect(within(assignmentSection).queryByText('Chargement des affectations...')).not.toBeInTheDocument();
+        });
+
+        const [roomSelect, resourceSelect] = within(assignmentSection).getAllByRole('combobox') as HTMLSelectElement[];
+        const quantityInput = within(form).getByRole('spinbutton') as HTMLInputElement;
+
+        fireEvent.change(roomSelect, {
+            target: { value: String(roomA.id) },
+        });
+
+        fireEvent.change(resourceSelect, {
+            target: { value: String(resourceTableau.id) },
+        });
+
+        fireEvent.change(quantityInput, {
+            target: { value: '3' },
+        });
+
+        fireEvent.click(assignButton);
+
+        await waitFor(() => {
+            expect(mockPut).toHaveBeenCalledWith('/rooms/{roomId}/resources/{resourceId}', {
+                params: {
+                    path: {
+                        roomId: roomA.id,
+                        resourceId: resourceTableau.id,
+                    },
+                },
+                body: {
+                    quantity: 3,
+                },
+            });
+        });
+
+        await waitFor(() => {
+            const titles = within(assignmentSection)
+                .getAllByRole('heading', { level: 3 })
+                .map((heading) => heading.textContent);
+
+            expect(titles).toContain('Tableau blanc');
+        });
+
+        expect(quantityInput).toHaveValue(1);
+
+        expect(mockPushToast).toHaveBeenCalledWith({
+            type: 'success',
+            message: 'Ressource affectee a la salle.',
+        });
     });
 
-    expect(await screen.findByRole('heading', { level: 3, name: 'Salle Vega' })).toBeInTheDocument();
-    expect(nameInput).toHaveValue('');
-    expect(capacityInput).toHaveValue(null);
+    it('cree une indisponibilite via POST /room-unavailabilities', async () => {
+        setupAdminApi();
 
-    expect(mockPushToast).toHaveBeenCalledWith({
-      type: 'success',
-      message: 'Salle creee avec succes.',
+        renderAdmin();
+        await waitForAdminToLoad();
+
+        const submitButton = screen.getByRole('button', { name: 'Ajouter une indisponibilite' });
+        const form = submitButton.closest('form') as HTMLFormElement;
+        const roomSelect = within(form).getByRole('combobox') as HTMLSelectElement;
+        const reasonInput = within(form).getByPlaceholderText('Maintenance, travaux...') as HTMLInputElement;
+        const dateInputs = Array.from(form.querySelectorAll('input[type="datetime-local"]')) as HTMLInputElement[];
+
+        expect(dateInputs).toHaveLength(2);
+
+        const [fromInput, toInput] = dateInputs;
+
+        fireEvent.change(roomSelect, {
+            target: { value: String(roomB.id) },
+        });
+
+        fireEvent.change(fromInput, {
+            target: { value: '2099-06-27T08:00' },
+        });
+
+        fireEvent.change(toInput, {
+            target: { value: '2099-06-27T12:00' },
+        });
+
+        fireEvent.change(reasonInput, {
+            target: { value: 'Travaux reseau' },
+        });
+
+        fireEvent.click(submitButton);
+
+        await waitFor(() => {
+            expect(mockPost).toHaveBeenCalledWith('/room-unavailabilities', {
+                body: {
+                    room_id: roomB.id,
+                    from_time: new Date('2099-06-27T08:00').toISOString(),
+                    to_time: new Date('2099-06-27T12:00').toISOString(),
+                    reason: 'Travaux reseau',
+                },
+            });
+        });
+
+        expect(await screen.findByText('Travaux reseau')).toBeInTheDocument();
+        expect(fromInput).toHaveValue('');
+        expect(toInput).toHaveValue('');
+        expect(reasonInput).toHaveValue('');
+
+        expect(mockPushToast).toHaveBeenCalledWith({
+            type: 'success',
+            message: 'Indisponibilite creee. Les reservations en conflit ont pu etre annulees par le backend.',
+        });
     });
-  });
-
-  it('cree une ressource via POST /room-resources', async () => {
-    setupAdminApi();
-
-    renderAdmin();
-    await waitForAdminToLoad();
-
-    const input = screen.getByPlaceholderText('Projecteur') as HTMLInputElement;
-
-    fireEvent.change(input, {
-      target: { value: 'Visioconference' },
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: 'Ajouter la ressource' }));
-
-    await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith('/room-resources', {
-        body: {
-          name: 'Visioconference',
-        },
-      });
-    });
-
-    expect(await screen.findByRole('heading', { level: 3, name: 'Visioconference' })).toBeInTheDocument();
-    expect(input).toHaveValue('');
-
-    expect(mockPushToast).toHaveBeenCalledWith({
-      type: 'success',
-      message: 'Ressource creee avec succes.',
-    });
-  });
-
-  it('affecte une ressource a une salle via PUT /rooms/{roomId}/resources/{resourceId}', async () => {
-    setupAdminApi();
-
-    renderAdmin();
-    await waitForAdminToLoad();
-
-    const assignButton = screen.getByRole('button', { name: 'Affecter' });
-    const form = assignButton.closest('form') as HTMLFormElement;
-    const assignmentSection = form.parentElement as HTMLElement;
-
-    await waitFor(() => {
-      expect(within(assignmentSection).queryByText('Chargement des affectations...')).not.toBeInTheDocument();
-    });
-
-    const [roomSelect, resourceSelect] = within(assignmentSection).getAllByRole('combobox') as HTMLSelectElement[];
-    const quantityInput = within(form).getByRole('spinbutton') as HTMLInputElement;
-
-    fireEvent.change(roomSelect, {
-      target: { value: String(roomA.id) },
-    });
-
-    fireEvent.change(resourceSelect, {
-      target: { value: String(resourceTableau.id) },
-    });
-
-    fireEvent.change(quantityInput, {
-      target: { value: '3' },
-    });
-
-    fireEvent.click(assignButton);
-
-    await waitFor(() => {
-      expect(mockPut).toHaveBeenCalledWith('/rooms/{roomId}/resources/{resourceId}', {
-        params: {
-          path: {
-            roomId: roomA.id,
-            resourceId: resourceTableau.id,
-          },
-        },
-        body: {
-          quantity: 3,
-        },
-      });
-    });
-
-    await waitFor(() => {
-      const titles = within(assignmentSection)
-        .getAllByRole('heading', { level: 3 })
-        .map((heading) => heading.textContent);
-
-      expect(titles).toContain('Tableau blanc');
-    });
-
-    expect(quantityInput).toHaveValue(1);
-
-    expect(mockPushToast).toHaveBeenCalledWith({
-      type: 'success',
-      message: 'Ressource affectee a la salle.',
-    });
-  });
-
-  it('cree une indisponibilite via POST /room-unavailabilities', async () => {
-    setupAdminApi();
-
-    renderAdmin();
-    await waitForAdminToLoad();
-
-    const submitButton = screen.getByRole('button', { name: 'Ajouter une indisponibilite' });
-    const form = submitButton.closest('form') as HTMLFormElement;
-    const roomSelect = within(form).getByRole('combobox') as HTMLSelectElement;
-    const reasonInput = within(form).getByPlaceholderText('Maintenance, travaux...') as HTMLInputElement;
-    const dateInputs = Array.from(
-      form.querySelectorAll('input[type="datetime-local"]'),
-    ) as HTMLInputElement[];
-
-    expect(dateInputs).toHaveLength(2);
-
-    const [fromInput, toInput] = dateInputs;
-
-    fireEvent.change(roomSelect, {
-      target: { value: String(roomB.id) },
-    });
-
-    fireEvent.change(fromInput, {
-      target: { value: '2099-06-27T08:00' },
-    });
-
-    fireEvent.change(toInput, {
-      target: { value: '2099-06-27T12:00' },
-    });
-
-    fireEvent.change(reasonInput, {
-      target: { value: 'Travaux reseau' },
-    });
-
-    fireEvent.click(submitButton);
-
-    await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith('/room-unavailabilities', {
-        body: {
-          room_id: roomB.id,
-          from_time: new Date('2099-06-27T08:00').toISOString(),
-          to_time: new Date('2099-06-27T12:00').toISOString(),
-          reason: 'Travaux reseau',
-        },
-      });
-    });
-
-    expect(await screen.findByText('Travaux reseau')).toBeInTheDocument();
-    expect(fromInput).toHaveValue('');
-    expect(toInput).toHaveValue('');
-    expect(reasonInput).toHaveValue('');
-
-    expect(mockPushToast).toHaveBeenCalledWith({
-      type: 'success',
-      message: 'Indisponibilite creee. Les reservations en conflit ont pu etre annulees par le backend.',
-    });
-  });
 });

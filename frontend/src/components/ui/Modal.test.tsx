@@ -5,85 +5,83 @@ import { describe, expect, it, vi } from 'vitest';
 import { Modal } from './Modal';
 
 function renderModal(overrides: Partial<ComponentProps<typeof Modal>> = {}) {
-  const props: ComponentProps<typeof Modal> = {
-    open: true,
-    title: 'Titre',
-    onClose: vi.fn(),
-    children: <p>Contenu</p>,
-    ...overrides,
-  };
+    const props: ComponentProps<typeof Modal> = {
+        open: true,
+        title: 'Titre',
+        onClose: vi.fn(),
+        children: <p>Contenu</p>,
+        ...overrides,
+    };
 
-  return {
-    ...render(<Modal {...props} />),
-    props,
-  };
+    return {
+        ...render(<Modal {...props} />),
+        props,
+    };
 }
 
 describe('Modal', () => {
-  it('ne rend rien quand open vaut false', () => {
-    renderModal({ open: false });
+    it('ne rend rien quand open vaut false', () => {
+        renderModal({ open: false });
 
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    expect(screen.queryByText('Contenu')).not.toBeInTheDocument();
-  });
-
-  it('affiche le titre, la description, le contenu et le footer quand la modale est ouverte', () => {
-    renderModal({
-      title: 'Supprimer ce favori ?',
-      description: 'Cette action peut etre annulee plus tard.',
-      footer: <button type="button">Confirmer</button>,
-      children: <p>Contenu de la modale</p>,
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        expect(screen.queryByText('Contenu')).not.toBeInTheDocument();
     });
 
-    expect(
-      screen.getByRole('dialog', { name: 'Supprimer ce favori ?' }),
-    ).toBeInTheDocument();
-    expect(screen.getByText('Cette action peut etre annulee plus tard.')).toBeInTheDocument();
-    expect(screen.getByText('Contenu de la modale')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Confirmer' })).toBeInTheDocument();
-  });
+    it('affiche le titre, la description, le contenu et le footer quand la modale est ouverte', () => {
+        renderModal({
+            title: 'Supprimer ce favori ?',
+            description: 'Cette action peut etre annulee plus tard.',
+            footer: <button type="button">Confirmer</button>,
+            children: <p>Contenu de la modale</p>,
+        });
 
-  it('appelle onClose quand on clique sur le fond', async () => {
-    const user = userEvent.setup();
-    const onClose = vi.fn();
+        expect(screen.getByRole('dialog', { name: 'Supprimer ce favori ?' })).toBeInTheDocument();
+        expect(screen.getByText('Cette action peut etre annulee plus tard.')).toBeInTheDocument();
+        expect(screen.getByText('Contenu de la modale')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Confirmer' })).toBeInTheDocument();
+    });
 
-    renderModal({ onClose });
+    it('appelle onClose quand on clique sur le fond', async () => {
+        const user = userEvent.setup();
+        const onClose = vi.fn();
 
-    await user.click(screen.getByRole('button', { name: 'Fermer la fenetre' }));
+        renderModal({ onClose });
 
-    expect(onClose).toHaveBeenCalledTimes(1);
-  });
+        await user.click(screen.getByRole('button', { name: 'Fermer la fenetre' }));
 
-  it("n appelle pas onClose quand on clique dans le contenu", async () => {
-    const user = userEvent.setup();
-    const onClose = vi.fn();
+        expect(onClose).toHaveBeenCalledTimes(1);
+    });
 
-    renderModal({ onClose });
+    it('n appelle pas onClose quand on clique dans le contenu', async () => {
+        const user = userEvent.setup();
+        const onClose = vi.fn();
 
-    await user.click(screen.getByRole('dialog', { name: 'Titre' }));
+        renderModal({ onClose });
 
-    expect(onClose).not.toHaveBeenCalled();
-  });
+        await user.click(screen.getByRole('dialog', { name: 'Titre' }));
 
-  it('appelle onClose quand on appuie sur Escape', () => {
-    const onClose = vi.fn();
+        expect(onClose).not.toHaveBeenCalled();
+    });
 
-    renderModal({ onClose });
+    it('appelle onClose quand on appuie sur Escape', () => {
+        const onClose = vi.fn();
 
-    fireEvent.keyDown(window, { key: 'Escape' });
+        renderModal({ onClose });
 
-    expect(onClose).toHaveBeenCalledTimes(1);
-  });
+        fireEvent.keyDown(window, { key: 'Escape' });
 
-  it('verrouille le scroll du body puis restaure la valeur precedente au demontage', () => {
-    document.body.style.overflow = 'auto';
+        expect(onClose).toHaveBeenCalledTimes(1);
+    });
 
-    const { unmount } = renderModal();
+    it('verrouille le scroll du body puis restaure la valeur precedente au demontage', () => {
+        document.body.style.overflow = 'auto';
 
-    expect(document.body.style.overflow).toBe('hidden');
+        const { unmount } = renderModal();
 
-    unmount();
+        expect(document.body.style.overflow).toBe('hidden');
 
-    expect(document.body.style.overflow).toBe('auto');
-  });
+        unmount();
+
+        expect(document.body.style.overflow).toBe('auto');
+    });
 });

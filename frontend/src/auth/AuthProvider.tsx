@@ -6,86 +6,86 @@ type AuthUser = components['schemas']['User'];
 type AuthStatus = 'loading' | 'authenticated' | 'anonymous';
 
 type LoginInput = {
-  email: string;
-  password: string;
+    email: string;
+    password: string;
 };
 
 type AuthContextValue = {
-  user: AuthUser | null;
-  status: AuthStatus;
-  login: (input: LoginInput) => Promise<AuthUser>;
-  logout: () => Promise<void>;
-  refreshMe: () => Promise<void>;
+    user: AuthUser | null;
+    status: AuthStatus;
+    login: (input: LoginInput) => Promise<AuthUser>;
+    logout: () => Promise<void>;
+    refreshMe: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [status, setStatus] = useState<AuthStatus>('loading');
+    const [user, setUser] = useState<AuthUser | null>(null);
+    const [status, setStatus] = useState<AuthStatus>('loading');
 
-  const refreshMe = async () => {
-    setStatus('loading');
+    const refreshMe = async () => {
+        setStatus('loading');
 
-    const { data, error } = await api.GET('/users/me');
+        const { data, error } = await api.GET('/users/me');
 
-    if (error) {
-      setUser(null);
-      setStatus('anonymous');
-      return;
-    }
+        if (error) {
+            setUser(null);
+            setStatus('anonymous');
+            return;
+        }
 
-    setUser(data);
-    setStatus('authenticated');
-  };
+        setUser(data);
+        setStatus('authenticated');
+    };
 
-  const login = async ({ email, password }: LoginInput) => {
-    const { data, error } = await api.POST('/auth/login', {
-      body: { email, password },
-    });
+    const login = async ({ email, password }: LoginInput) => {
+        const { data, error } = await api.POST('/auth/login', {
+            body: { email, password },
+        });
 
-    console.log('AUTH_LOGIN_RESULT', { data, error });
+        console.log('AUTH_LOGIN_RESULT', { data, error });
 
-    if (error || !data) {
-      throw new Error('INVALID_CREDENTIALS');
-    }
+        if (error || !data) {
+            throw new Error('INVALID_CREDENTIALS');
+        }
 
-    setUser(data);
-    setStatus('authenticated');
-    return data;
-  };
+        setUser(data);
+        setStatus('authenticated');
+        return data;
+    };
 
-  const logout = async () => {
-    await api.POST('/auth/logout');
-    setUser(null);
-    setStatus('anonymous');
-  };
+    const logout = async () => {
+        await api.POST('/auth/logout');
+        setUser(null);
+        setStatus('anonymous');
+    };
 
-  useEffect(() => {
-    void refreshMe();
-  }, []);
+    useEffect(() => {
+        void refreshMe();
+    }, []);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        status,
-        login,
-        logout,
-        refreshMe,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                status,
+                login,
+                logout,
+                refreshMe,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
+    const context = useContext(AuthContext);
 
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
 
-  return context;
+    return context;
 }

@@ -4,36 +4,31 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { ToastProvider } from '../components/ui/ToastProvider';
 
 type Options = {
-  route?: string;
-  path?: string;
-  withToastProvider?: boolean;
+    route?: string;
+    path?: string;
+    withToastProvider?: boolean;
 } & Omit<RenderOptions, 'wrapper'>;
 
 export function renderWithProviders(
-  ui: ReactElement,
-  {
-    route = '/',
-    path,
-    withToastProvider = true,
-    ...renderOptions
-  }: Options = {},
+    ui: ReactElement,
+    { route = '/', path, withToastProvider = true, ...renderOptions }: Options = {},
 ) {
-  function Wrapper({ children }: PropsWithChildren) {
-    const content = withToastProvider ? <ToastProvider>{children}</ToastProvider> : children;
+    function Wrapper({ children }: PropsWithChildren) {
+        const content = withToastProvider ? <ToastProvider>{children}</ToastProvider> : children;
 
-    return <MemoryRouter initialEntries={[route]}>{content}</MemoryRouter>;
-  }
+        return <MemoryRouter initialEntries={[route]}>{content}</MemoryRouter>;
+    }
 
-  const routedUi = path ? (
-    <Routes>
-      <Route path={path} element={ui} />
-    </Routes>
-  ) : (
-    ui
-  );
+    const routedUi = path ? (
+        <Routes>
+            <Route path={path} element={ui} />
+        </Routes>
+    ) : (
+        ui
+    );
 
-  return render(routedUi, {
-    wrapper: Wrapper,
-    ...renderOptions,
-  });
+    return render(routedUi, {
+        wrapper: Wrapper,
+        ...renderOptions,
+    });
 }

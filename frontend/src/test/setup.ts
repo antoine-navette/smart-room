@@ -3,61 +3,61 @@ import { cleanup } from '@testing-library/react';
 import { afterEach } from 'vitest';
 
 class ResizeObserverMock {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+    observe() {}
+    unobserve() {}
+    disconnect() {}
 }
 
 class IntersectionObserverMock {
-  root = null;
-  rootMargin = '';
-  thresholds: number[] = [];
+    root = null;
+    rootMargin = '';
+    thresholds: number[] = [];
 
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-  takeRecords() {
-    return [];
-  }
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords() {
+        return [];
+    }
 }
 
 Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: (query: string) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: () => {},
-    removeListener: () => {},
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => false,
-  }),
+    writable: true,
+    value: (query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+    }),
 });
 
 Object.defineProperty(window, 'scrollTo', {
-  writable: true,
-  value: () => {},
+    writable: true,
+    value: () => {},
 });
 
 Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
-  writable: true,
-  value: () => {},
+    writable: true,
+    value: () => {},
 });
 
 Object.defineProperty(window, 'ResizeObserver', {
-  writable: true,
-  value: ResizeObserverMock,
+    writable: true,
+    value: ResizeObserverMock,
 });
 
 Object.defineProperty(window, 'IntersectionObserver', {
-  writable: true,
-  value: IntersectionObserverMock,
+    writable: true,
+    value: IntersectionObserverMock,
 });
 
 afterEach(() => {
-  cleanup();
-  document.body.style.overflow = '';
-  localStorage.clear();
-  sessionStorage.clear();
+    cleanup();
+    document.body.style.overflow = '';
+    localStorage.clear();
+    sessionStorage.clear();
 });
