@@ -75,9 +75,9 @@ jobs:
   deploy_staging:
     name: Deploy to Staging
     needs: [build_frontend, build_backend]
-    runs-on: [self-hosted, ledge]
+    runs-on: [self-hosted, smart-room]
     env:
-      TARGET_PATH: /srv/apps/ledge/staging
+      TARGET_PATH: /srv/apps/smart-room/staging
       IMAGE_TAG: ${{ github.event.pull_request.head.sha }}
     steps:
       - name: Checkout PR code
