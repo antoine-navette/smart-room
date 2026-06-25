@@ -48,9 +48,9 @@ export function HeroSearch({
 
       <div className="max-w-6xl mx-auto relative z-10">
         <h1 className="font-headline-xl text-[32px] md:text-[64px] leading-tight md:leading-[72px] mb-6 max-w-2xl font-black">
-          Find the perfect room, <br />
+          Trouve la salle ideale, <br />
           <span className="text-primary bg-secondary-container px-2 neo-border inline-block rotate-[-2deg]">
-            instantly.
+            en quelques secondes.
           </span>
         </h1>
 
@@ -62,7 +62,7 @@ export function HeroSearch({
           >
             <div className="flex flex-col gap-2 xl:col-span-3">
               <label className="font-label-bold text-[14px] leading-[20px] font-bold text-on-surface-variant">
-                Search
+                Recherche
               </label>
               <div className="relative">
                 <Icon
@@ -73,7 +73,7 @@ export function HeroSearch({
                   type="text"
                   value={filters.query}
                   onChange={(event) => onFilterChange("query", event.target.value)}
-                  placeholder="Room, building, floor..."
+                  placeholder="Salle, batiment, etage..."
                   className="pl-10"
                 />
               </div>
@@ -81,7 +81,7 @@ export function HeroSearch({
 
             <div className="flex flex-col gap-2 xl:col-span-2">
               <label className="font-label-bold text-[14px] leading-[20px] font-bold text-on-surface-variant">
-                Building
+                Batiment
               </label>
               <div className="relative">
                 <Icon
@@ -93,7 +93,7 @@ export function HeroSearch({
                   onChange={(event) => onFilterChange("buildingId", event.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-surface-container neo-border rounded-DEFAULT focus:outline-none focus:border-primary focus:shadow-[4px_4px_0px_0px_#fddc00] transition-all appearance-none cursor-pointer"
                 >
-                  <option value="all">All Buildings</option>
+                  <option value="all">Tous les batiments</option>
                   {buildings.map((building) => (
                     <option key={building.id} value={String(building.id)}>
                       {building.name}
@@ -105,7 +105,7 @@ export function HeroSearch({
 
             <div className="flex flex-col gap-2 xl:col-span-2">
               <label className="font-label-bold text-[14px] leading-[20px] font-bold text-on-surface-variant">
-                Floor
+                Etage
               </label>
               <div className="relative">
                 <Icon
@@ -118,7 +118,7 @@ export function HeroSearch({
                   className="w-full pl-10 pr-4 py-3 bg-surface-container neo-border rounded-DEFAULT focus:outline-none focus:border-primary focus:shadow-[4px_4px_0px_0px_#fddc00] transition-all appearance-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                   disabled={visibleFloors.length === 0}
                 >
-                  <option value="all">All Floors</option>
+                  <option value="all">Tous les etages</option>
                   {visibleFloors.map((floor) => (
                     <option key={floor.id} value={String(floor.id)}>
                       {floor.name}
@@ -130,7 +130,7 @@ export function HeroSearch({
 
             <div className="flex flex-col gap-2 xl:col-span-2">
               <label className="font-label-bold text-[14px] leading-[20px] font-bold text-on-surface-variant">
-                Capacity
+                Capacite
               </label>
               <div className="relative">
                 <Icon
@@ -142,7 +142,7 @@ export function HeroSearch({
                   onChange={(event) => onFilterChange("capacity", event.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-surface-container neo-border rounded-DEFAULT focus:outline-none focus:border-primary focus:shadow-[4px_4px_0px_0px_#fddc00] transition-all appearance-none cursor-pointer"
                 >
-                  <option value="any">Any Size</option>
+                  <option value="any">Toutes tailles</option>
                   <option value="small">1-4 pers.</option>
                   <option value="medium">5-10 pers.</option>
                   <option value="large">11+ pers.</option>
@@ -152,7 +152,7 @@ export function HeroSearch({
 
             <div className="flex flex-col gap-2 xl:col-span-2">
               <label className="font-label-bold text-[14px] leading-[20px] font-bold text-on-surface-variant">
-                Start
+                Debut
               </label>
               <div className="relative">
                 <Icon
@@ -170,7 +170,7 @@ export function HeroSearch({
 
             <div className="flex flex-col gap-2 xl:col-span-2">
               <label className="font-label-bold text-[14px] leading-[20px] font-bold text-on-surface-variant">
-                End
+                Fin
               </label>
               <div className="relative">
                 <Icon
@@ -187,7 +187,7 @@ export function HeroSearch({
               </div>
             </div>
 
-            <div className="flex gap-3 xl:col-span-12">
+            <div className="flex flex-wrap gap-3 xl:col-span-12">
               <Button
                 type="submit"
                 variant="primary"
@@ -195,7 +195,7 @@ export function HeroSearch({
                 disabled={isLoading}
               >
                 <Icon name="search" />
-                Find
+                Rechercher
               </Button>
               <Button
                 type="button"
@@ -205,7 +205,7 @@ export function HeroSearch({
                 disabled={isLoading}
               >
                 <Icon name="restart_alt" />
-                Reset Filters
+                Reinitialiser les filtres
               </Button>
             </div>
           </form>

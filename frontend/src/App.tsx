@@ -6,13 +6,15 @@ import Dashboard from "./pages/Dashboard"
 import Admin from "./pages/Admin"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
+import { ToastProvider } from "./components/ui/ToastProvider"
 import { AuthProvider } from "./auth/AuthProvider"
 import ProtectedRoute from "./auth/ProtectedRoute"
 
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <ToastProvider>
+        <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
@@ -30,7 +32,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
+      </ToastProvider>
     </AuthProvider>
   )
 }
