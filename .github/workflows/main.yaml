@@ -17,6 +17,7 @@ jobs:
     env:
       TARGET_PATH: /srv/apps/smart-room/prod
       HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      IMAGE_TAG: latest
 
     steps:
       - name: Login to GHCR

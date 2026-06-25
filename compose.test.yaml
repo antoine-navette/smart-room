@@ -1,0 +1,16 @@
+services:
+  backend:
+    image: ghcr.io/antoine-navette/smart-room-backend:${IMAGE_TAG}
+    environment:
+      PORT: "3000"
+      POSTGRES_URL: postgres://user:password@database:5432/smart-room
+      SMTP_URL: smtp://localhost:1025
+      ALLOWED_ORIGINS: http://localhost:3000
+    ports:
+      - "3000:3000"
+
+  database:
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: smart-room
