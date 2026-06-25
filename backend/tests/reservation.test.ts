@@ -46,7 +46,11 @@ describe('Reservations', () => {
         const created = await fetch(`${API_URL}/reservations`, {
             method: 'POST',
             headers: authed(cookie),
-            body: JSON.stringify({ room_id: 1, start_time: '2030-07-01T10:00:00.000Z', end_time: '2030-07-01T12:00:00.000Z' }),
+            body: JSON.stringify({
+                room_id: 1,
+                start_time: '2030-07-01T10:00:00.000Z',
+                end_time: '2030-07-01T12:00:00.000Z',
+            }),
         });
         const { id } = await created.json();
         const res = await fetch(`${API_URL}/reservations/${id}`, { method: 'DELETE', headers: authed(cookie) });
