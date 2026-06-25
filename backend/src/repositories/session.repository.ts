@@ -2,21 +2,32 @@ import type { Pool } from 'pg';
 import type { Session } from '../entities/session.entity.js';
 import type { User } from '../entities/user.entity.js';
 
+type SessionRow = Omit<Session, 'expires_at'> & {
+    expires_at: Date | string;
+};
+
+const toSession = (row: SessionRow): Session => ({
+    id: row.id,
+    user_id: row.user_id,
+    token: row.token,
+    expires_at: row.expires_at instanceof Date ? row.expires_at : new Date(row.expires_at),
+});
+
 export class SessionRepository {
     constructor(private readonly pool: Pool) {}
 
     async create(userId: number, token: string, expiresAt: Date): Promise<Session> {
-        const result = await this.pool.query<Session>(
+        const result = await this.pool.query<SessionRow>(
             'INSERT INTO sessions (user_id, token, expires_at) VALUES ($1, $2, $3) RETURNING *',
             [userId, token, expiresAt],
         );
         const row = result.rows[0];
         if (!row) throw new Error('Failed to create session');
-        return row;
+        return toSession(row);
     }
 
     async findByTokenWithUser(token: string): Promise<{ session: Session; user: User } | null> {
-        type Row = Session & Omit<User, 'id'>;
+        type Row = SessionRow & Omit<User, 'id'>;
         const result = await this.pool.query<Row>(
             `SELECT sessions.*, users.last_name, users.first_name, users.role, users.email, users.password_hash
              FROM sessions
@@ -24,10 +35,12 @@ export class SessionRepository {
              WHERE sessions.token = $1`,
             [token],
         );
+
         const row = result.rows[0];
         if (!row) return null;
+
         return {
-            session: { id: row.id, user_id: row.user_id, token: row.token, expires_at: row.expires_at },
+            session: toSession(row),
             user: {
                 id: row.user_id,
                 last_name: row.last_name,

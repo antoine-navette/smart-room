@@ -14,7 +14,7 @@ type Options = { authService: AuthService };
 
 const sessionCookieOptions = (expiresAt: Date) => ({
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict' as const,
     path: '/',
     expires: expiresAt,
@@ -48,8 +48,17 @@ export const authRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
                 result satisfies never;
             }
 
+            console.log('LOGIN_RESULT', result);
+            console.log(
+                'EXPIRES_DEBUG',
+                result.session.expires_at,
+                result.session.expires_at instanceof Date,
+                Number.isFinite(result.session.expires_at.valueOf()),
+            );
+
             const { password_hash, ...user } = result.user;
             reply.setCookie('session_token', result.session.token, sessionCookieOptions(result.session.expires_at));
+            console.log('COOKIE_SET_OK');
             return reply.status(200).send(user);
         },
     );
