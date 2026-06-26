@@ -95,15 +95,26 @@ export const userRoutes: FastifyPluginAsyncZodOpenApi<Options> = async (app, { a
                 response: {
                     200: UserDto,
                     400: InvalidParamsErrorDto,
+                    401: UnauthorizedErrorDto,
+                    403: ForbiddenErrorDto,
                     404: UserNotFoundErrorDto,
                     500: InternalServerErrorDto,
                 },
             },
         },
         async (request, reply) => {
+            const auth = await authService.authenticate(request.cookies['session_token']);
+            if (!auth.success) {
+                return reply.status(401).send({ code: 'UNAUTHORIZED', message: 'Unauthorized' });
+            }
+
             const params = UserIdParamsDto.safeParse(request.params);
             if (!params.success) {
                 return reply.status(400).send({ code: 'INVALID_PARAMS', issues: params.error.issues });
+            }
+
+            if (auth.user.id !== params.data.id) {
+                return reply.status(403).send({ code: 'FORBIDDEN', message: 'You can only access your own user' });
             }
 
             const result = await userService.findById(params.data.id);
